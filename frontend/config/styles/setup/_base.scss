@@ -1,0 +1,60 @@
+body {
+  background-color: $colorBackground;
+  font-family: $fontDefault;
+  font-weight: $fontWeightDefault;
+  line-height: 1.5;
+  min-height: 100vh;
+  margin: 0px;
+}
+.pointer {
+  cursor: pointer;
+}
+.text-danger {
+  color: $colorDanger !important;
+}
+.text-success {
+  color: $colorSuccess !important;
+}
+.text-warning {
+  color: $colorWarning !important;
+}
+.text-primary {
+  color: $colorPrimary !important;
+}
+.text-muted {
+  color: $colorGray !important;
+}
+.text-tip {
+  color: #606266 !important;
+}
+.bg-danger {
+  background-color: $colorDanger !important;
+  color: #fff;
+}
+.bg-success {
+  background-color: $colorSuccess !important;
+  color: #fff;
+}
+.bg-warning {
+  background-color: $colorWarning !important;
+}
+.bg-primary {
+  background-color: $colorPrimary !important;
+  color: #fff;
+}
+.bg-info {
+  background-color: $colorInfo !important;
+  color: #fff;
+}
+.bg-muted {
+  background-color: $colorGray !important;
+}
+.darker {
+  filter: brightness(0.9);
+}
+img, svg, video, canvas, audio, iframe, embed, object {
+  display: inline-block;
+}
+a {
+  text-decoration: none;
+}

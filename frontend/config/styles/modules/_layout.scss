@@ -1,0 +1,29 @@
+Icon {
+  font-size: 2em;
+  margin-right: 10px;
+}
+
+.custom-scrollbar-vertical {
+  &::-webkit-scrollbar {
+    width: 6px;
+    background-color: #FFFFFF;
+    outline: 2px solid white;
+  }
+  &::-webkit-scrollbar-thumb {
+    height: 100px;
+    background-color: #d0d0d0;
+    border-radius: 5px;
+  }
+}
+.custom-scrollbar-horizontal {
+  &::-webkit-scrollbar {
+    height: 6px;
+    background-color: #FFFFFF;
+    outline: 2px solid white;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 100px;
+    background-color: #d0d0d0;
+    border-radius: 5px;
+  }
+}
