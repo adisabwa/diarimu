@@ -1,7 +1,7 @@
 <template>
   <div id="main-layout" class="bg-white 
     [--width-menu:250px]">
-    <el-container class="z-[10]">
+    <div class="z-[10] w-full">
       <transition name="slide-in" mode="out-in"
         enter-active-class="transition-all ease-in-out duration-500"
         leave-active-class="transition-all ease-in-out duration-500"
@@ -19,10 +19,10 @@
         @click="toggleClass('.el-menu-vertical-demo','-translate-x-full')">
         <icons icon="mdi:menu" class="m-0 text-4xl text-teal-700"/>
       </el-button>
-    </el-container>
+    </div>
     <el-container>
       <el-main class="p-0 mt-[50px] px-3 md:px-10 pb-12 overflow-[unset]
-        min-h-[calc(100vh-40px)] 
+        min-h-[calc(100vh-110px)] 
         relative
         flex flex-col">
         <div class="fixed w-screen h-screen left-0 top-0
@@ -44,16 +44,16 @@
           </router-view>
         </div>
       </el-main>
-    </el-container>
-    <el-container class="w-full main-content-wrap ml-0 overflow-hidden">
-      <el-footer height="auto" class="w-full h-[40px] px-0 py-2 z-[9] bg-gray-100 relative">
-        <div id="bottom" class="min-w-[1200px]
-          bg-contain bg-no-repeat bg-bottom
-          absolute bottom-0 -translate-y-[40px] left-1/2 -translate-x-1/2
-          h-[60px] w-full"
-          :style="`background-image:url('${$baseUrl}assets/images/bottom.png')`"></div>
-        <div class="text-center">
-          &copy; 2023 by <a href="https://codev-app.my.id/" target="_blank" class="no-underline text-green-900">Codev-App</a>
+      <el-footer height="auto" class="h-[20px] px-0 z-[99999] relative">
+        <div class="overflow-hidden h-[45px] w-screen
+          absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-[20px]">
+          <div id="bottom" class="bg-cover bg-top bg-repeat 
+            h-full min-w-[600px] w-full"
+            :style="`background-image:url('${$baseUrl}assets/images/bottom.png')`">
+          </div>
+        </div>
+        <div class="text-[12px] text-center h-full bg-gray-100 flex items-center justify-center gap-2">
+          &copy; 2023 by <a href="https://codev-app.my.id/" target="_blank" class="no-underline text-green-900"> Codev-App</a>
         </div>
       </el-footer>
     </el-container>

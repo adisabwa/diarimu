@@ -22,3 +22,11 @@ function setRandomColor() {
 function toNumber($number){
     return preg_replace("/[^0-9]/", '', $number);
 }
+
+
+function toPhoneNumber($number){
+    preg_match('/^0+/', $number, $matches);
+    $number = toNumber($number);
+    $hp = toNumber($number);
+    return ($matches[0] ?? '').$hp;
+}

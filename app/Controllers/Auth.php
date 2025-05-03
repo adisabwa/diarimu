@@ -16,24 +16,10 @@ class Auth extends BaseController
         $data = $no_hp ?? $this->request->getPost('no_hp');
         $password = $password ?? $this->request->getPost('password');
 
-        $hp = $email = $message = '';
+        $message = '';
        
-        if (filter_var($data, FILTER_VALIDATE_EMAIL)) {
-            $email = $data;
-        } else {
-            $message = "Format email keliru";
-            $hp = toNumber($data);
-            if (substr($hp,0,2) == '62') {
-                $hp = $data;
-                $message = '';
-            }
-            else if (substr($hp,0,1) == '8') {
-                $hp = '0'.$data;
-                $message = '';
-            } else {
-                $message .= ' / Nomor HP tidak valid';
-            }
-        }
+        $email = $data;
+        $hp = toPhoneNumber($data);
         
         if ($message) {
             return $this->respond([

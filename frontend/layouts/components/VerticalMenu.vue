@@ -1,18 +1,20 @@
 <template>
-  <div >
-    <div class="z-[2]"> 
-      <el-header class="bg-orange-300 h-[40px] w-full relative"></el-header>
-      <div id="top" class="add-play bg-cover bg-bottom
-        h-[70px] w-[1400px] absolute z-[51] top-[1px]
-        translate-x-[calc(50vw-50%)] md:-translate-x-[calc(675px)]"
-          :style="`background-image:url('${$baseUrl}assets/images/top.png')`"></div>
-      <img id="logo" :src="$baseUrl + 'assets/images/logo-kecil.png'" height="90px" 
-        @click="$router.push({name:defaultRoute})"
-        class="pointer animate hover:scale-[0.8]
-        absolute z-[53] top-[5px]
-        mt-2
-        translate-x-[calc(50vw-50%)]
-        md:-translate-x-[calc(50%-125px)]"/>
+  <div class="">
+    <div class="z-[2] h-[40px]">
+      <div class="absolute top-0 overflow-hidden w-full h-[100px]"> 
+        <el-header class="bg-orange-300 h-[40px] w-full relative"></el-header>
+        <div id="top" class="add-play bg-cover bg-bottom
+          h-[70px] w-[1400px] absolute z-[51] top-[1px]
+          translate-x-[calc(50vw-50%)] md:-translate-x-[calc(675px)]"
+            :style="`background-image:url('${$baseUrl}assets/images/top.png')`"></div>
+        <img id="logo" :src="$baseUrl + 'assets/images/logo-kecil.png'" height="90px" 
+          @click="$router.push({name:defaultRoute})"
+          class="pointer animate hover:scale-[0.8]
+          absolute z-[53] top-[5px]
+          mt-2
+          translate-x-[calc(50vw-50%)]
+          md:-translate-x-[calc(50%-125px)]"/>
+      </div>
     </div>
     <div class="h-screen w-[--width-menu] bg-white
       transition-all duration-500

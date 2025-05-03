@@ -1,3 +1,6 @@
+
+import { baseUrl } from "@/config/url";
+
 let iqab = [
   {
     index: 'dashboard',
@@ -134,38 +137,59 @@ let saving = [
 
 let topMenu = [
   {
-    label:'Data Kepengurusan',
-    route:'management-dashboard',
-    icon:'simple-line-icons:organization',
-    color:'bg-[theme(colors.emerald.700)]',
-    image:'https://img.freepik.com/free-photo/hand-with-marker-drawing-social-network-map_1232-205.jpg?t=st=1732515956~exp=1732519556~hmac=6345df7f352240fb0aafccf4f5995b04070ac74f3c5ca66adfb8d8fd71a3832b&w=996',
+    label:"Baca Qur'an",
+    route:'quran-baca',
+    color:'bg-lime-200',
+    shadowColor:'shadow-lime-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/quran.png',
+  },
+  {
+    label:"Hafal Qur'an",
+    route:'quran-hafal',
+    color:'bg-yellow-200',
+    shadowColor:'shadow-yellow-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/memorization.png',
+  },
+  {
+    label:"Kajian Qur'an",
+    route:'quran-kaji',
+    color:'bg-sky-200',
+    shadowColor:'shadow-sky-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/kajian.png',
   },
   {
     label:'Data PSB',
     route:'admin-management',
     icon:'material-symbols:school',
-    color:'bg-[theme(colors.emerald.700)]',
+    color:'bg-emerald-700',
+    textColor:'text-orange-500',
     image:'https://i.ytimg.com/vi/mf2xJ22ePok/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDTApGdiQbR2RlDjcwKWOInJmkVsA',
   },
   {
     label:'Iqab Santri',
     route:'admin-iqab',
     icon:'healthicons:justice-24px',
-    color:'bg-[theme(colors.emerald.700)]',
+    color:'bg-emerald-700',
+    textColor:'text-orange-500',
     image:'https://img.freepik.com/premium-photo/judge-gavel-scales-justice-court-hall-law-concept-judiciary-jurisprudence-justice-copy-space-based-generative-ai_438099-11686.jpg',
   },
   {
     label:'Perpustakaan Digital',
     route:'book-list',
     icon:'ion:library',
-    color:'bg-[theme(colors.emerald.700)]',
+    color:'bg-emerald-700',
+    textColor:'text-orange-500',
     image:'https://media.npr.org/assets/img/2023/12/29/gettyimages-925364372-edit_custom-15f489a3ffaa6163f026535ac4705763d4ccb977.jpg?s=1100&c=85&f=webp',
   },
   {
     label:'User Management',
     route:'users',
     icon:'mdi:users-group',
-    color:'bg-[theme(colors.emerald.700)]',
+    color:'bg-emerald-700',
+    textColor:'text-orange-500',
     image:'https://zahiraccounting.com/en-my/wp-content/uploads/2015/10/zahir-accounting-software-have-more-than-60.000-users.png',
   },
 ]

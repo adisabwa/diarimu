@@ -13,22 +13,20 @@
 					pt-7 pb-8 mb-20
 					bg-scroll bg-repeat bg-top
 					bg-[url('https://darularqampatean.com/wp-content/uploads/2021/10/bg-vectors.png')]">
-					<div class="grid grid-cols-[repeat(auto-fit,_65px)] gap-[25px] justify-center
+					<div class="grid grid-cols-[repeat(auto-fit,_65px)] gap-[25px] gap-y-[15px]
+						justify-center
 						px-1 md:max-w-[80%] mx-auto">
 						<template v-for="(menu, ind) in topMenu">
 							<div class="grid-item h-[110px]">
 								<div class="animate pointer duration-500 group/app
-									hover:scale-90"
-									>
-									<div :class="`${menu.color} h-[65px] rounded-full
+									hover:scale-90"	>
+									<div :class="`${menu.color} ${menu.textColor} ${menu.shadowColor}
+										shadow-md
+										h-[65px] rounded-full
 										relative overflow-hidden
 										flex items-center justify-center align-middle`">
-										<icons class="text-[#f3b76f] text-[33px]
-											m-0" :icon="menu.icon" />
-										<div class="bg-[#f3b76f] h-[2px] w-full
-											absolute top-[7px] left-[100%] group-hover/app:translate-x-0 -translate-x-[70%]"/>
-										<div class="bg-[#f3b76f] h-[2px] w-full
-											absolute bottom-[7px] right-[100%] group-hover/app:translate-x-0 translate-x-[70%]"/>
+										<img :src="menu.image" height="45px" width="45px"
+											class="rounded-full"/>
 										<div class="absolute w-[90px] h-[200%] rotate-[-25deg] top-[-50%]
 											bg-gradient-to-r from-transparent via-white/[0.2] to-transparent
 											animate-[fly-in-absolute_4s_infinite_ease-in-out] [--from-left:-70%] [--left:350%] "
@@ -36,7 +34,7 @@
 									</div>
 									<div class="text-center mt-2 text-[15px] text-emerald-800 w-fit
 										absolute -translate-x-1/2 left-1/2
-										leading-[1.3]">{{ menu.label }}</div>
+										leading-[1.1]">{{ menu.label }}</div>
 								</div>
 							</div>
 						</template>
@@ -44,14 +42,14 @@
 					</div>
 			</div>
 		</div>
-		<div class="translate-y-[-40px]">
+		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat
 				h-[60px] min-w-[600px] w-full
 				filter hue-rotate-[349deg] brightness-[.9]"
 				:style="`background-image:url('${$baseUrl}assets/images/bottom.png')`"></div>
 			
 			<div class="absolute bg-[#f3b76f] h-[100px] w-full" />
-		</div>
+		</div> -->
 	</div>
 </template>
 

@@ -19,7 +19,7 @@
                 :id="dataId"
                 href="data/anggota/store"
                 href-get="data/anggota/get"
-                @saved="submitted"  
+                @saved="submittedAnggota"  
                 @error="saving=false"
                 size="large"
                 :show-submit="false"
@@ -30,11 +30,12 @@
               <el-divider class="m-0 mb-5 "/>
               <form-comp ref="formAkun"
                 class="[&_*]:text-center [&_*]:rounded-full"
-                :key="'form-akun-'+formKey"
+                :key="'form-akun-'+formKeyAkun"
                 :fields="fieldsAkun" 
-                :id="dataId"
+                :id="dataIdAkun"
+                :pass-columns="['id_anggota','role']"
                 href="pengguna/store"
-                @saved="submitted"  
+                @saved="submittedAkun"  
                 @error="saving=false"
                 size="large"
                 :show-submit="false"
@@ -46,7 +47,6 @@
                 type="primary" 
                 size="large" 
                 @click="$refs.formRegistrasi.submitForm();
-                $refs.formAkun.submitForm();
                 saving=true"
                 :loading="saving" 
                 class="mt-2 w-full bg-teal-700 font-bold
@@ -70,13 +70,14 @@ export default {
     return {
       saving: false,
       formKey:1,
+      formKeyAkun:1,
       fields:{},
       fieldsAkun:{
         id_anggota:{
-          nama_kolom:'id_anggota',from_user:'0'
+          nama_kolom:'id_anggota',default:'',
         },
         role:{
-          nama_kolom:'role',from_user:'0',default:'user',
+          nama_kolom:'role',default:'user',
         },
         password:{
           nama_kolom:'password',input:'password',label:'Password Baru'
@@ -85,7 +86,8 @@ export default {
           nama_kolom:'passwordconf',input:'password',label:'Konfirmasi Password'
         }
       },
-      dataId:'',
+      dataId:-1,
+      dataIdAkun:-1,
     };
   },
   methods: {
@@ -99,6 +101,15 @@ export default {
           this.saving = false
         });
     },
+     submittedAnggota(data){
+      this.saving = false
+      console.log(data)
+      this.$refs.formAkun.changeData('id_anggota', data.id)
+      this.$refs.formAkun.submitForm();
+    },
+    submittedAkun(data){
+      this.saving = false
+    }
   },
   created() {
     this.getInitial();

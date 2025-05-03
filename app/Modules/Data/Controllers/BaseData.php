@@ -72,15 +72,16 @@ class BaseData extends BaseController
             }
         }
         // Start the transaction
+
         $this->model->transBegin();
         if ($posted_data['id'] > 0) {
             $save = $this->model->update($posted_data['id'], $data);
         } else {
-            $save = $this->model->insert($data);
+            $save = $this->model->insert($data, TRUE);
             $posted_data['id'] = $this->model->insertID();
         }
         // var_dump($posted_data);
-        // var_dump($this->model, $this->model->error());
+        // var_dump($this->model->error());
         // Append ID to data
         foreach ($child_table as $table => $values) {
             $data_kolom = $this->kolomClass->getKolomDetail($this->model->getTableName(), $child_key[$table]);

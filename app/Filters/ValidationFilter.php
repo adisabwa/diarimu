@@ -22,11 +22,13 @@ class ValidationFilter implements FilterInterface
         $datas = $model->getAll($table);
         // $koloms = [];
         $postData = $request->getPost();
+        $id = $postData['id'] ?? -1;
         unset($postData['id']);
         $files_data = $_FILES;
         $folders = [];
         $validationRule = [];
         $double_input = [];
+        $input_only = [];
         $func = [];
         foreach ($datas as $key => $data) {
            $nama = $data->nama_kolom;
@@ -34,14 +36,21 @@ class ValidationFilter implements FilterInterface
            if (isset($postData[$nama])) {
                 $validationRule[$nama] = [
                     'label' => $label,
-                    'rules' => $data->required == '1' ? 'required' : 'permit_empty'.(empty($data->rules) ? '' : '|'.$data->rules),
+                    // 'rules' => 'even'
+                    'rules' => ($data->required == '1' ? 'required' : 'permit_empty').(empty($data->rules) ? '' : '|'.$data->rules),
                 ];
                 if ($data->input == 'select-double')
                     $double_input[$nama] = $postData[$nama];
 
+                if ($data->input_only == '1')
+                    $input_only[$nama] = $postData[$nama];
+
                 if (!empty($data->function_submit)) {
                     $func[$nama] = $data->function_submit;
                 }
+
+                $validationRule[$nama]['rules'] = str_replace("{id}",$id,$validationRule[$nama]['rules']);
+                // var_dump("{id}",$id,$validationRule[$nama]['rules']);
                 // $koloms[] = $data;
            } else if (isset($files_data[$nama])) {
                 $validationRule[$nama] = [
@@ -56,7 +65,7 @@ class ValidationFilter implements FilterInterface
                 $folders[$nama] = $data->folder;
            }
         }
-        // var_dump($postData);
+        // var_dump($validationRule);
             // return failValidationErrors([]);
         if (empty($validationRule))
             return TRUE;
@@ -68,8 +77,7 @@ class ValidationFilter implements FilterInterface
                 'messages' => $validation->getErrors()
             ])->setStatusCode(400); // Bad Request
         }
-        
-       
+
         $postData = $request->getPost();
         
         foreach ($_FILES as $inputName => $fileData) {
@@ -86,6 +94,10 @@ class ValidationFilter implements FilterInterface
             }
         }
 
+        foreach ($func as $nama_kolom => $f) {
+            $postData[$nama_kolom] = $f($postData[$nama_kolom]);
+        }
+
         foreach ($double_input as $nama_kolom => $data) {
             $koloms = explode('-', $nama_kolom);
             $datas = explode('-', $data);
@@ -95,9 +107,11 @@ class ValidationFilter implements FilterInterface
             unset($postData[$nama_kolom]);
         }
 
-        foreach ($func as $nama_kolom => $f) {
-            $postData[$nama_kolom] = $f($postData[$nama_kolom]);
+        foreach ($input_only as $nama_kolom => $data) {
+            unset($postData[$nama_kolom]);
         }
+
+        $postData['id'] = $id;
         $newRequest = $request->setGlobal('post', $postData);
         return $newRequest;
     }

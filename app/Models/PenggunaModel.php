@@ -36,7 +36,6 @@ class PenggunaModel extends Model
         $data = $this->db->table('mu_pengguna p')
                     ->select("ang.*, p.*")
                     ->join("mu_anggota ang","ang.id=p.id_anggota")
-                    ->join('mu_list_akses la','a.id_akses=la.id','left')
                     ->groupStart()
                       ->where('ang.no_hp', $no_hp)
                       ->orWhere('ang.email', $email)

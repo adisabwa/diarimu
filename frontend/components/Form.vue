@@ -260,6 +260,10 @@ export default {
       type:Boolean,
       default: true,
     },
+    showNotification:{
+      type:Boolean,
+      default: true,
+    },
     passColumns:{
       type:Array,
       default:[],
@@ -267,7 +271,7 @@ export default {
     showColumns:{
       type:Array,
       default:[],
-    }
+    },
   },
   emits:['update:id','saved','error','changeId','formValue'],
   data: function() {
@@ -310,7 +314,8 @@ export default {
     
   },
   methods: {
-    changeData(val){
+    changeData(field, val){
+      this.form[field] = val
     },
     searchData(ind){
       let field = this.fieldsData[ind]
@@ -346,9 +351,11 @@ export default {
           }
         })
         .catch(err => {
+          console.log(err)
           this.saving = false;
           var res = err.response;
           var code = res.status;
+          if (this.showNotification)
             this.$notify.error({
               title: 'Gagal',
               message: 'Tidak dapat mengambil data',
@@ -396,25 +403,28 @@ export default {
         })
         .catch(err => {
           this.saving = false;
+          console.log(err)
           var res = err.response;
           var code = res.status;
           this.$emit('error', false);
           
           if (code == '400') {
             // Populating error message
-            // console.log(res)
+            console.log(res.data.messages, this.errors)
             this.fillObjectValue(this.errors, res.data.messages);
-            this.$notify.error({
-              title: 'Gagal',
-              message: 'Data belum benar',
-              position: 'bottom-right'
-            });
+            if (this.showNotification)
+              this.$notify.error({
+                title: 'Gagal',
+                message: 'Data belum benar',
+                position: 'bottom-right'
+              });
           } else {
-            this.$notify.error({
-              title: 'Gagal',
-              message: this.errorSubmitText,
-              position: 'bottom-right'
-            });
+            if (this.showNotification)
+              this.$notify.error({
+                title: 'Gagal',
+                message: this.errorSubmitText,
+                position: 'bottom-right'
+              });
           }
           this.form = backUpForm;
         });
