@@ -4,7 +4,7 @@ import store from '@/config/store'
 import config from '@/config/url'
 
 import managementRoute from './routes/management'
-import iqabRoute from './routes/iqab'
+import quranRoute from './routes/quran'
 import authRoute from './routes/auth'
 import libraryRoute from './routes/library'
 import defaultRoute from './routes/default'
@@ -17,7 +17,7 @@ const routes = new createRouter({
     ...defaultRoute,
     ...libraryRoute,
     ...authRoute,
-    ...iqabRoute,
+    ...quranRoute,
     ...savingRoute,
 	],
   scrollBehavior: function(to, from, savedPosition) {
@@ -54,18 +54,20 @@ routes.beforeEach(async (to, from, next) => {
         query: { nextUrl: to.fullPath }
       })
     } else {
-      if (to.meta.app) {
-        // console.log(to.meta.app, loggedUser.app);
-        if (!loggedUser.app.includes(to.meta.app)) {
-          next({
-            name: 'unauthorized',
-          })
-        } else {
-          next()
-        }
-      } else {
+      // if (to.meta.app) {
+      //   // console.log(to.meta.app, loggedUser.app);
+      //   if (!loggedUser.app.includes(to.meta.app)) {
+      //     next({
+      //       name: 'unauthorized',
+      //     })
+      //   } 
+      //   else {
+      //     next()
+      //   }
+      // } 
+      // else {
         next()
-      }
+      // }
     }
   } else if (to.matched.some(record => record.meta.guest)) {
     next()

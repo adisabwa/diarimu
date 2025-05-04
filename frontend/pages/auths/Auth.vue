@@ -1,7 +1,7 @@
 <template>
   <div id="auth" class="max-w-[1100px] mx-6 md:mx-auto bg-white bg-opacity-[0.9]
     border-solid border border-gray-300">
-    <div class="h-full md:px-10">
+    <div class="h-full md:px-10 pb-12">
       <div class="flex flex-col items-center align-middle">
         <div class="p-5 pt-36 
           text-center">
@@ -119,7 +119,7 @@ export default {
   created() {
     // this.initial();
     this.nextUrl = this.$route.query.nextUrl;
-    this.redirect();
+    // this.redirect();
   }
 };
 </script>

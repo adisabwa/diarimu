@@ -14,4 +14,5 @@ return [
 	'matches'		=> '{field} tidak sama dengan {param}.',
 	'is_unique' 	=> '{field} sudah digunakan.',
 	'greater_than'	=> '{field} harus lebih besar dari {param}.',
+	'double_greater_and_equal_to' => '{field} harus lebih besar atau sama dengan dari {param}.',
 ];

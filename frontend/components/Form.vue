@@ -30,6 +30,10 @@
                 </template>
               </el-input>
             </template>
+            <template v-else-if="field.input == 'input-number'">
+              <el-input-number v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
+                class="w-full" :size="size"/>
+            </template>
             <template v-else-if="field.input == 'number'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 class="w-full" type="number"
@@ -48,6 +52,7 @@
                   [&_li_span]:whitespace-normal
                   [&_li_span]:block [&_li_span]:leading-[1.6] [&_li_span]:py-2"
                 :size="size">
+                <template #prefix v-if="!isEmpty(field.prepend)"> {{ field.prepend }}</template>
                 <template 
                   v-for="item in field.options"
                   :key="item">
@@ -91,6 +96,7 @@
                   [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] [&_li_span]:py-2"
                 @change="form[field.nama_kolom] = ''"
                 :size="size">
+                <template #prefix v-if="!isEmpty(field.prepend1)"> {{ field.prepend1 }}</template>
                 <template 
                   v-for="item in field.options"
                   :key="item">
@@ -100,12 +106,14 @@
                   </el-option>
                 </template>
               </el-select>
-              <el-select v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" class="w-full"
+              <el-select v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
                 filterable clearable
                 popper-class="h-auto max-w-[600px]
                   [&_li]:h-auto [&_li]:py-1
                   [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] "
-                :size="size">
+                :size="size"
+                :style="{width:field.width_input}">
+                <template #prefix v-if="!isEmpty(field.prepend2)"> {{ field.prepend2 }}</template>
                 <template 
                   v-for="subItem in field.options[field.parentSelect] === undefined ? [] : field.options[field.parentSelect].options"
                   :key="subItem">
@@ -190,7 +198,7 @@
           </div>
         </el-form-item>
       </template>
-      <slot :errors="errors" :form="form"></slot>
+      <slot :errors="errors" :form="form" :fields="fieldsData"></slot>
       <div class="text-md mt-10" v-if="showRequiredText">
         <span class="text-red-500">)*</span> isian harus diisi
       </div>
@@ -215,6 +223,10 @@ export default {
     id: {
       type:[Number, String, Array],
       default: ''
+    },
+    formValue: {
+      type:[Array, Object],
+      default:[],
     },
     fields: {
       type:[Array, Object],
@@ -273,7 +285,7 @@ export default {
       default:[],
     },
   },
-  emits:['update:id','saved','error','changeId','formValue'],
+  emits:['update:id','saved','error','changeId','update:formValue'],
   data: function() {
     return {
       saving: false,
@@ -305,7 +317,7 @@ export default {
     },
     form: {
       handler(newVal, oldVal) {
-        this.$emit('formValue', newVal)
+        this.$emit('update:formValue', newVal)
       },
       deep: true, // Watch nested properties
     },

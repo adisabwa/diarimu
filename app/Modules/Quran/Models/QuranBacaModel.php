@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\Iqab\Models;
+namespace Modules\Quran\Models;
 
 use CodeIgniter\Model;
 
-class ListIqabModel extends Model
+class QuranBacaModel extends Model
 {
-    protected $table         = 'daiq_list_iqab';
+    protected $table         = 'mu_quran_baca';
     protected $primaryKey = 'id';
 
     protected $protectFields = false;
@@ -23,6 +23,23 @@ class ListIqabModel extends Model
 
     }
 
+    
+    public function get_last()
+    {
+        $data = $this->db->table('mu_quran_baca qb')
+                    ->select("qb.*, s.nama, 
+                        sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
+                    ->join('mu_anggota s','qb.id_anggota=s.id')
+                    ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
+                    ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
+                    ->orderBy('qb.tanggal desc,surat_selesai desc,surat_mulai desc')
+                    ->get()
+                    ->getRowObject();
+        // var_dump($data);
+        return $data;
+    }
+
+
     public function getAll($whereAnd = [], $whereOr = [], $order = '')
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
@@ -30,9 +47,9 @@ class ListIqabModel extends Model
 
         $data = $this->db->table('daiq_list_iqab i')
                     ->select("i.*, s.nama, s.kelas, pel.pelanggaran, pel.tingkat, iq.iqab")
-										->join('mu_santri s','i.id_santri=s.id')
-										->join('daiq_pelanggaran pel','i.id_pelanggaran=pel.id')
-										->join('daiq_iqab iq','i.id_iqab=iq.id')
+                    ->join('mu_santri s','i.id_santri=s.id')
+                    ->join('daiq_pelanggaran pel','i.id_pelanggaran=pel.id')
+                    ->join('daiq_iqab iq','i.id_iqab=iq.id')
                     ->where($whereAnd)
                     ->groupStart()
                         ->orWhere($whereOr)

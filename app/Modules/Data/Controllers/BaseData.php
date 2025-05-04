@@ -81,7 +81,7 @@ class BaseData extends BaseController
             $posted_data['id'] = $this->model->insertID();
         }
         // var_dump($posted_data);
-        // var_dump($this->model->error());
+        // var_dump( $this->model->error());
         // Append ID to data
         foreach ($child_table as $table => $values) {
             $data_kolom = $this->kolomClass->getKolomDetail($this->model->getTableName(), $child_key[$table]);

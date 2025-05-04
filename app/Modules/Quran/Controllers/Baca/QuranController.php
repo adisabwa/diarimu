@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Iqab\Controllers\Admin;
+namespace Modules\Quran\Controllers\Baca;
 
-use App\Controllers\BaseController;
+use Modules\Data\Controllers\BaseData;
 use App\Libraries\PdfBuilder;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -12,13 +12,14 @@ use PhpParser\Node\Expr\AssignOp\Coalesce;
 use Config\Upload;
 use stdClass;
 
-class Iqab extends BaseController
+class QuranController extends BaseData
 {
-    protected $listIqabModel;
+    protected $quran;
 
     public function __construct()
     {
-        $this->listIqabModel = model('ListIqabModel');
+        $this->model = model('QuranBacaModel');
+        $this->quran = model('DataSuratQuranModel');
     }
 
     public function index()
@@ -34,48 +35,44 @@ class Iqab extends BaseController
         $whereOr = [
             
         ];
-        $data = $this->listIqabModel->getAll($whereAnd, $whereOr, $order);
+        $data = $this->model->getAll($whereAnd, $whereOr, $order);
 
-        // var_dump($this->listIqabModel->db->getLastQuery());
+        // var_dump($this->model->db->getLastQuery());
         return $this->respondCreated($data);
     }
 
     public function get()
     {
         $id = $this->request->getGet('id');
-        $data = $this->listIqabModel->find($id);
+        $data = $this->model->find($id);
         if (!empty($data)) {
-            $data->parentSelect = (object)['id_pelanggaran-id_iqab' => $data->id_pelanggaran];
-            $data->{'id_pelanggaran-id_iqab'} = "$data->id_pelanggaran-$data->id_iqab";
+            $data->parentSelect = (object)[
+                'surat_mulai-ayat_mulai' => $data->surat_mulai,
+                'surat_selesai-ayat_selesai' => $data->surat_selesai,
+            ];
+            $data->{'surat_mulai-ayat_mulai'} = "$data->surat_mulai-$data->ayat_mulai";
+            $data->{'surat_selesai-ayat_selesai'} = "$data->surat_selesai-$data->ayat_selesai";
         }
         return $this->respondCreated($data);
     }
 
-    public function store()
+    public function save()
     {
         $posted_data = $this->request->getPost();
-        $data = $posted_data;
-        unset($data['id']);
-        $data["created_by"] = userdata()->id;
+        $countAyat = $this->quran->countAyat($posted_data['surat_mulai'], $posted_data['ayat_mulai'],     $posted_data['surat_selesai'], $posted_data['ayat_selesai']);
+        $posted_data['total_ayat'] = $countAyat;
+        $this->request->setGlobal('post', $posted_data);
+        return $this->store();
+    }
 
-        // var_dump($data);
-        if ($posted_data['id'] > 0) {
-            $save = $this->listIqabModel->update($posted_data['id'], $data);
-        } else {
-            $save = $this->listIqabModel->insert($data);
-            $posted_data['id'] = $this->listIqabModel->insertID();
-        }
-        // Append ID to data
-        if ($save) {
-            return $this->respondCreated($posted_data);
-        } else {
-            return $this->failServerError();
-        }
+    public function get_last()
+    {
+        return $this->respondCreated($this->model->get_last());
     }
 
     public function dashboard()
     {
-        $data = $this->listIqabModel->getSummary();
+        $data = $this->model->getSummary();
         $labels = [];
         $datasets = [
             'backgroundColor' => [],
@@ -95,7 +92,7 @@ class Iqab extends BaseController
         if ($status == '2')
             $data['no_pendaftaran'] = getNomorPendaftaran();
         // var_dump($data);exit;
-        $save = $this->listIqabModel->update($id,$data);
+        $save = $this->model->update($id,$data);
 
         if ($save)
             return $this->respondCreated();
@@ -110,7 +107,7 @@ class Iqab extends BaseController
         $ids = $this->request->getPost('id') ?? -1;
         $status = $this->request->getPost('status') ?? 1;
         // var_dump($ids);exit;
-        $save = $this->listIqabModel->update($ids,['status' => $status]);
+        $save = $this->model->update($ids,['status' => $status]);
 
         if ($save)
             return $this->respondCreated();
@@ -120,7 +117,7 @@ class Iqab extends BaseController
 
     public function delete($id)
     {
-        $save = $this->listIqabModel->delete($id);
+        $save = $this->model->delete($id);
 
         if ($save)
             return $this->respondCreated();
@@ -134,7 +131,7 @@ class Iqab extends BaseController
 
         $ids = $this->request->getPost('id') ?? -1;
         // var_dump($ids);exit;
-        $save = $this->listIqabModel->delete($ids);
+        $save = $this->model->delete($ids);
 
         if ($save)
             return $this->respondCreated();
@@ -147,7 +144,7 @@ class Iqab extends BaseController
     {
         $PdfBuilder = new PdfBuilder();
 
-        $data  = $this->listIqabModel->getData(['p.id' => $id]);
+        $data  = $this->model->getData(['p.id' => $id]);
         if ($data->status != '2')
             exit('Data belum diverifikasi');
         
@@ -164,7 +161,7 @@ class Iqab extends BaseController
 
         $PdfBuilder = new PdfBuilder();
 
-        $data  = $this->listIqabModel->getAll(['p.id IN ('.implode(',',$ids).')' => NULL, 'status' => '2']);
+        $data  = $this->model->getAll(['p.id IN ('.implode(',',$ids).')' => NULL, 'status' => '2']);
         $html = '';
         foreach($data as $d) {
             $html .= view('dokumens/kartu-pendaftaran', ['content' => $d]);

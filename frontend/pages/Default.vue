@@ -19,7 +19,7 @@
 					class="mt-6
 						"/>
 			</div>
-			<div class="w-auto [&_*]:text-lg py-5 px-7">
+			<div class="w-auto [&_*]:text-lg py-5 px-7 pb-12">
 				<el-button class="bg-emerald-900/[0.5] w-full
 					shadow-[inset_3px_3px_rgba(#fff,#fff,#fff,0.3)]
 					py-5

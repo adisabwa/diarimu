@@ -61,6 +61,9 @@ class Kolom extends BaseController
               $labels = explode(' dan ', $data->label);
               $data->label1 = $labels[0] ?? $data->label;
               $data->label2 = $labels[1] ?? $data->label;
+              $prepends = explode(' dan ', $data->prepend);
+              $data->prepend1 = $prepends[0] ?? $data->prepend;
+              $data->prepend2 = $prepends[1] ?? $data->prepend;
             }
           }
           

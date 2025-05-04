@@ -17,7 +17,8 @@
 						justify-center
 						px-1 md:max-w-[80%] mx-auto">
 						<template v-for="(menu, ind) in topMenu">
-							<div class="grid-item h-[110px]">
+							<div class="grid-item h-[110px] cursor-pointer"
+								@click="$router.push({name:menu.route})">
 								<div class="animate pointer duration-500 group/app
 									hover:scale-90"	>
 									<div :class="`${menu.color} ${menu.textColor} ${menu.shadowColor}

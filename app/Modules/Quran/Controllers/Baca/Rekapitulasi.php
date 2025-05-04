@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Iqab\Controllers\Admin;
+namespace Modules\Quran\Controllers\Admin;
 
 use Modules\Data\Controllers\BaseData;
 use App\Libraries\PdfBuilder;
@@ -18,7 +18,7 @@ class Rekapitulasi extends BaseData
 
     public function __construct()
     {
-        $this->model = model('ListIqabModel');
+        $this->model = model('ListQuranModel');
     }
 
     public function index()

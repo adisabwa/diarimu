@@ -1,6 +1,7 @@
 <template>
   <div id="table-data">
-    <div class="flex flex-col md:flex-row mb-6 gap-4
+    <div v-if="showCreate || showSearch"
+      class="flex flex-col md:flex-row mb-6 gap-4
       mt-7 md:mt-2">
       <div v-if="showCreate" class="w-full
         grid grid-cols-2 [&_*]:m-0
