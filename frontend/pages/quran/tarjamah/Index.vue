@@ -1,42 +1,32 @@
 <template>
   <div id="quran" class="pt-0">
     <el-card class="relative overflow-hidden
-       bg-gradient-to-tr from-white/[0.8] from-50% to-yellow-200/[0.7] rounded-[10px]
+       bg-gradient-to-tr from-white/[0.8] from-50% to-sky-200/[0.7] rounded-[10px]
       z-[0] font-montserrat
       mb-3 p-0" 
-      body-class="relative p-0 ">
-      <img :src="quran.image" height="90px" width="90px"
-          class="absolute z-[0] top-[-10px] right-[-20px]
-            opacity-[0.5]"/>
-      <div class="relative w-fit overflow-x-scroll z-[10]
-        snap-mandatory snap-x">
-        <div class="w-[200%] flex h-[90px] py-4">
-          <div class="snap-center w-full px-6 h-[90px]">
-            <div class="z-[10] text-gray-500">Setoran Terakhir : </div>
-            <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
-            </div>
-            <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
-            
-          </div>
-          <div class="snap-center w-full px-6 h-[90px] overflow-scroll">
-            <div class="z-[10] mb-2 text-md font-bold italic">
-              <div>Total Hafalan :</div> 
-              <ol class="m-0 pl-4 text-[90%]">
-                <template v-for="data in juz">
-                  <li>{{ data.nama_surat_mulai }} :{{ data.ayat_mulai }} ( Juz {{ data.juz_mulai }} ) s/d {{ data.nama_surat_selesai }} : {{ data.ayat_selesai }} ( Juz {{ data.juz_selesai }} )</li>
-                </template>
-              </ol>
-            </div>
-          </div>
+      body-class="py-4 px-6">
+      <div class="z-[10] text-gray-500">Terakhir Mentarjamah : </div>
+      <template v-if="!isEmpty(lastData.tanggal)">
+        <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
         </div>
-      </div>
+        <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
+      </template>
+      <template v-else>
+        <div class="z-[10] text-2xl font-bold mb-3">
+          Belum ada data
+        </div>
+      </template>
+    
+      <img :src="quran.image" height="90px" width="90px"
+          class="absolute z-[0] top-[-10px] right-[-15px]
+            opacity-[0.5]"/>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px]
       mb-3 p-0"
       body-class="py-3 px-5"
       header-class="py-3 font-bold text-xl">
       <template #header>
-        <div>Setoran Hafalan hari ini</div>
+        <div>Tarjamahan hari ini</div>
       </template>
       <template v-if="!showCreate">
         <div v-if="success"
@@ -53,14 +43,14 @@
         </el-button>
       </template>
       <template v-else>
-        <form-comp ref="formBaca"
+        <form-comp ref="formTarjamah"
           class="[&_*]:rounded-[15px]"
-          :key="'form-hafal-'+formKey"
+          :key="'form-tarjamah-'+formKey"
           :fields="fields" 
           v-model:id="dataId"
           v-model:form-value="formValue" 
-          href="quran/hafal/store"
-          href-get="quran/hafal/get"
+          href="quran/tarjamah/store"
+          href-get="quran/tarjamah/get"
           :show-columns="['tanggal','surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']"
           @saved="submittedData" 
           @error="saving=false"
@@ -72,14 +62,14 @@
         <el-button size="large" type="success"
           class="rounded-[15px] w-full font-bold"
           :loading="saving" :disable="saving"
-          @click="$refs.formBaca.submitForm(); saving=false">
+          @click="$refs.formTarjamah.submitForm(); saving=false">
           Simpan Data
         </el-button>
       </template>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
-      header="Rekap Menghafal AL-Qur'an"
+      header="Rekap Mentarjamah AL-Qur'an"
       header-class="py-3 font-bold text-xl" >
       <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
@@ -126,7 +116,6 @@ export default {
         ayat_mulai:'',
         ayat_selesai:'',
       },
-      juz:[],
       fields:{
         tanggal:'',
         surat_selesai:'',
@@ -138,7 +127,7 @@ export default {
       setStatusType: setStatusType,
       showCreate:false,
       success:false,
-      quran: topMenu.quranHafal,
+      quran: topMenu.quranTarjamah,
       statistic:{
 				labels:[],
 				datasets:[],
@@ -162,14 +151,13 @@ export default {
   methods: {
     getInitial: async function() {
         this.loading = true;
-        await this.$http.get('/quran/hafal/get_last')
+        await this.$http.get('/quran/tarjamah/get_last')
           .then(result => {
             var res = result.data;
-            this.lastData = this.fillAndAddObjectValue(this.lastData, res.last)
-            this.juz = res.juz
+            this.lastData = this.fillAndAddObjectValue(this.lastData, res)
           });
 
-        await this.$http.get('/kolom/preparation?table=mu_quran_hafal&grouping=0&input=0')
+        await this.$http.get('/kolom/preparation?table=mu_quran_tarjamah&grouping=0&input=0')
           .then(result => {
             var res = result.data;
             this.dataId = -1
@@ -189,7 +177,7 @@ export default {
     },
     async getChart(){
       // return;
-      await this.$http.get('quran/hafal/dashboard', {
+      await this.$http.get('quran/tarjamah/dashboard', {
           params: {}
         })
           .then(res => {

@@ -1,11 +1,11 @@
 <template>
-  <div id="quran" class="pt-0">
+  <div id="sholat" class="pt-0">
     <el-card class="relative overflow-hidden
        bg-gradient-to-tr from-white/[0.8] from-50% to-yellow-200/[0.7] rounded-[10px]
       z-[0] font-montserrat
       mb-3 p-0" 
       body-class="relative p-0 ">
-      <img :src="quran.image" height="90px" width="90px"
+      <img :src="sholat.image" height="90px" width="90px"
           class="absolute z-[0] top-[-10px] right-[-20px]
             opacity-[0.5]"/>
       <div class="relative w-fit overflow-x-scroll z-[10]
@@ -33,53 +33,36 @@
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px]
       mb-3 p-0"
-      body-class="py-3 px-5"
+      body-class="body-sholat relative py-3 px-0 overflow-x-scroll
+        snap-x snap-mandatory
+        flex"
       header-class="py-3 font-bold text-xl">
       <template #header>
-        <div>Setoran Hafalan hari ini</div>
+        <div @click="removeClass('.body-sholat','snap-x snap-mandatory');
+          scrollElement('.body-sholat','#2');
+        ">Setoran Hafalan hari ini</div>
       </template>
-      <template v-if="!showCreate">
-        <div v-if="success"
-          class="text-center text-green-500 
-            mb-5
-            flex items-center justify-center">
-          <icons icon="mdi:check-circle" />
-          <span>Anda berhasil menyimpan data baru</span>
+        <div id="1" class="shrink-0 snap-center w-full px-6 h-[90px]">
+          <div class="z-[10] text-gray-500">Setoran Terakhir : </div>
+          <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
+          </div>
+          <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
+          
         </div>
-        <el-button size="large" type="primary"
-          class="rounded-[15px] w-full font-bold"
-          @click="showCreate = true">
-          Tambah Catatan
-        </el-button>
-      </template>
-      <template v-else>
-        <form-comp ref="formBaca"
-          class="[&_*]:rounded-[15px]"
-          :key="'form-hafal-'+formKey"
-          :fields="fields" 
-          v-model:id="dataId"
-          v-model:form-value="formValue" 
-          href="quran/hafal/store"
-          href-get="quran/hafal/get"
-          :show-columns="['tanggal','surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']"
-          @saved="submittedData" 
-          @error="saving=false"
-          size="large"
-          :show-submit="false"
-          label-position="top"
-          :show-required-text="false">
-        </form-comp>  
-        <el-button size="large" type="success"
-          class="rounded-[15px] w-full font-bold"
-          :loading="saving" :disable="saving"
-          @click="$refs.formBaca.submitForm(); saving=false">
-          Simpan Data
-        </el-button>
-      </template>
+        <div id="2" class="shrink-0 snap-center w-full px-6 h-[90px] overflow-scroll">
+          <div class="z-[10] mb-2 text-md font-bold italic">
+            <div>Total Hafalan :</div> 
+            <ol class="m-0 pl-4 text-[90%]">
+              <template v-for="data in juz">
+                <li>{{ data.nama_surat_mulai }} :{{ data.ayat_mulai }} ( Juz {{ data.juz_mulai }} ) s/d {{ data.nama_surat_selesai }} : {{ data.ayat_selesai }} ( Juz {{ data.juz_selesai }} )</li>
+              </template>
+            </ol>
+          </div>
+        </div>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
-      header="Rekap Menghafal AL-Qur'an"
+      header="Rekap Mengwajib AL-Qur'an"
       header-class="py-3 font-bold text-xl" >
       <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
@@ -99,13 +82,13 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { setStatusText, setStatusType } from '@/helpers/quran'
 import Form from '@/components/Form.vue'
 import LineChart from '@/components/charts/Line.vue'
 import { topMenu } from '@/helpers/menus.js'
+import { removeClass } from 'element-plus/es/utils/index.mjs';
 
 export default {
-  name: "quran",
+  name: "sholat",
   components: {
     'form-comp' : Form,
     LineChart,
@@ -134,11 +117,9 @@ export default {
       },
       formValue:{},
       sizeWindow:window.innerWidth,
-      setStatusText: setStatusText,
-      setStatusType: setStatusType,
       showCreate:false,
       success:false,
-      quran: topMenu.quranHafal,
+      sholat: topMenu.sholatWajib,
       statistic:{
 				labels:[],
 				datasets:[],
@@ -162,14 +143,14 @@ export default {
   methods: {
     getInitial: async function() {
         this.loading = true;
-        await this.$http.get('/quran/hafal/get_last')
+        await this.$http.get('/sholat/wajib/get_last')
           .then(result => {
             var res = result.data;
             this.lastData = this.fillAndAddObjectValue(this.lastData, res.last)
             this.juz = res.juz
           });
 
-        await this.$http.get('/kolom/preparation?table=mu_quran_hafal&grouping=0&input=0')
+        await this.$http.get('/kolom/preparation?table=mu_sholat_wajib&grouping=0&input=0')
           .then(result => {
             var res = result.data;
             this.dataId = -1
@@ -189,7 +170,7 @@ export default {
     },
     async getChart(){
       // return;
-      await this.$http.get('quran/hafal/dashboard', {
+      await this.$http.get('sholat/wajib/dashboard', {
           params: {}
         })
           .then(res => {

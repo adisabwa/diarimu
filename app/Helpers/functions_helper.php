@@ -29,5 +29,12 @@ function toPhoneNumber($number){
     $number = toNumber($number);
     // var_dump($matches, $number);
     $hp = toNumber($number);
-    return ($matches[0] ?? '').$hp;
+    $hp = ($matches[0] ?? '').$hp;
+    if (substr($hp,0,1) == '08')
+        $hp = str_replace_first("08","628",$hp);
+    return $hp;
+}
+
+function str_replace_first($search, $replace, $subject) {
+    return implode($replace, explode($search, $subject, 2));
 }

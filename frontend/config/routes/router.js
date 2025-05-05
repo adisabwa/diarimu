@@ -8,7 +8,7 @@ import quranRoute from './routes/quran'
 import authRoute from './routes/auth'
 import libraryRoute from './routes/library'
 import defaultRoute from './routes/default'
-import savingRoute from './routes/saving'
+import sholatRoute from './routes/sholat'
 // Vue router
 const routes = new createRouter({
   history: createWebHistory(),
@@ -18,7 +18,7 @@ const routes = new createRouter({
     ...libraryRoute,
     ...authRoute,
     ...quranRoute,
-    ...savingRoute,
+    ...sholatRoute,
 	],
   scrollBehavior: function(to, from, savedPosition) {
     // console.log(savedPosition)

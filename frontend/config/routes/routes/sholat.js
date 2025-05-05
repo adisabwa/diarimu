@@ -8,14 +8,14 @@ const siteUrl = config.siteUrl
 let routes = [
   {
     meta:{
-      app: 'quran'
+      app: 'sholat'
     },
     children: [
       {
-        path: siteUrl + 'p/quran',
+        path: siteUrl + 'p/sholat',
         children: [
           {
-            path: 'baca',
+            path: 'sunnah',
             component: MainLayout,
             meta: {
                 requiresAuth: true,
@@ -27,29 +27,8 @@ let routes = [
             children: [ 
               {
                 path: '',
-                name: 'quran-baca', 
-                component: () => import('@/pages/quran/baca/Index.vue'),
-                meta: {
-                    pageTitle: "<b>Daftar Baca Qur'an</b>",
-                }
-              },
-            ]
-          },
-          {
-            path: 'hafal',
-            component: MainLayout,
-            meta: {
-                requiresAuth: true,
-                enterFromClass : "scale-0 opacity-50",
-                enterToClass : "opacity-100",
-                leaveFromClass : "opacity-100",
-                leaveToClass : "scale-0 opacity-50",
-            },
-            children: [ 
-              {
-                path: '',
-                name: 'quran-hafal', 
-                component: () => import('@/pages/quran/hafal/Index.vue'),
+                name: 'sholat-sunnah', 
+                component: () => import('@/pages/sholat/sunnah/Index.vue'),
                 meta: {
                     pageTitle: "<b>Daftar Hafalan Qur'an</b>",
                 }
@@ -57,7 +36,7 @@ let routes = [
             ]
           },
           {
-            path: 'tarjamah',
+            path: 'wajib',
             component: MainLayout,
             meta: {
                 requiresAuth: true,
@@ -69,10 +48,10 @@ let routes = [
             children: [ 
               {
                 path: '',
-                name: 'quran-tarjamah', 
-                component: () => import('@/pages/quran/tarjamah/Index.vue'),
+                name: 'sholat-wajib', 
+                component: () => import('@/pages/sholat/wajib/Index.vue'),
                 meta: {
-                    pageTitle: "<b>Daftar Tarjamah Qur'an</b>",
+                    pageTitle: "<b>Daftar Hafalan Qur'an</b>",
                 }
               },
             ]

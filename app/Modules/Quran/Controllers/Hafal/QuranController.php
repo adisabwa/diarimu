@@ -15,11 +15,13 @@ use stdClass;
 class QuranController extends BaseData
 {
     protected $quran;
+    protected $data;
 
     public function __construct()
     {
         $this->model = model('QuranHafalModel');
         $this->quran = model('DataSuratQuranModel');
+        $this->data = model('QuranHafalDataModel');
     }
 
     public function index()
@@ -62,12 +64,60 @@ class QuranController extends BaseData
         $countAyat = $this->quran->countAyat($posted_data['surat_mulai'], $posted_data['ayat_mulai'],     $posted_data['surat_selesai'], $posted_data['ayat_selesai']);
         $posted_data['total_ayat'] = $countAyat;
         $this->request->setGlobal('post', $posted_data);
+        $this->save_data();
         return $this->store();
+    }
+
+    public function save_data()
+    {
+        $posted_data = $this->request->getPost();
+        $surat_mulai = $posted_data['surat_mulai'];
+        $ayat_mulai = $posted_data['ayat_mulai'];
+        $surat_selesai = $posted_data['surat_selesai'];
+        $ayat_selesai = $posted_data['ayat_selesai'];
+        $id_anggota = userdata()->id_anggota;
+        $data = $this->data->get_last_data($id_anggota, $surat_mulai, $ayat_mulai);
+        if (!empty($data)) {
+            $data->surat_selesai = $surat_selesai;
+            $data->ayat_selesai = $ayat_selesai;
+            $save = $this->data->update($data->id, $data);
+        } else {
+            $save = $this->data->insert([
+                'id_anggota' => $id_anggota,
+                'surat_mulai' => $surat_mulai,
+                'ayat_mulai' => $ayat_mulai,
+                'ayat_selesai' => $ayat_selesai,
+                'surat_selesai' => $surat_selesai,
+            ]);
+        }
+        return $this->merge_data();
+    }
+
+    public function merge_data()
+    {
+        $id_anggota = userdata()->id_anggota;
+        do {
+            $data = $this->data->get_merge($id_anggota);
+            foreach ($data as $key => $value) {
+                $this->data->update($value->id, [
+                    'surat_mulai' => $value->surat_mulai_2,
+                    'ayat_mulai' => $value->ayat_mulai_2,
+                ]);
+                $this->data->delete($value->id_2);
+            }
+        } while (!empty($data));
+        // var_dump($this->data->getLastQuery());
+        // return $this->respondCreated($data);    
+        return;
     }
 
     public function get_last()
     {
-        return $this->respondCreated($this->model->get_last());
+        $id_anggota = userdata()->id_anggota;
+        $last = $this->model->get_last($id_anggota);
+        $juz = $this->data->get_juz($id_anggota);
+
+        return $this->respondCreated(compact('last','juz'));
     }
 
     public function dashboard()

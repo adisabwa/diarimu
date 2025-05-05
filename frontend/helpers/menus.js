@@ -152,13 +152,29 @@ let topMenu = {
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/memorization.png',
   },
-  quranKaji: {
-    label:"Kajian Qur'an",
-    route:'quran-kaji',
+  quranTarjamah: {
+    label:"Tarjamahan Qur'an",
+    route:'quran-tarjamah',
     color:'bg-sky-200',
     shadowColor:'shadow-sky-600',
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/kajian.png',
+  },
+  sholatWajib: {
+    label:"Sholat Wajib",
+    route:'sholat-wajib',
+    color:'bg-purple-200',
+    shadowColor:'shadow-purple-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/mosque.png',
+  },
+  sholatSunnah: {
+    label:"Sholat Sunnah",
+    route:'sholat-sunnah',
+    color:'bg-rose-200',
+    shadowColor:'shadow-rose-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/prayer-rug.png',
   },
 }
 

@@ -17,6 +17,7 @@
                 :key="'form-registrasi-'+formKey"
                 :fields="fields" 
                 :id="dataId"
+                v-model:form-value="formValue"
                 href="data/anggota/store"
                 href-get="data/anggota/get"
                 @saved="submittedAnggota"  
@@ -34,6 +35,7 @@
                 :fields="fieldsAkun" 
                 :id="dataIdAkun"
                 :pass-columns="['id_anggota','role']"
+                v-model:form-value="formAkun"
                 href="pengguna/store"
                 @saved="submittedAkun"  
                 @error="saving=false"
@@ -86,8 +88,10 @@ export default {
           nama_kolom:'passwordconf',input:'password',label:'Konfirmasi Password'
         }
       },
-      dataId:-1,
+      dataId:2,
       dataIdAkun:-1,
+      formValue:{},
+      formAkun:{},
     };
   },
   methods: {
@@ -103,13 +107,25 @@ export default {
     },
      submittedAnggota(data){
       this.saving = false
-      console.log(data)
       this.$refs.formAkun.changeData('id_anggota', data.id)
       this.$refs.formAkun.submitForm();
     },
     submittedAkun(data){
       this.saving = false
-    }
+      // console.log(this.formValue, this.formAkun)
+      let payload = {
+        no_hp: this.formValue.no_hp,
+        password: this.formAkun.password,
+      }
+      console.log(payload)
+      this.$store.dispatch('login',payload, true)
+        .then(() => {
+          this.$router.push({name:'dashboard'})
+        })
+    },
+  },
+  updated(){
+    console.log(this.formValue, this.formAkun)
   },
   created() {
     this.getInitial();

@@ -4,9 +4,9 @@ namespace Modules\Quran\Models;
 
 use CodeIgniter\Model;
 
-class QuranHafalModel extends Model
+class QuranTarjamahModel extends Model
 {
-    protected $table         = 'mu_quran_hafal';
+    protected $table         = 'mu_quran_tarjamah';
     protected $primaryKey = 'id';
 
     protected $protectFields = false;
@@ -26,14 +26,14 @@ class QuranHafalModel extends Model
     
     public function get_last($id_anggota)
     {
-        $data = $this->db->table('mu_quran_hafal qb')
+        $data = $this->db->table('mu_quran_tarjamah qb')
                     ->select("qb.*, s.nama, 
                         sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
                     ->join('mu_anggota s','qb.id_anggota=s.id')
                     ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
                     ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
                     ->orderBy('qb.tanggal desc,surat_selesai desc,surat_mulai desc')
-                    ->where('qb.id_anggota', $id_anggota)
+                    ->where('id_anggota',$id_anggota)
                     ->get()
                     ->getRowObject();
         // var_dump($data);
@@ -41,12 +41,13 @@ class QuranHafalModel extends Model
     }
 
 
+
     public function getAll($whereAnd = [], $whereOr = [], $order = '')
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        $data = $this->db->table('mu_quran_hafal qb')
+        $data = $this->db->table('mu_quran_tarjamah qb')
                     ->select("qb.*, s.nama, 
                         sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
                     ->join('mu_anggota s','qb.id_anggota=s.id')

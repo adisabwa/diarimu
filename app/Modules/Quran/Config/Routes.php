@@ -1,6 +1,8 @@
 <?php
 
 use Modules\Quran\Controllers\Baca\QuranController as Quran;
+use Modules\Quran\Controllers\Hafal\QuranController as QuranHafal;
+use Modules\Quran\Controllers\Tarjamah\QuranController as QuranTarjamah;
 // use Modules\Quran\Controllers\Baca\Rekapitulasi;
 
 //----------------------------------Section Quran-------------------------------------
@@ -48,11 +50,26 @@ $routes->group('quran/hafal', [
     'namespace' => 'Hafal',
     'filter' => 'api-auth',
 ], static function ($routes) {    
-    $routes->add('/', [Quran::class, 'index']);
-    $routes->add('get', [Quran::class, 'get']);
-    $routes->add('get_last', [Quran::class, 'get_last']);
-    $routes->add('store', [Quran::class, 'save'], [ 'filter' => 'api-validation:mu_quran_hafal']);
-    $routes->add('dashboard', [Quran::class, 'dashboard']);
+    $routes->add('/', [QuranHafal::class, 'index']);
+    $routes->add('get', [QuranHafal::class, 'get']);
+    $routes->add('get_last', [QuranHafal::class, 'get_last']);
+    $routes->add('store', [QuranHafal::class, 'save'], [ 'filter' => 'api-validation:mu_quran_hafal']);
+    $routes->add('dashboard', [QuranHafal::class, 'dashboard']);
+    $routes->add('save_data', [QuranHafal::class, 'save_data']);
+    $routes->add('merge_data', [QuranHafal::class, 'merge_data']);
+});     
+
+//-----------------------------------------------------------------------------------------------------
+//------------------------------------- Tarjamah Quran -----------------------------------------------
+$routes->group('quran/tarjamah', [
+    'namespace' => 'Tarjamah',
+    'filter' => 'api-auth',
+], static function ($routes) {    
+    $routes->add('/', [QuranTarjamah::class, 'index']);
+    $routes->add('get', [QuranTarjamah::class, 'get']);
+    $routes->add('get_last', [QuranTarjamah::class, 'get_last']);
+    $routes->add('store', [QuranTarjamah::class, 'save'], [ 'filter' => 'api-validation:mu_quran_tarjamah']);
+    $routes->add('dashboard', [QuranTarjamah::class, 'dashboard']);
 });
 
 //-----------------------------------------------------------------------------------------------------

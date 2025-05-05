@@ -24,7 +24,7 @@ class QuranBacaModel extends Model
     }
 
     
-    public function get_last()
+    public function get_last($id_anggota)
     {
         $data = $this->db->table('mu_quran_baca qb')
                     ->select("qb.*, s.nama, 
@@ -33,11 +33,13 @@ class QuranBacaModel extends Model
                     ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
                     ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
                     ->orderBy('qb.tanggal desc,surat_selesai desc,surat_mulai desc')
+                    ->where('id_anggota',$id_anggota)
                     ->get()
                     ->getRowObject();
         // var_dump($data);
         return $data;
     }
+
 
 
     public function getAll($whereAnd = [], $whereOr = [], $order = '')
