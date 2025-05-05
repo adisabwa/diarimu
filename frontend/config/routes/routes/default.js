@@ -36,11 +36,11 @@ let routes = [
             name: 'dashboard', 
             component: () => import('@/pages/Dashboard.vue'),
             meta: {
+              requiresAuth: true,
               enterFromClass : "-translate-x-full opacity-0",
               enterToClass : "opacity-50",
               leaveFromClass : "opacity-50",
               leaveToClass : "translate-x-full opacity-0",
-              pageTitle: '<b>Darul Arqom Patean Boarding School</b>',
             }
           }
         ]

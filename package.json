@@ -14,7 +14,7 @@
     "@rollup/plugin-strip": "^3.0.2",
     "axios": "^1.4.0",
     "chart.js": "^4.4.4",
-    "element-plus": "^2.3.4",
+    "element-plus": "^2.9.8",
     "jquery": "^3.7.0",
     "json-form-data": "^1.7.2",
     "lodash": "^4.17.21",

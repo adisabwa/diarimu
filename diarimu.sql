@@ -321,35 +321,38 @@ CREATE TABLE `mu_quran_baca` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `mu_quran_baca` (`id`, `id_anggota`, `tanggal`, `tingkat`, `jenis_buku`, `surat_mulai`, `ayat_mulai`, `surat_selesai`, `ayat_selesai`, `total_ayat`, `created_at`, `created_by`, `updated_at`, `updated_by`) VALUES
-(4,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:10',	14,	'2025-05-04 14:14:10',	NULL),
-(5,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:34',	14,	'2025-05-04 14:14:34',	NULL),
-(6,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	1,	1,	7,	7,	'2025-05-04 14:23:14',	14,	'2025-05-04 14:24:32',	NULL),
-(7,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	1,	2,	9,	16,	'2025-05-04 14:32:54',	14,	'2025-05-04 14:32:54',	NULL),
-(8,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:42',	14,	'2025-05-04 14:33:42',	NULL),
-(9,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:59',	14,	'2025-05-04 14:33:59',	NULL),
+(4,	24,	'2025-05-01',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:10',	14,	'2025-05-04 14:14:10',	NULL),
+(5,	24,	'2025-05-01',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:34',	14,	'2025-05-04 14:14:34',	NULL),
+(6,	24,	'2025-05-02',	'lanjut',	'al-qur\'an',	1,	1,	1,	7,	7,	'2025-05-04 14:23:14',	14,	'2025-05-04 14:24:32',	NULL),
+(7,	24,	'2025-05-02',	'lanjut',	'al-qur\'an',	1,	1,	2,	9,	16,	'2025-05-04 14:32:54',	14,	'2025-05-04 14:32:54',	NULL),
+(8,	24,	'2025-05-03',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:42',	14,	'2025-05-04 14:33:42',	NULL),
+(9,	24,	'2025-05-03',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:59',	14,	'2025-05-04 14:33:59',	NULL),
 (10,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	5,	8,	6,	8,	121,	'2025-05-04 14:35:15',	14,	'2025-05-04 14:35:15',	NULL),
 (11,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	2,	6,	9,	15,	'2025-05-04 14:40:20',	14,	'2025-05-04 14:40:20',	NULL),
-(12,	24,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	1,	6,	9,	16,	'2025-05-04 14:46:47',	14,	'2025-05-04 14:46:47',	NULL);
+(12,	24,	'2025-05-05',	'lanjut',	'al-qur\'an',	1,	1,	6,	9,	16,	'2025-05-04 14:46:47',	14,	'2025-05-04 14:46:47',	NULL),
+(13,	24,	'2025-05-06',	'lanjut',	'al-qur\'an',	6,	1,	6,	110,	110,	'2025-05-05 02:01:38',	14,	'2025-05-05 02:01:38',	NULL);
 
 DROP TABLE IF EXISTS `mu_quran_hafal`;
 CREATE TABLE `mu_quran_hafal` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_anggota` int NOT NULL,
-  `tanggal` datetime NOT NULL,
-  `hal_mulai` int NOT NULL,
-  `hal_selesai` int NOT NULL,
-  `juz_mulai` int DEFAULT NULL,
-  `juz_selesai` int DEFAULT NULL,
-  `surat_mulai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `surat_selesai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tanggal` date NOT NULL,
+  `surat_mulai` int DEFAULT NULL,
   `ayat_mulai` int DEFAULT NULL,
+  `surat_selesai` int DEFAULT NULL,
   `ayat_selesai` int DEFAULT NULL,
+  `total_ayat` int DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `id_anggota` (`id_anggota`)
+  KEY `id_anggota` (`id_anggota`),
+  KEY `surat_selesai` (`surat_selesai`),
+  KEY `surat_mulai` (`surat_mulai`),
+  CONSTRAINT `mu_quran_hafal_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `mu_anggota` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `mu_quran_hafal_ibfk_2` FOREIGN KEY (`surat_mulai`) REFERENCES `mu__surat_quran` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `mu_quran_hafal_ibfk_3` FOREIGN KEY (`surat_selesai`) REFERENCES `mu__surat_quran` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -375,4 +378,4 @@ CREATE TABLE `mu_quran_kaji` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- 2025-05-04 15:42:59
+-- 2025-05-05 02:57:22

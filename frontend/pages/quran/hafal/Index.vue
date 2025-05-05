@@ -1,15 +1,17 @@
 <template>
   <div id="quran" class="pt-0">
     <el-card class="relative overflow-hidden
-       bg-gradient-to-tr from-yellow-50/[0.8] from-50% to-lime-200/[0.7] rounded-[10px]
+       bg-gradient-to-tr from-white/[0.8] from-50% to-yellow-200/[0.7] rounded-[10px]
       z-[0]
       mb-3 p-0" 
       body-class="py-3 px-5">
-      <div class="z-[10] text-gray-500">Terakhir Membaca : </div>
+      <div class="z-[10] text-gray-500">Setoran Terakhir : </div>
       <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
       </div>
       <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
-    
+      <div class="z-[10] mt-3 mb-2 text-xl font-bold italic">
+        Total Hafalan : 10 Juz
+      </div>
       <img :src="quran.image" height="70px" width="70px"
           class="absolute z-[0] top-[-10px] right-[-15px]"/>
     </el-card>
@@ -37,12 +39,12 @@
       <template v-else>
         <form-comp ref="formBaca"
           class="[&_*]:rounded-[15px]"
-          :key="'form-baca-'+formKey"
+          :key="'form-hafal-'+formKey"
           :fields="fields" 
           v-model:id="dataId"
           v-model:form-value="formValue" 
-          href="quran/baca/store"
-          href-get="quran/baca/get"
+          href="quran/hafal/store"
+          href-get="quran/hafal/get"
           :show-columns="['tanggal','surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']"
           @saved="submittedData" 
           @error="saving=false"
@@ -61,7 +63,7 @@
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
-      header="Rekap Membaca AL-Qur'an"
+      header="Rekap Memhafal AL-Qur'an"
       header-class="py-3 font-bold text-xl" >
       <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
@@ -119,7 +121,7 @@ export default {
       setStatusType: setStatusType,
       showCreate:false,
       success:false,
-      quran: topMenu.quranBaca,
+      quran: topMenu.quranHafal,
       statistic:{
 				labels:[],
 				datasets:[],
@@ -143,13 +145,13 @@ export default {
   methods: {
     getInitial: async function() {
         this.loading = true;
-        await this.$http.get('/quran/baca/get_last')
+        await this.$http.get('/quran/hafal/get_last')
           .then(result => {
             var res = result.data;
             this.lastData = this.fillAndAddObjectValue(this.lastData, res)
           });
 
-        await this.$http.get('/kolom/preparation?table=mu_quran_baca&grouping=0&input=0')
+        await this.$http.get('/kolom/preparation?table=mu_quran_hafal&grouping=0&input=0')
           .then(result => {
             var res = result.data;
             this.dataId = -1
@@ -169,7 +171,7 @@ export default {
     },
     async getChart(){
       // return;
-      await this.$http.get('quran/baca/dashboard', {
+      await this.$http.get('quran/hafal/dashboard', {
           params: {}
         })
           .then(res => {

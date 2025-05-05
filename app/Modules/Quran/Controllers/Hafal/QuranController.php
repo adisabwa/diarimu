@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Quran\Controllers\Baca;
+namespace Modules\Quran\Controllers\Hafal;
 
 use Modules\Data\Controllers\BaseData;
 use App\Libraries\PdfBuilder;
@@ -18,7 +18,7 @@ class QuranController extends BaseData
 
     public function __construct()
     {
-        $this->model = model('QuranBacaModel');
+        $this->model = model('QuranHafalModel');
         $this->quran = model('DataSuratQuranModel');
     }
 
@@ -100,7 +100,7 @@ class QuranController extends BaseData
         
         $color =  setRandomColor();
         $datasets[] = (object)[
-            'label' => 'Jumlah Bacaan Ayat',
+            'label' => 'Jumlah Hafalan Ayat',
             'data' => array_values($total),
             'tension' => 0.1,
             'borderColor' => $color,

@@ -4,9 +4,9 @@ namespace Modules\Quran\Models;
 
 use CodeIgniter\Model;
 
-class QuranBacaModel extends Model
+class QuranHafalModel extends Model
 {
-    protected $table         = 'mu_quran_baca';
+    protected $table         = 'mu_quran_hafal';
     protected $primaryKey = 'id';
 
     protected $protectFields = false;
@@ -26,7 +26,7 @@ class QuranBacaModel extends Model
     
     public function get_last()
     {
-        $data = $this->db->table('mu_quran_baca qb')
+        $data = $this->db->table('mu_quran_hafal qb')
                     ->select("qb.*, s.nama, 
                         sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
                     ->join('mu_anggota s','qb.id_anggota=s.id')
@@ -45,7 +45,7 @@ class QuranBacaModel extends Model
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        $data = $this->db->table('mu_quran_baca qb')
+        $data = $this->db->table('mu_quran_hafal qb')
                     ->select("qb.*, s.nama, 
                         sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
                     ->join('mu_anggota s','qb.id_anggota=s.id')

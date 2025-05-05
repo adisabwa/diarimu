@@ -98,7 +98,7 @@ export default {
     setActiveMenu: function() {
       let vm = this
       let index = ''
-      console.log(index, this.menus)
+      // console.log(index, this.menus)
       this.menus.forEach(m => {
         if (m.type == 'menu') {
           if (!index)
@@ -110,7 +110,7 @@ export default {
           })
         }
       })
-      console.log(index)
+      // console.log(index)
       this.activeMenu = index
     },
     async getMenus(){
@@ -118,7 +118,7 @@ export default {
       let index = vm.coalesce([vm.$route.meta.app, 'default'])
       await import(`@/helpers/menus/management.js`)
         .then(res => {
-          console.log(res.default)
+          // console.log(res.default)
           vm.menus = res.default
           this.setActiveMenu()
         })

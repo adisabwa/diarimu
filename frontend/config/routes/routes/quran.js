@@ -33,12 +33,25 @@ let routes = [
                     pageTitle: "<b>Daftar Baca Qur'an</b>",
                 }
               },
+            ]
+          },
+          {
+            path: 'hafal',
+            component: MainLayout,
+            meta: {
+                requiresAuth: true,
+                enterFromClass : "scale-0 opacity-50",
+                enterToClass : "opacity-100",
+                leaveFromClass : "opacity-100",
+                leaveToClass : "scale-0 opacity-50",
+            },
+            children: [ 
               {
-                path: 'rekapitulasi',
-                name: 'rekap-quran', 
-                component: () => import('@/pages/quran/baca/Rekapitulasi.vue'),
+                path: '',
+                name: 'quran-hafal', 
+                component: () => import('@/pages/quran/hafal/Index.vue'),
                 meta: {
-                    pageTitle: '<b>Rekapitulasi Pelanggaran</b>',
+                    pageTitle: "<b>Daftar Hafalan Qur'an</b>",
                 }
               },
             ]
