@@ -452,6 +452,28 @@ INSERT INTO `mu_quran_hafal_data` (`id`, `id_anggota`, `surat_mulai`, `ayat_mula
 (23,	2,	4,	1,	5,	9,	'2025-05-05 06:48:06',	NULL,	'2025-05-05 06:52:01',	NULL),
 (26,	2,	1,	1,	2,	45,	'2025-05-05 10:07:44',	NULL,	'2025-05-05 10:07:44',	NULL);
 
+DROP TABLE IF EXISTS `mu_quran_kaji`;
+CREATE TABLE `mu_quran_kaji` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_anggota` int NOT NULL,
+  `tanggal` datetime NOT NULL,
+  `hal_mulai` int NOT NULL,
+  `hal_selesai` int NOT NULL,
+  `juz_mulai` int DEFAULT NULL,
+  `juz_selesai` int DEFAULT NULL,
+  `surat_mulai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `surat_selesai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ayat_mulai` int DEFAULT NULL,
+  `ayat_selesai` int DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_anggota` (`id_anggota`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 DROP TABLE IF EXISTS `mu_quran_tarjamah`;
 CREATE TABLE `mu_quran_tarjamah` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -498,11 +520,11 @@ CREATE TABLE `mu_sholat_wajib` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_anggota` int NOT NULL,
   `tanggal` date NOT NULL,
-  `shubuh` int NOT NULL,
-  `dhuhur` int NOT NULL,
-  `asar` int NOT NULL,
-  `maghrib` int NOT NULL,
-  `isya` int NOT NULL,
+  `shubuh` int DEFAULT NULL,
+  `dhuhur` int DEFAULT NULL,
+  `asar` int DEFAULT NULL,
+  `maghrib` int DEFAULT NULL,
+  `isya` int DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `created_by` int NOT NULL,
@@ -512,5 +534,8 @@ CREATE TABLE `mu_sholat_wajib` (
   CONSTRAINT `mu_sholat_wajib_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `mu_anggota` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`, `asar`, `maghrib`, `isya`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(3,	24,	'0000-00-00',	100,	NULL,	NULL,	NULL,	NULL,	'2025-05-06 03:51:08',	'2025-05-06 03:51:08',	14,	0),
+(4,	24,	'2025-05-06',	0,	100,	100,	100,	100,	'2025-05-06 03:51:57',	'2025-05-06 07:39:30',	14,	0);
 
--- 2025-05-05 21:24:07
+-- 2025-05-06 08:04:57

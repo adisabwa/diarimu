@@ -39,6 +39,16 @@ class BaseData extends BaseController
     }
 
     
+    public function get_where()
+    {
+        $where = $this->request->getGet('where') ?? [];
+        $order = $this->request->getGet('order') ?? [];
+        $order = implode(",", $order);
+
+        $data = $this->model->where($where)->orderBy($order)->find()[0] ?? [];
+        return $this->respondCreated($data);
+    }
+
     public function options()
     {
         $where = $this->request->getGet('where') ?? [];

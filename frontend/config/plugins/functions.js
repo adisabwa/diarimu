@@ -220,6 +220,7 @@ let listFunction = {
     }, delay);
   },
   addClass(el, cls, delay = 0){
+    // console.log('add')
     setTimeout(function(){
       return jquery(el).addClass(cls);
     }, delay);
@@ -298,6 +299,9 @@ let listFunction = {
   },
   monthIndo(date) {
     return moment(date).format('MMMM YYYY');
+  },
+  addDay(date, sum, unit = 'days'){
+    return moment(date).add(sum, unit).format('yyyy-MM-DD');
   },
   ucFirst (str) {
     return str ? str[0].toUpperCase() + str.slice(1) : str
