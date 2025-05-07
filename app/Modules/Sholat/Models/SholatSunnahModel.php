@@ -4,9 +4,9 @@ namespace Modules\Sholat\Models;
 
 use CodeIgniter\Model;
 
-class SholatWajibModel extends Model
+class SholatSunnahModel extends Model
 {
-    protected $table         = 'mu_sholat_wajib';
+    protected $table         = 'mu_sholat_sunnah';
     protected $primaryKey = 'id';
 
     protected $protectFields = false;
@@ -28,7 +28,7 @@ class SholatWajibModel extends Model
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        return $this->db->table('mu_sholat_wajib f')
+        return $this->db->table('mu_sholat_sunnah f')
                     ->select('f.*, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where($whereAnd)
@@ -42,7 +42,7 @@ class SholatWajibModel extends Model
 
     public function get_last($id_anggota)
     {
-        return $this->db->table('mu_sholat_wajib f')
+        return $this->db->table('mu_sholat_sunnah f')
                     ->select('f.*, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where('f.id_anggota', $id_anggota)
@@ -53,7 +53,7 @@ class SholatWajibModel extends Model
 
     public function get_best($id_anggota)
     {
-        return $this->db->table('mu_sholat_wajib f')
+        return $this->db->table('mu_sholat_sunnah f')
                     ->select('f.*, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where('f.id_anggota', $id_anggota)

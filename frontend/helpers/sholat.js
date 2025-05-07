@@ -1,19 +1,18 @@
 
 export function setStatusColor(number){
-    if (number === '' || number === null || number === undefined)
-      return '[&_*]:bg-slate-50 [&_*]:text-slate-400 bg-slate-50 text-slate-400'
-    else if (number == 100)
-      return '[&_*]:bg-green-100 [&_*]:text-green-900 bg-green-100 text-green-900'
-    else if (number >= 75)
-      return '[&_*]:bg-sky-100 [&_*]:text-sky-900 bg-sky-100 text-sky-900'
-    else if (number >= 50)
-      return '[&_*]:bg-purple-100 [&_*]:text-purple-900 bg-purple-100  text-purple-900'
-    else if (number >= 25)
-      return '[&_*]:bg-orange-100 [&_*]:text-orange-900 bg-orange-100 text-orange-900'
-    else if (number >= 0)
-      return '[&_*]:bg-red-500 [&_*]:text-white bg-red-500 text-white'
-    else
-      return '[&_*]:bg-slate-200 bg-slate-200'
+    if (typeof number == 'number') {
+      if (number == 100)
+        return '[&_*]:bg-green-100 [&_*]:text-green-900 bg-green-100 text-green-900'
+      else if (number >= 75)
+        return '[&_*]:bg-sky-100 [&_*]:text-sky-900 bg-sky-100 text-sky-900'
+      else if (number >= 50)
+        return '[&_*]:bg-purple-100 [&_*]:text-purple-900 bg-purple-100  text-purple-900'
+      else if (number >= 25)
+        return '[&_*]:bg-orange-100 [&_*]:text-orange-900 bg-orange-100 text-orange-900'
+      else if (number >= 0)
+        return '[&_*]:bg-red-500 [&_*]:text-white bg-red-500 text-white'
+    }
+    return '[&_*]:bg-slate-50 [&_*]:text-slate-400 bg-slate-50 text-slate-400'
   }
   
 let options  = [

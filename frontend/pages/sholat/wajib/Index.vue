@@ -1,32 +1,41 @@
+
 <template>
   <div id="sholat" class="pt-0">
     <el-card class="relative overflow-hidden
-       bg-gradient-to-tr from-white/[0.8] from-50% to-yellow-200/[0.7] rounded-[10px]
+       bg-gradient-to-tr from-white/[0.8] from-50% to-purple-200/[0.7] rounded-[10px]
       z-[0] font-montserrat
       mb-3 p-0" 
       body-class="relative p-0 ">
       <img :src="sholat.image" height="90px" width="90px"
           class="absolute z-[0] top-[-10px] right-[-20px]
             opacity-[0.5]"/>
-      <div class="relative w-fit overflow-x-scroll z-[10]
-        snap-mandatory snap-x">
-        <div class="w-[200%] flex h-[90px] py-4">
-          <div class="snap-center w-full px-6 h-[90px]">
-            <div class="z-[10] text-gray-500">Setoran Terakhir : </div>
-            <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
-            </div>
-            <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
-            
+      <div class="relative flex px-5 py-5 gap-6 justify-center">
+        <div class="relative w-fit text-center py-4 px-6
+          border-2 border-solid border-indigo-200
+          bg-sky-100/[0.4]
+          rounded-[20px]">
+          <div class="text-gray-500 font-bold
+            mb-2">Nilai Terbaru</div>
+          <div class="text-gray-500"><b>( {{ dateShortIndo(lastData.tanggal) }} )</b></div>
+          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ lastData.total_score }}</div>
+          <div class="flex items-start justify-center">
+            <star :id="'1starbestdata'" width="28px" class="scale-100"/>
+            <star :id="'2starbestdata'" width="33px" class="scale-100"/>
+            <star :id="'3starbestdata'" width="28px" class="scale-100"/>
           </div>
-          <div class="snap-center w-full px-6 h-[90px] overflow-scroll">
-            <div class="z-[10] mb-2 text-md font-bold italic">
-              <div>Total Hafalan :</div> 
-              <ol class="m-0 pl-4 text-[90%]">
-                <template v-for="data in juz">
-                  <li>{{ data.nama_surat_mulai }} :{{ data.ayat_mulai }} ( Juz {{ data.juz_mulai }} ) s/d {{ data.nama_surat_selesai }} : {{ data.ayat_selesai }} ( Juz {{ data.juz_selesai }} )</li>
-                </template>
-              </ol>
-            </div>
+        </div>
+        <div class="relative w-fit text-center py-4 px-6
+          border-2 border-solid border-indigo-200
+          bg-sky-100/[0.4]
+          rounded-[20px]">
+          <div class="text-gray-500 font-bold
+            mb-2">Nilai Terbaik</div>
+          <div class=" text-gray-500"><b>( {{ dateShortIndo(bestData.tanggal) }} )</b></div>
+          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ bestData.total_score }}</div>
+          <div class="flex items-start justify-center">
+            <star :id="'1starbestdata'" width="28px" class="scale-100"/>
+            <star :id="'2starbestdata'" width="33px" class="scale-100"/>
+            <star :id="'3starbestdata'" width="28px" class="scale-100"/>
           </div>
         </div>
       </div>
@@ -47,15 +56,16 @@
               format="DD MMMM YYYY"
               size="large"
               @blur="editTanggal = false"
-              @change="editTanggal = false"
+              @change="editTanggal = false;
+                setTanggalInitial();
+                setDataInitiall();"
             />
           </div>
-          <div v-else class="w-[300%] flex"
-            @click="changeTanggal">
+          <div v-else class="w-[300%] flex">
             <div v-for="(t, key) in tanggals" 
               :id="'header'+key"
               class="snap-center w-full px-4 text-center">
-              <div @click="">
+              <div @click="changeTanggal">
                 <span 
                   >{{ dateDayIndo(t) }}</span>
               </div>
@@ -76,8 +86,10 @@
         overflow-x-scroll
         snap-x snap-mandatory">
         <template v-for="(_data, ind) in datas">
-          <div :id="'body'+ind" class="shrink-0 snap-center font-montserrat px-3">
-            <template v-for="sholat in _data">
+          <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat px-3
+            flex-col"
+            v-loading="loadings[ind]">
+            <template v-for="sholat in _data.sholats">
               <div :class="`${setStatusColor(sholat.value)}
                 mx-5 pt-4 pb-3 mb-4 px-7
                 rounded-[15px] 
@@ -90,42 +102,57 @@
                   </div>
                 </div>
                 <div class="flex gap-x-1 mx-3">
-                  <img :id="'1star'+ind+tanggals[ind]+sholat.nama_kolom"
-                    :src="`${$baseUrl}assets/images/star.png`"
-                    width="20px"
-                    class="animate scale-0" />
-                  <img :id="'2star'+ind+tanggals[ind]+sholat.nama_kolom"
-                    :src="`${$baseUrl}assets/images/star.png`"
-                    width="20px"
-                    class="animate scale-0" />
-                  <img :id="'3star'+ind+tanggals[ind]+sholat.nama_kolom"
-                    :src="`${$baseUrl}assets/images/star.png`"
-                    width="20px"
-                    class="animate scale-0" />
+                  <star :id="'1star'+ind+tanggals[ind]+sholat.nama_kolom" />
+                  <star :id="'2star'+ind+tanggals[ind]+sholat.nama_kolom" />
+                  <star :id="'3star'+ind+tanggals[ind]+sholat.nama_kolom" />
                 </div>
-                <el-select v-model="sholat.value"
+                <!-- <el-select v-model="sholat.value"
                   placeholder="Pilih" clearable
-                  @change="showStar(ind + '' + tanggals[ind], sholat.nama_kolom, sholat.value);
-                  saveData(sholat.nama_kolom)"
-                  :popper-class="`${setStatusColor(sholat.value)}`"
-                  class="w-[70px]">
+                  @change="showStar();
+                    saveData(ind, sholat.nama_kolom)"
+                  class="w-[50px] rounded-full h-[50px]">
                   <template #prefix>
                     <icons icon="mdi:edit" />
                   </template>
                   <template v-for="o in options">
-                    <el-option :value="o.value" :label="o.label"/>
+                    <el-option :value="o.value" :label="o.label">
+                      {{ o.label }} ( {{ o.value }} )
+                    </el-option>
                   </template>
-                </el-select>
+                </el-select> -->
+                {{ sholat.value }}
+                <el-dropdown trigger="click"
+                  @command="(res) => {
+                    sholat.value = res
+                    showStar()
+                    saveData(ind, sholat.nama_kolom)
+                  }"
+                  :popper-class="`${setStatusColor(sholat.value)}`"
+                  class="h-[40px]">
+                  <el-button class="rounded-full h-full w-[40px]">
+                    <icons icon="mdi:edit" class="m-0"/>
+                  </el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <template v-for="o in options">
+                        <el-dropdown-item :command="o.value"
+                          :class="`${o.value == sholat.value ? 'font-bold' : ''}`">
+                          {{ o.label }} ( {{ o.value }} ) 
+                        </el-dropdown-item>
+                      </template>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </div>
             </template>
-          </div>
+          </el-container>
         </template>
       </div>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
-      header="Rekap Mengwajib AL-Qur'an"
-      header-class="py-3 font-bold text-xl" >
+      header="Rekapitulasi Sholat Wajib"
+      header-class="py-3 font-bold text-xl text-center" >
       <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
         <el-option value="day" label="Per Hari" />
@@ -151,12 +178,15 @@ import { mapGetters } from 'vuex';
 import Form from '@/components/Form.vue'
 import LineChart from '@/components/charts/Line.vue'
 import { topMenu } from '@/helpers/menus.js'
+import Star from '../components/Star.vue'
+import { getGlobalThis } from '@vue/shared';
 
 export default {
   name: "sholat",
   components: {
     'form-comp' : Form,
     LineChart,
+    Star,
   },
   data: function() {
     return {
@@ -167,39 +197,42 @@ export default {
       tanggals:[],
       tanggal:'',
       datas:[],
+      loadings:[false, false, false],
       dataSholat: {
-        shubuh:{
-          nama_kolom: 'shubuh',
-          value:null,
-        },
-        dhuhur:{
-          nama_kolom: 'dhuhur',
-          value:null,
-        },
-        asar:{
-          nama_kolom: 'asar',
-          value:null,
-        },
-        maghrib:{
-          nama_kolom: 'maghrib',
-          value:null,
-        },
-        isya:{
-          nama_kolom: 'isya',
-          value:null,
-        },
+        id:'-1',
+        sholats:{
+          shubuh:{
+            nama_kolom: 'shubuh',
+            value:null,
+          },
+          dhuhur:{
+            nama_kolom: 'dhuhur',
+            value:null,
+          },
+          asar:{
+            nama_kolom: 'asar',
+            value:null,
+          },
+          maghrib:{
+            nama_kolom: 'maghrib',
+            value:null,
+          },
+          isya:{
+            nama_kolom: 'isya',
+            value:null,
+          },
+        }
       },
+      afterScroll: true,
       tipe:'',
       lastData:{
         tanggal:'',
-        surat_mulai:'',
-        surat_selesai:'',
-        nama_surat_mulai:'',
-        nama_surat_selesai:'',
-        ayat_mulai:'',
-        ayat_selesai:'',
+        total_score:'',
       },
-      juz:[],
+      bestData:{
+        tanggal:'',
+        total_score:'',
+      },
       fields:{
         tanggal:'',
         surat_selesai:'',
@@ -219,16 +252,11 @@ export default {
     };
   },
   watch: {
-    tanggal(val){
-      this.setDataInitiall()
-      this.getInitial()
-    },
     editTanggal(val){
       let vm = this
       setTimeout(() => {
         vm.setHeaderToCenter()
       }, 50);
-        
     },
   },  
   computed: {
@@ -241,11 +269,20 @@ export default {
     
   },
   methods: {
-    getInitial: async function() {
+    getLast(){
+       this.$http.get('sholat/wajib/get_last_and_best')
+        .then( res => {
+          let data = res.data
+          this.fillObjectValue(this.lastData, data?.last)
+          this.fillObjectValue(this.bestData, data?.best)
+          this.toggleStarClass('starbestdata',data?.last.total_score / 5)
+        })
+    },
+    getData: async function(index) {
       let vm = this
       vm.loading = true;
-      for (let index = 0; index < this.datas.length; index++) {
-        const element = this.datas[index];
+      vm.loadings[index] = true;
+      // setTimeout(() => {
         vm.$http.get('sholat/wajib/get_where', {
             params: {
               where: {
@@ -256,25 +293,26 @@ export default {
           })
             .then(res => {
               let data = res.data
-              console.log(data)
-              if (index == 1)
-                vm.dataId = data.id
-
-              let keys = Object.keys(vm.dataSholat)
+              vm.datas[index].id = this.coalesce([data?.id,-1])
+              let keys = Object.keys(vm.dataSholat.sholats)
               keys.forEach(( k, ind) => {
                 if (data[k] !== null) {
-                  vm.datas[index][k].value = parseInt(data[k])
-                  vm.showStar(index + '' + vm.tanggals[index], k, vm.datas[index][k].value)
-                } else {
-                  vm.datas[index][k].value = null
-                  vm.showStar(index + '' + vm.tanggals[index], k, vm.datas[index][k].value)
+                  vm.datas[index].sholats[k].value = parseInt(data[k])
+                } 
+                else {
+                  vm.datas[index].sholats[k].value = null
                 }
                 // console.log(index, k, vm.datas[index][k])
+                vm.showStar()
               })
-              vm.loading = false
+              setTimeout(() => {
+                vm.loading = false
+                vm.loadings[index] = false;
+              }, 300);
             })
             .catch(err => {
-              console.log(err)
+              console.log(err, index, vm.datas[index])
+              vm.loadings[index] = false;
               vm.loading = false
               vm.$notify({
                 type:'error',
@@ -283,50 +321,64 @@ export default {
                 position: 'bottom-right',
               });
             })
-      }
+      // }, 1000)
     },
-    showStar(prev, label, value){
-      let id = 'star' + prev + label;
-      // console.log(id)
+    showStar(){
+      let vm = this
+      vm.datas.forEach((d, ind)=> {
+        let array = Object.keys(d.sholats)
+        for (let i = 0; i < array.length; i++) {
+          const key = array[i];
+          let sholat = d.sholats[key]
+          let value = sholat.value
+          let id = 'star' + ind + vm.tanggals[ind] + key;
+          this.toggleStarClass(id, value)
+        }
+      })
+    },
+    toggleStarClass(id, value){
+      let vm = this
       if (value >= 50) {
-        this.removeClass('#1' + id,'scale-0')
-        this.removeClass('#2' + id,'scale-0')
-        this.removeClass('#3' + id,'scale-0')
+        vm.removeClass('#1' + id,'scale-0')
+        vm.removeClass('#2' + id,'scale-0')
+        vm.removeClass('#3' + id,'scale-0')
       } else {
-        this.addClass('#1' + id,'scale-0')
-        this.addClass('#2' + id,'scale-0')
-        this.addClass('#3' + id,'scale-0')
+        vm.addClass('#1' + id,'scale-0')
+        vm.addClass('#2' + id,'scale-0')
+        vm.addClass('#3' + id,'scale-0')
       }
 
       
       if (value == 100) {
-        this.removeClass('#1' + id,'grayscale')
-        this.removeClass('#2' + id,'grayscale')
-        this.removeClass('#3' + id,'grayscale')
+        vm.removeClass('#1' + id,'grayscale')
+        vm.removeClass('#2' + id,'grayscale')
+        vm.removeClass('#3' + id,'grayscale')
       } else if (value >= 75) {
-        this.addClass('#1' + id,'grayscale')
-        this.removeClass('#2' + id,'grayscale')
-        this.removeClass('#3' + id,'grayscale')
+        vm.addClass('#1' + id,'grayscale')
+        vm.removeClass('#2' + id,'grayscale')
+        vm.removeClass('#3' + id,'grayscale')
       } else if (value >= 50) {
-        this.addClass('#1' + id,'grayscale')
-        this.addClass('#2' + id,'grayscale')
-        this.removeClass('#3' + id,'grayscale')
+        vm.addClass('#1' + id,'grayscale')
+        vm.addClass('#2' + id,'grayscale')
+        vm.removeClass('#3' + id,'grayscale')
       } 
     },
-    saveData(kolom){
+    saveData(ind, kolom){
+      let data = this.datas[ind]
       let form = {
-        id:this.dataId,
+        id:data.id,
         id_anggota:this.idAnggota,
-        tanggal:this.tanggal,
+        tanggal:this.tanggals[ind],
       }
-      form[kolom] = this.dataSholat[kolom].value
+      form[kolom] = data.sholats[kolom].value
       console.log(form)
       var formData = window.jsonToFormData(form); 
       this.$http.post('sholat/wajib/store', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       } )
         .then(result => {
-          this.getInitial()
+          // this.getData()
+          this.getLast()
         })
         .catch(err => {
           
@@ -361,19 +413,27 @@ export default {
           })
     },
     setHeaderToCenter(){
-      let body = this.jquery('#body-scroll');
-      let bcenter = this.jquery('#body1');
+      console.log('center')
+      let vm = this
+      vm.afterScroll = false
+      let body = vm.jquery('#body-scroll');
+      let bcenter = vm.jquery('#body1');
       body[0].scrollLeft = bcenter[0].offsetLeft
 
-      if (this.editTanggal) return
-      let header = this.jquery('#header-scroll');
-      let center = this.jquery('#header1');
+      if (vm.editTanggal) return
+      let header = vm.jquery('#header-scroll');
+      let center = vm.jquery('#header1');
       header[0].scrollLeft = center[0].offsetLeft
+
+      setTimeout(() => {
+        console.log('bypass-handle')
+        vm.afterScroll = true
+      }, 700);
     },
     scrollHeader(course = -1){
       let duration = 0.7
       let vm = this
-      console.log(course)
+      // console.log(course)
       vm.removeClass('#header-scroll','snap-x snap-mandatory')
       if (course == -1) {
         vm.scrollElement('#header-scroll','#header0',duration)
@@ -381,44 +441,71 @@ export default {
         vm.scrollElement('#header-scroll','#header2',duration)
       }
       setTimeout(() => {
-        vm.tanggal = vm.addDay(vm.tanggal, course)
-        vm.setHeaderToCenter()
         vm.addClass('#header-scroll','snap-x snap-mandatory')
       }, duration * 1000 + 100);
     },
-    setDataInitiall(){
+    setTanggalInitial(){
       this.tanggals = [
         this.addDay(this.tanggal, -1),
         this.tanggal,
         this.addDay(this.tanggal, 1),
       ]
+    },
+    setDataInitiall(){
       this.datas = [];
       for (let index = 0; index < this.tanggals.length; index++) {
         this.datas[index] = JSON.parse(JSON.stringify(this.dataSholat))
+        this.getData(index)
+      }
+    },
+    changeTanggalData(course = -1){
+      console.log(course)
+      let vm = this
+      vm.tanggal = vm.addDay(vm.tanggal, course)
+      for (let i = 0; i < vm.tanggals.length; i++) {
+        vm.tanggals[i] = vm.addDay(vm.tanggals[i], course)
+      }
+      // unset(vm.datas[-1])
+      // unset(vm.datas[3])
+      let n_data = JSON.parse(JSON.stringify(vm.dataSholat))
+      if (course == -1) {
+        vm.datas.pop()
+        vm.datas.unshift(n_data)
+        vm.getData(1)
+      } else {
+        vm.datas.shift()
+        vm.datas.push(n_data)
+        vm.getData(2)
       }
     },
     handleAfterScroll(){
-      // console.log('handle')
+      if (!this.afterScroll) return
+      console.log('handle-after')
+      let vm = this
+      if (vm.editTanggal == true)
+        return
       let header = this.jquery('#header-scroll')[0]
       let right = this.jquery('#header2')[0]
       // console.log(header.scrollLeft)
       if (header.scrollLeft == 0) {
-        this.tanggal = this.tanggals[0]
+        this.changeTanggalData(-1)
         this.setHeaderToCenter()
       } else if (header?.scrollLeft == right?.offsetLeft) {
-        this.tanggal = this.tanggals[2]
+        this.changeTanggalData(1)
         this.setHeaderToCenter()
       }
+      // setTimeout(() => {
+        vm.loadings[0] = vm.loadings[1] = vm.loadings[2] = false
+      // }, 500);
     },  
   },
   created: function() {
-    // let filter = this.$store.getters.filter
-    // this.filter.nama = this.isEmpty(filter.nama) ? '' : filter.nama
-    this.tanggal = this.dateNow()
+    // this.tanggal = this.dateNow()
+    this.tanggal = '2025-05-01'
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
-    // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
-    this.getInitial()
-    // console.log(this.$router);
+    this.setTanggalInitial()
+    this.setDataInitiall()
+    this.getLast()
   },
   mounted: function() {
     let vm = this
@@ -429,23 +516,34 @@ export default {
     });
 
     let scrollTimeout;
-    jquery('#header-scroll, #body-scroll').on('scroll', () => {
+    jquery('#header-scroll').on('scroll', () => {      
+      const scrollLeft = jquery('#header-scroll')[0].scrollLeft;
+      // console.log('header-scroll')
+      vm.removeClass('#body-scroll','snap-x snap-mandatory')
+      jquery('#body-scroll').scrollLeft(scrollLeft);
+      vm.following = 'body'
+
       clearTimeout(scrollTimeout);
+      if (vm.afterScroll) {
+        vm.loadings[0] = vm.loadings[1] = vm.loadings[2] = true
+      }
       scrollTimeout = setTimeout(() => {
-        console.log('Scrolling has finished');
+        console.log('header', 'Scrolling has finished');
         setTimeout(() => {
           vm.addClass('#header-scroll','snap-x snap-mandatory')
           vm.addClass('#body-scroll','snap-x snap-mandatory')
           vm.handleAfterScroll()
-        }, 200);
+        }, 500);
         // Your code here
       }, 200); // Adjust timeout duration as needed
     });
-    jquery('#header-scroll').on('scroll', () => {
-      const scrollLeft = jquery('#header-scroll')[0].scrollLeft;
-      console.log(scrollLeft)
-      vm.removeClass('#body-scroll','snap-x snap-mandatory')
-      jquery('#body-scroll').scrollLeft(scrollLeft);
+    
+    jquery('#body-scroll').on('scroll', () => {
+      const scrollLeft = jquery('#body-scroll')[0].scrollLeft;
+      // console.log('body-scroll')
+      // console.log(scrollLeft)
+      vm.removeClass('#header-scroll','snap-x snap-mandatory')
+      jquery('#header-scroll').scrollLeft(scrollLeft);
     });
     this.setHeaderToCenter()
     // window.addEventListener('scroll', this.handleScroll);

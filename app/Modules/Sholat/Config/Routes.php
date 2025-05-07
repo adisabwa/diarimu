@@ -1,8 +1,8 @@
 <?php
 
 use Modules\Sholat\Controllers\Sholat;
-use Modules\Sholat\Controllers\Wajib\Sholat as SholatWajib;
-use Modules\Sholat\Controllers\Wajib\Rekapitulasi as SholatRekapitulasi;
+use Modules\Sholat\Controllers\Wajib\SholatController as SholatWajib;
+use Modules\Sholat\Controllers\Sunnah\SholatController as SholatSunnah;
 
 //----------------------------------Section Tabungan-------------------------------------
 
@@ -24,8 +24,22 @@ $routes->group('sholat/wajib', [
     $routes->add('/', [SholatWajib::class,'index']);
     $routes->add('get', [SholatWajib::class, 'get']);
     $routes->add('get_where', [SholatWajib::class, 'get_where']);
-    $routes->add('store', [SholatWajib::class, 'store'], [ 'filter' => 'api-validation:mu_sholat-wajib']);
+    $routes->add('store', [SholatWajib::class, 'store'], [ 'filter' => 'api-validation:mu_sholat-wajib,sholat/wajib/total_score']);
     $routes->add('dashboard', [SholatWajib::class, 'dashboard']);
+    $routes->add('get_last_and_best', [SholatWajib::class, 'get_last_and_best']);
+});
+
+//-----------------------------------------------------------------------------------------------------
+//-------------------------------------Sunnah Sholat -----------------------------------------------
+$routes->group('sholat/sunnah', [
+    'filter' => 'api-auth',
+], static function ($routes) {    
+    $routes->add('/', [SholatSunnah::class,'index']);
+    $routes->add('get', [SholatSunnah::class, 'get']);
+    $routes->add('get_where', [SholatSunnah::class, 'get_where']);
+    $routes->add('store', [SholatSunnah::class, 'store'], [ 'filter' => 'api-validation:mu_sholat-sunnah,sholat/sunnah/total_score']);
+    $routes->add('dashboard', [SholatSunnah::class, 'dashboard']);
+    $routes->add('get_last_and_best', [SholatSunnah::class, 'get_last_and_best']);
 });
 
 //-----------------------------------------------------------------------------------------------------

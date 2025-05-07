@@ -291,6 +291,9 @@ let listFunction = {
   dateDayIndo(date) {
     return moment(date).format('dddd, DD MMMM YYYY');
   },
+  dateShortIndo(date) {
+    return moment(date).format('DD/MM/YY');
+  },
   dateTimeIndo(datetime) {
     return moment(datetime).format('dddd, DD MMMM YYYY HH:mm');
   },

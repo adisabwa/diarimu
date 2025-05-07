@@ -107,6 +107,8 @@ class BaseData extends BaseController
             }
         }
 
+        $newRequest = $this->request->setGlobal('post', $posted_data);
+
         if ($this->model->transStatus() === false) {
             $this->model->transRollback();
             // var_dump($this->model->error());

@@ -11,8 +11,11 @@ use App\Models\KolomModel;
 class ValidationFilter implements FilterInterface
 {
 
-    public function before(RequestInterface $request, $table = null)
+    public function before(RequestInterface $request, $params = null)
     {
+        if (is_array($params)){
+            $table = $params[0];
+        }
         helper('functions'); 
 
         $validation = Services::validation();

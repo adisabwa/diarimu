@@ -51,6 +51,15 @@ INSERT INTO `mu__juz_quran` (`id`, `surat_mulai`, `surat_mulai_nama`, `ayat_mula
 (29,	67,	'Al-Mulk',	1,	77,	'Al-Mursalat',	50),
 (30,	78,	'An-Naba',	1,	114,	'An-Nas',	6);
 
+DROP TABLE IF EXISTS `mu__sholat_sunnah`;
+CREATE TABLE `mu__sholat_sunnah` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nama_sholat` varchar(30) NOT NULL,
+  `rakaat` enum('odd','even') NOT NULL DEFAULT 'even',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 DROP TABLE IF EXISTS `mu__surat_quran`;
 CREATE TABLE `mu__surat_quran` (
   `id` int NOT NULL,
@@ -317,12 +326,13 @@ INSERT INTO `mu_nama_kolom` (`id`, `id_group`, `order`, `nama_kolom`, `is_table`
 (114,	8,	8,	'surat_selesai-ayat_selesai',	NULL,	'0',	'',	'',	'string',	'Akhir Hafalan',	'select-double',	' dan Ayat  ',	'',	'1',	'1',	'1',	'double_greater_and_equal_to[surat_mulai-ayat_mulai]',	'',	'0',	'',	'',	'',	'1',	'',	'',	'200px',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
 (115,	8,	1,	'id_anggota',	NULL,	'0',	'',	'',	'string',	'Nama',	'input',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'AnggotaModel'),
 (122,	9,	2,	'tanggal',	NULL,	'0',	'',	'',	'date',	'Tanggal Setoran',	'date',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
-(123,	9,	3,	'shubuh',	NULL,	'0',	'',	'',	'int',	'Shubuh',	'select',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
+(123,	9,	3,	'shubuh',	NULL,	'0',	'',	'',	'int',	'Shubuh',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
 (124,	9,	1,	'id_anggota',	NULL,	'0',	'',	'',	'string',	'Nama',	'input',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'AnggotaModel'),
-(125,	9,	4,	'dhuhur',	NULL,	'0',	'',	'',	'int',	'Dhuhur',	'select',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
-(126,	9,	5,	'asar',	NULL,	'0',	'',	'',	'int',	'Asar',	'select',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
-(127,	9,	6,	'maghrib',	NULL,	'0',	'',	'',	'int',	'Maghrib',	'select',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
-(128,	9,	7,	'isya',	NULL,	'0',	'',	'',	'int',	'Isya',	'select',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}');
+(125,	9,	4,	'dhuhur',	NULL,	'0',	'',	'',	'int',	'Dhuhur',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
+(126,	9,	5,	'asar',	NULL,	'0',	'',	'',	'int',	'Asar',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
+(127,	9,	6,	'maghrib',	NULL,	'0',	'',	'',	'int',	'Maghrib',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
+(128,	9,	7,	'isya',	NULL,	'0',	'',	'',	'int',	'Isya',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
+(129,	9,	7,	'total_score',	NULL,	'0',	'',	'',	'int',	'Nilai Total',	'input-number',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}');
 
 DROP TABLE IF EXISTS `mu_pengguna`;
 CREATE TABLE `mu_pengguna` (
@@ -515,6 +525,25 @@ INSERT INTO `mu_quran_tarjamah` (`id`, `id_anggota`, `tanggal`, `surat_mulai`, `
 (18,	2,	'2025-05-05',	1,	1,	2,	45,	NULL,	'2025-05-05 10:07:44',	20,	'2025-05-05 10:07:44',	NULL),
 (19,	24,	'2025-05-05',	1,	1,	1,	7,	7,	'2025-05-05 13:01:20',	14,	'2025-05-05 13:01:20',	NULL);
 
+DROP TABLE IF EXISTS `mu_sholat_sunnah`;
+CREATE TABLE `mu_sholat_sunnah` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_anggota` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `id_sholat` int DEFAULT NULL,
+  `rakaat` int NOT NULL,
+  `created_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_at` datetime NOT NULL,
+  `created_by` int NOT NULL,
+  `updated_by` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_anggota` (`id_anggota`),
+  KEY `id_sholat` (`id_sholat`),
+  CONSTRAINT `mu_sholat_sunnah_ibfk_4` FOREIGN KEY (`id_anggota`) REFERENCES `mu_anggota` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `mu_sholat_sunnah_ibfk_6` FOREIGN KEY (`id_sholat`) REFERENCES `mu__sholat_sunnah` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
 DROP TABLE IF EXISTS `mu_sholat_wajib`;
 CREATE TABLE `mu_sholat_wajib` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -525,6 +554,7 @@ CREATE TABLE `mu_sholat_wajib` (
   `asar` int DEFAULT NULL,
   `maghrib` int DEFAULT NULL,
   `isya` int DEFAULT NULL,
+  `total_score` int NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `created_by` int NOT NULL,
@@ -534,8 +564,12 @@ CREATE TABLE `mu_sholat_wajib` (
   CONSTRAINT `mu_sholat_wajib_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `mu_anggota` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`, `asar`, `maghrib`, `isya`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(3,	24,	'0000-00-00',	100,	NULL,	NULL,	NULL,	NULL,	'2025-05-06 03:51:08',	'2025-05-06 03:51:08',	14,	0),
-(4,	24,	'2025-05-06',	0,	100,	100,	100,	100,	'2025-05-06 03:51:57',	'2025-05-06 07:39:30',	14,	0);
+INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`, `asar`, `maghrib`, `isya`, `total_score`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(4,	24,	'2025-05-06',	75,	100,	100,	100,	100,	475,	'2025-05-06 03:51:57',	'2025-05-07 07:06:19',	14,	0),
+(5,	24,	'2025-05-07',	75,	100,	100,	100,	100,	475,	'2025-05-07 06:13:11',	'2025-05-07 07:06:26',	14,	0),
+(7,	24,	'2025-05-08',	75,	100,	75,	NULL,	NULL,	250,	'2025-05-07 06:16:25',	'2025-05-07 07:06:42',	14,	0),
+(8,	24,	'2025-05-09',	100,	50,	NULL,	NULL,	NULL,	150,	'2025-05-07 06:45:54',	'2025-05-07 07:07:08',	14,	0),
+(10,	24,	'2025-05-01',	25,	100,	100,	0,	0,	225,	'2025-05-07 06:47:10',	'2025-05-07 07:54:55',	14,	0),
+(13,	24,	'2025-05-10',	100,	NULL,	NULL,	NULL,	NULL,	100,	'2025-05-07 07:15:00',	'2025-05-07 07:15:00',	14,	0);
 
--- 2025-05-06 08:04:57
+-- 2025-05-07 08:04:26
