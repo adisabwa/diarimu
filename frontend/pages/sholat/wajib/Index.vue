@@ -1,49 +1,14 @@
 
 <template>
   <div id="sholat" class="pt-0">
-    <el-card class="relative overflow-hidden
-       bg-gradient-to-tr from-white/[0.8] from-50% to-purple-200/[0.7] rounded-[10px]
-      z-[0] font-montserrat
-      mb-3 p-0" 
-      body-class="relative p-0 ">
-      <img :src="sholat.image" height="90px" width="90px"
-          class="absolute z-[0] top-[-10px] right-[-20px]
-            opacity-[0.5]"/>
-      <div class="relative flex px-5 py-5 gap-6 justify-center">
-        <div class="relative w-fit text-center py-4 px-6
-          border-2 border-solid border-indigo-200
-          bg-sky-100/[0.4]
-          rounded-[20px]">
-          <div class="text-gray-500 font-bold
-            mb-2">Nilai Terbaru</div>
-          <div class="text-gray-500"><b>( {{ dateShortIndo(lastData.tanggal) }} )</b></div>
-          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ lastData.total_score }}</div>
-          <div class="flex items-start justify-center">
-            <star :id="'1starbestdata'" width="28px" class="scale-100"/>
-            <star :id="'2starbestdata'" width="33px" class="scale-100"/>
-            <star :id="'3starbestdata'" width="28px" class="scale-100"/>
-          </div>
-        </div>
-        <div class="relative w-fit text-center py-4 px-6
-          border-2 border-solid border-indigo-200
-          bg-sky-100/[0.4]
-          rounded-[20px]">
-          <div class="text-gray-500 font-bold
-            mb-2">Nilai Terbaik</div>
-          <div class=" text-gray-500"><b>( {{ dateShortIndo(bestData.tanggal) }} )</b></div>
-          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ bestData.total_score }}</div>
-          <div class="flex items-start justify-center">
-            <star :id="'1starbestdata'" width="28px" class="scale-100"/>
-            <star :id="'2starbestdata'" width="33px" class="scale-100"/>
-            <star :id="'3starbestdata'" width="28px" class="scale-100"/>
-          </div>
-        </div>
-      </div>
-    </el-card>
-    <el-card class="bg-white/[0.9] rounded-[10px]
+    <el-card class="rounded-[10px]
+      bg-gradient-to-tr from-white/[0.8] from-30% to-purple-200/[0.7] 
       mb-3 p-0"
       body-class="relative p-0"
       header-class="relative p-0">
+      <img :src="sholat.image" height="90px" width="90px"
+          class="absolute z-[0] top-[-60px] right-[-20px]
+            opacity-[0.5]"/>
       <template #header>
         <div id="header-scroll" class="relative px-0 py-4 font-bold text-xl overflow-x-scroll
         snap-x snap-mandatory" >
@@ -86,7 +51,7 @@
         overflow-x-scroll
         snap-x snap-mandatory">
         <template v-for="(_data, ind) in datas">
-          <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat px-3
+          <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat px-auto
             flex-col"
             v-loading="loadings[ind]">
             <template v-for="sholat in _data.sholats">
@@ -120,7 +85,6 @@
                     </el-option>
                   </template>
                 </el-select> -->
-                {{ sholat.value }}
                 <el-dropdown trigger="click"
                   @command="(res) => {
                     sholat.value = res
@@ -147,6 +111,43 @@
             </template>
           </el-container>
         </template>
+      </div>
+    </el-card>
+    <el-card class="relative overflow-hidden
+    bg-white/[0.9] 
+      rounded-[10px]
+      z-[0] font-montserrat
+      mb-3 p-0" 
+      body-class="relative p-0 ">
+      <div class="relative flex px-3 py-5 gap-3 justify-center">
+        <div class="relative w-fit text-center py-4 px-6
+          border-2 border-solid border-indigo-200
+          bg-sky-100/[0.4]
+          rounded-[20px]">
+          <div class="text-gray-500 font-bold leading-[1.2] w-[100px]
+            mb-2">Nilai Terbaru</div>
+          <div class="text-gray-500"><b>( {{ dateShortIndo(lastData.tanggal) }} )</b></div>
+          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ lastData.total_score }}</div>
+          <div class="flex items-start justify-center">
+            <star :id="'1starlastdata'" width="28px"/>
+            <star :id="'2starlastdata'" width="33px"/>
+            <star :id="'3starlastdata'" width="28px"/>
+          </div>
+        </div>
+        <div class="relative w-fit text-center py-4 px-6
+          border-2 border-solid border-indigo-200
+          bg-sky-100/[0.4]
+          rounded-[20px]">
+          <div class="text-gray-500 font-bold leading-[1.2] w-[100px]
+            mb-2">Nilai Terbaik</div>
+          <div class=" text-gray-500"><b>( {{ dateShortIndo(bestData.tanggal) }} )</b></div>
+          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ bestData.total_score }}</div>
+          <div class="flex items-start justify-center">
+            <star :id="'1starbestdata'" width="28px"/>
+            <star :id="'2starbestdata'" width="33px"/>
+            <star :id="'3starbestdata'" width="28px"/>
+          </div>
+        </div>
       </div>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
@@ -275,7 +276,9 @@ export default {
           let data = res.data
           this.fillObjectValue(this.lastData, data?.last)
           this.fillObjectValue(this.bestData, data?.best)
-          this.toggleStarClass('starbestdata',data?.last.total_score / 5)
+          console.log(data?.last.total_score, data?.best.total_score)
+          this.toggleStarClass('starlastdata',data?.last.total_score / 5)
+          this.toggleStarClass('starbestdata',data?.best.total_score / 5)
         })
     },
     getData: async function(index) {

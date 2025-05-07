@@ -9,18 +9,43 @@ use CodeIgniter\Files\File;
 
 class SholatController extends BaseData
 {
+    private $data;
 
     public function __construct()
     {
         $this->model = model('SholatSunnahModel');
+        $this->data = model('DataSholatSunnahModel');
     }
     
-    public function get_last_and_best()
+    public function get_initial()
     {
-        $last = $this->model->get_last(userdata()->id_anggota);
-        $best = $this->model->get_best(userdata()->id_anggota);
+        $postData = $this->request->getGetPost();
 
-        return $this->respondCreated(compact('last','best'));
+        $data = $this->model->getAll([
+            'id_anggota' => $postData['id_anggota'],
+            'tanggal' => $postData['tanggal'],
+        ]);
+
+        $keys = [];
+        foreach ($data as $key => $d) {
+            $keys[$d->id_sholat] = $key;
+        }
+
+        $sholats = $this->data->findAll();
+        $datas = [];
+        foreach ($sholats as $key => $d) {
+            $exist = isset($keys[$d->id]);
+            $datas[$d->id] = (object) [
+                'id'            => $d->id,
+                'nama_sholat'   => $d->nama_sholat,
+                'do'            => $exist,
+                'rakaat'        => $exist ? $data[$keys[$d->id]]->rakaat : 0,
+                'optionsRakaat' => $d->rakaat == 'even'
+                    ? ['2','4','6'] : ['1','3','5'],
+            ];
+        }
+
+        return $this->respondCreated($datas);
 
     }
     

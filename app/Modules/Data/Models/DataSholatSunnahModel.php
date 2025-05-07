@@ -4,9 +4,9 @@ namespace Modules\Data\Models;
 
 use CodeIgniter\Model;
 
-class PrmModel extends Model
+class DataSholatSunnahModel extends Model
 {
-    protected $table      = 'mu_prm';
+    protected $table      = 'mu__sholat_sunnah';
     protected $primaryKey = 'id';
 
     protected $protectFields = false;
@@ -34,9 +34,8 @@ class PrmModel extends Model
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        $data = $this->db->table('mu_prm i')
+        $data = $this->db->table('mu__sholat_sunnah i')
                     ->select("i.*")
-                    ->join("mu_pcm p","p.id=i.id_pcm")
                     ->where($whereAnd)
                     ->groupStart()
                         ->orWhere($whereOr)
@@ -56,10 +55,11 @@ class PrmModel extends Model
                     ->where($where)
                     ->get()
                     ->getResult();
+
       foreach ($data as $key => $d) {
         $options[] = (object)[
           'value' => "$d->id",
-          'label' => "$d->prm",
+          'label' => "$d->nama_sholat",
         ];
       }
       return $options;

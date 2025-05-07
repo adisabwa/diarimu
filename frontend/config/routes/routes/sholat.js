@@ -51,7 +51,7 @@ let routes = [
                 name: 'sholat-wajib', 
                 component: () => import('@/pages/sholat/wajib/Index.vue'),
                 meta: {
-                    pageTitle: "<b>Daftar Hafalan Qur'an</b>",
+                    pageTitle: "<b>Daftar Sholat Wajib</b>",
                 }
               },
             ]

@@ -38,3 +38,19 @@ function toPhoneNumber($number){
 function str_replace_first($search, $replace, $subject) {
     return implode($replace, explode($search, $subject, 2));
 }
+
+function pluckFromObjectsNested(array $objects, string $path): array {
+    $keys = explode('.', $path);
+
+    return array_map(function($obj) use ($keys) {
+        $value = $obj;
+        foreach ($keys as $key) {
+            if (is_object($value) && isset($value->$key)) {
+                $value = $value->$key;
+            } else {
+                return null;
+            }
+        }
+        return $value;
+    }, $objects);
+}

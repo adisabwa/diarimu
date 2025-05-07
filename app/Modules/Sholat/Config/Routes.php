@@ -36,6 +36,7 @@ $routes->group('sholat/sunnah', [
 ], static function ($routes) {    
     $routes->add('/', [SholatSunnah::class,'index']);
     $routes->add('get', [SholatSunnah::class, 'get']);
+    $routes->add('get_initial', [SholatSunnah::class, 'get_initial']);
     $routes->add('get_where', [SholatSunnah::class, 'get_where']);
     $routes->add('store', [SholatSunnah::class, 'store'], [ 'filter' => 'api-validation:mu_sholat-sunnah,sholat/sunnah/total_score']);
     $routes->add('dashboard', [SholatSunnah::class, 'dashboard']);
