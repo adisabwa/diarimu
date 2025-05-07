@@ -59,6 +59,18 @@ CREATE TABLE `mu__sholat_sunnah` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+INSERT INTO `mu__sholat_sunnah` (`id`, `nama_sholat`, `rakaat`) VALUES
+(1,	'Tahajud',	'even'),
+(2,	'Witir',	'odd'),
+(3,	'Qobliyah Shubuh',	'even'),
+(4,	'Syuruq',	'even'),
+(5,	'Dhuha',	'even'),
+(6,	'Qobliyah Dhuhur',	'even'),
+(7,	'Ba\'diyah Dhuhur',	'even'),
+(8,	'Qobliyah Asar',	'even'),
+(9,	'Qobliyah Maghrib',	'even'),
+(10,	'Ba\'diyah Maghrib',	'even'),
+(11,	'Ba\'diyah Isya',	'even');
 
 DROP TABLE IF EXISTS `mu__surat_quran`;
 CREATE TABLE `mu__surat_quran` (
@@ -316,14 +328,14 @@ INSERT INTO `mu_nama_kolom` (`id`, `id_group`, `order`, `nama_kolom`, `is_table`
 (104,	7,	6,	'surat_mulai-ayat_mulai',	NULL,	'0',	'',	'',	'string',	'Awal Bacaan',	'select-double',	' dan Ayat  ',	'',	'1',	'1',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'200px',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
 (105,	7,	8,	'surat_selesai-ayat_selesai',	NULL,	'0',	'',	'',	'string',	'Akhir Bacaan',	'select-double',	' dan Ayat  ',	'',	'1',	'1',	'1',	'double_greater_and_equal_to[surat_mulai-ayat_mulai]',	'',	'0',	'',	'',	'',	'1',	'',	'',	'200px',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
 (106,	7,	1,	'id_anggota',	NULL,	'0',	'',	'',	'string',	'Nama',	'input',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'AnggotaModel'),
-(107,	8,	2,	'tanggal',	NULL,	'0',	'',	'',	'date',	'Tanggal Setoran',	'date',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(107,	8,	2,	'tanggal',	NULL,	'0',	'',	'',	'date',	'Tanggal Aktivitas',	'date',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
 (108,	8,	5,	'surat_mulai',	NULL,	'0',	'',	'',	'string',	'Surat Mulai',	'select',	'Surat',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
 (109,	8,	6,	'ayat_mulai',	NULL,	'0',	'',	'',	'string',	'Ayat Mulai',	'input-number',	'Ayat ke ',	'',	'0',	'0',	'0',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
 (110,	8,	7,	'surat_selesai',	NULL,	'0',	'',	'',	'string',	'Surat Selesai',	'select',	'Surat',	'',	'1',	'0',	'0',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
 (111,	8,	8,	'ayat_selesai',	NULL,	'0',	'',	'',	'string',	'Ayat Selesai',	'input-number',	'Ayat ke ',	'',	'1',	'0',	'0',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
 (112,	8,	9,	'total_ayat',	NULL,	'0',	'',	'',	'string',	'Total Ayat',	'input-number',	'',	'',	'0',	'0',	'0',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
-(113,	8,	6,	'surat_mulai-ayat_mulai',	NULL,	'0',	'',	'',	'string',	'Awal Hafalan',	'select-double',	' dan Ayat  ',	'',	'1',	'1',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'200px',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
-(114,	8,	8,	'surat_selesai-ayat_selesai',	NULL,	'0',	'',	'',	'string',	'Akhir Hafalan',	'select-double',	' dan Ayat  ',	'',	'1',	'1',	'1',	'double_greater_and_equal_to[surat_mulai-ayat_mulai]',	'',	'0',	'',	'',	'',	'1',	'',	'',	'200px',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
+(113,	8,	6,	'surat_mulai-ayat_mulai',	NULL,	'0',	'',	'',	'string',	'Awal Ayat',	'select-double',	' dan Ayat  ',	'',	'1',	'1',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'200px',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
+(114,	8,	8,	'surat_selesai-ayat_selesai',	NULL,	'0',	'',	'',	'string',	'Akhir Ayat',	'select-double',	' dan Ayat  ',	'',	'1',	'1',	'1',	'double_greater_and_equal_to[surat_mulai-ayat_mulai]',	'',	'0',	'',	'',	'',	'1',	'',	'',	'200px',	'',	'1',	'0',	'',	'',	NULL,	'DataSuratQuranModel'),
 (115,	8,	1,	'id_anggota',	NULL,	'0',	'',	'',	'string',	'Nama',	'input',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'AnggotaModel'),
 (122,	9,	2,	'tanggal',	NULL,	'0',	'',	'',	'date',	'Tanggal Setoran',	'date',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
 (123,	9,	3,	'shubuh',	NULL,	'0',	'',	'',	'int',	'Shubuh',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
@@ -569,7 +581,7 @@ INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`
 (5,	24,	'2025-05-07',	75,	100,	100,	100,	100,	475,	'2025-05-07 06:13:11',	'2025-05-07 07:06:26',	14,	0),
 (7,	24,	'2025-05-08',	75,	100,	75,	NULL,	NULL,	250,	'2025-05-07 06:16:25',	'2025-05-07 07:06:42',	14,	0),
 (8,	24,	'2025-05-09',	100,	50,	NULL,	NULL,	NULL,	150,	'2025-05-07 06:45:54',	'2025-05-07 07:07:08',	14,	0),
-(10,	24,	'2025-05-01',	25,	100,	100,	0,	0,	225,	'2025-05-07 06:47:10',	'2025-05-07 07:54:55',	14,	0),
-(13,	24,	'2025-05-10',	100,	NULL,	NULL,	NULL,	NULL,	100,	'2025-05-07 07:15:00',	'2025-05-07 07:15:00',	14,	0);
+(10,	24,	'2025-05-01',	100,	25,	75,	0,	0,	200,	'2025-05-07 06:47:10',	'2025-05-07 12:46:09',	14,	0),
+(13,	24,	'2025-05-10',	100,	100,	100,	NULL,	NULL,	300,	'2025-05-07 07:15:00',	'2025-05-07 12:58:42',	14,	0);
 
--- 2025-05-07 08:04:26
+-- 2025-05-07 21:06:23
