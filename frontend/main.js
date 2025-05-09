@@ -22,6 +22,9 @@ app.component('file', File)
 //Plugins
 import elementPlugin from '@/config/plugins/element-ui-global'
 import funcPlugin from '@/config/plugins/functions'
+import directives from '@/config/plugins/directives' // import your plugin
+
+app.use(directives)
 app.use(elementPlugin)
 app.use(funcPlugin)
 

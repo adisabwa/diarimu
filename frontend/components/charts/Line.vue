@@ -73,6 +73,10 @@ export default {
 						ticks: {
 							font: {
 								size: 11
+							},
+							callback: function (value) {
+								const label = this.getLabelForValue(value);
+								return label.split(' ')
 							}
 						}
 					},

@@ -73,31 +73,35 @@ class QuranController extends BaseData
     public function dashboard()
     {
         $postData = $this->request->getGetPost();
-
+        $type = $postData['type'] ?? 'week';
+        $end = $postData['end'] ?? date('Y-m-d');
+        if ($type == 'week') {
+            $start = date('Y-m-d', strtotime('-6 days', strtotime($end)));
+        }
+        $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
-            ['id_anggota' => userdata()->id_anggota]
+            [
+                'id_anggota' => userdata()->id_anggota,
+                "tanggal >= '$start'" => NULL,
+                "tanggal <= '$end'" => NULL,
+            ]
         );
         $_data = [];
         foreach ($data as $key => $d) {
             if (empty($_data[$d->tanggal])) {
-                $tmp = (object)[
-                    'label' => date('d M y', strtotime($d->tanggal)),
-                    'total' => $d->total_ayat
-                ];
-                $_data[$d->tanggal] = $tmp;
+                $_data[$d->tanggal] = $d->total_ayat;
             } else {
-                $_data[$d->tanggal]->total += $d->total_ayat;
+                $_data[$d->tanggal] += $d->total_ayat;
             }
         }
         // var_dump($_data);
         $total = $labels = [];
         $max = $min = 0;
 
-        foreach ($_data as $key => $value) {
-            if (empty($labels[$value->label])) {
-                $labels[$value->label] = $value->label;
-                $total[$value->label] = $value->total;
-            }
+        foreach ($date_range as $key => $tgl) {
+            // var_dump($tgl);
+            $labels[$tgl] = date("d M", strtotime($tgl));
+            $total[$tgl] = $_data[$tgl] ?? 0;
         }
         
         $color =  setRandomColor();

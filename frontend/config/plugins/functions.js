@@ -148,7 +148,7 @@ let listFunction = {
     return "Rp " + number.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.") + ",00";
   },
   setCurrency: function(number) {
-    number = listFunction.setNumber(number)
+    number = listFunction.toNumber(number)
     return number.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1\.");
   },
   toNumber: function(number){

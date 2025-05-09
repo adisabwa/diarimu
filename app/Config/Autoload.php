@@ -45,7 +45,7 @@ class Autoload extends AutoloadConfig
         'Modules\Quran'      => APPPATH . 'Modules/Quran',
         'Modules\Psb'      => APPPATH . 'Modules/Psb',
         'Modules\Data'      => APPPATH . 'Modules/Data',
-        'Modules\Library'      => APPPATH . 'Modules/Library',
+        'Modules\Infaq'      => APPPATH . 'Modules/Infaq',
         'Modules\Sholat'      => APPPATH . 'Modules/Sholat',
     ];
 

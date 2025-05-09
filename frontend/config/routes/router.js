@@ -6,7 +6,7 @@ import config from '@/config/url'
 import managementRoute from './routes/management'
 import quranRoute from './routes/quran'
 import authRoute from './routes/auth'
-import libraryRoute from './routes/library'
+import infaqRoute from './routes/infaq'
 import defaultRoute from './routes/default'
 import sholatRoute from './routes/sholat'
 // Vue router
@@ -15,7 +15,7 @@ const routes = new createRouter({
   routes: [
     ...managementRoute,
     ...defaultRoute,
-    ...libraryRoute,
+    ...infaqRoute,
     ...authRoute,
     ...quranRoute,
     ...sholatRoute,

@@ -20,10 +20,11 @@ class SholatController extends BaseData
     public function get_initial()
     {
         $postData = $this->request->getGetPost();
+        $tanggal = $postData['tanggal'];
 
         $data = $this->model->getAll([
             'id_anggota' => $postData['id_anggota'],
-            'tanggal' => $postData['tanggal'],
+            'tanggal' => $tanggal,
         ]);
 
         $keys = [];
@@ -32,14 +33,18 @@ class SholatController extends BaseData
         }
 
         $sholats = $this->data->findAll();
+        // $sholats = [$sholats[0]];
         $datas = [];
         foreach ($sholats as $key => $d) {
             $exist = isset($keys[$d->id]);
             $datas[$d->id] = (object) [
-                'id'            => $d->id,
+                'ref'           => "dropdown$tanggal$d->nama_sholat",
+                'id_sholat'     => $d->id,
                 'nama_sholat'   => $d->nama_sholat,
                 'do'            => $exist,
-                'rakaat'        => $exist ? $data[$keys[$d->id]]->rakaat : 0,
+                'edit'          => false,
+                'rakaat'        => $exist ? $data[$keys[$d->id]]->rakaat : ($d->rakaat == 'even' ? 2 : 1),
+                'min'           => $d->rakaat == 'even' ? 2 : 1,
                 'optionsRakaat' => $d->rakaat == 'even'
                     ? ['2','4','6'] : ['1','3','5'],
             ];
@@ -51,12 +56,30 @@ class SholatController extends BaseData
     
     public function store()
     {
-        // Keep the original behavior
-        $data = parent::store();
-        // // Add your own logic
-        $id = $this->request->getPost('id');
-        $this->model->update_total_score($id);
-        return $data;
+        $data = $this->request->getPost();
+        $this->model->transBegin();
+        
+        $params = [
+            'id_anggota' => $data['id_anggota'],
+            'tanggal' => $data['tanggal'],
+            'id_sholat' => $data['id_sholat'],
+        ];
+
+        $this->model->where($params)->delete();
+        
+        if ($data['insert']) {
+            $params['rakaat'] = $data['rakaat'];
+            $save = $this->model->insert($params, TRUE);
+        }
+
+        if ($this->model->transStatus() === false) {
+            $this->model->transRollback();
+            // var_dump($this->model->error());
+            return $this->failServerError();
+        } else {
+            $this->model->transCommit();
+            return $this->respondCreated($data);
+        }
 
     }
 

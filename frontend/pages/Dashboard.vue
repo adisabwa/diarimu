@@ -1,18 +1,28 @@
 <template>
-	<div >
+	<div>
+		<img :src="`${$baseUrl}/assets/images/dashboard.png`"
+			class="absolute w-screen left-0 top-[-150px] z-[0]"/>
 		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto">
-			<div class="bg-white rounded-xl shadow-md
+			<div class="w-full h-[70px] px-2 mt-2 z-[1]
+				text-white leading-[1.3]">
+				Assalamu'aialkum,<br/>
+				<span class="text-xl font-semibold">{{ user.nama }}</span>
+			</div>
+			<div class="bg-white rounded-xl shadow-md shadow-emerald-700/[0.2]
 				overflow-hidden
-				mb-3 h-[120px]">
-				<div class="font-montserrat px-4 py-2 w-fit
-					rounded-xl flex
-					bg-slate-200/[0.3]">Informasi</div>
+				mb-3 pt-0 
+				flex flex-col items-center
+				h-[180px] w-full">
+				<div class="font-montserrat px-10 py-4 pt-10 *:w-fit
+					rounded-xl
+					bg-emerald-100/[0.3]">Informasi</div>
 			</div>
 			<div class="relative h-auto w-full
 				bg-white/[0.8] shadow-md
-					pt-7 pb-8 mb-20
-					bg-scroll bg-repeat bg-top
-					bg-[url('https://darularqampatean.com/wp-content/uploads/2021/10/bg-vectors.png')]">
+					pt-7 pb-8 mb-20">
+					<div class="px-6 pb-3
+					font-montserrat font-bold text-xl text-emerald-900">Catatan Ibadah</div>
+					<el-divider class="mt-0 mb-4 mx-4"/>
 					<div class="grid grid-cols-[repeat(auto-fit,_65px)] gap-[25px] gap-y-[15px]
 						justify-center
 						px-1 md:max-w-[80%] mx-auto">
@@ -55,6 +65,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
@@ -65,6 +76,11 @@ export default {
     return {
 			topMenu:topMenu,
     };
+  },
+  computed: {
+    ...mapGetters({
+      user: 'loggedUser',
+    }),
   },
 	
 }

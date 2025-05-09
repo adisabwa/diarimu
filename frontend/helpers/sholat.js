@@ -30,7 +30,7 @@ let options  = [
   },
   {
     value:25,
-    label:`Terlambat`,
+    label:`Lewat Waktu`,
   },
   {
     value:0,

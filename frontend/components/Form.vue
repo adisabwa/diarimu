@@ -9,13 +9,13 @@
             <span :class="`${field.required == '1' ? 'required' : ''} leading-[1.5] mt-2`"> {{ field.label }} </span>
           </template>
           <div class="flex space-x-3 w-full">
-            <el-select v-if="showOriginal" v-model="original[field.nama_kolom]" class="w-[130px] grow-0 shrink-0" size="large">
+            <el-select v-if="showOriginal" v-model="original[field.nama_kolom]" class="w-[130px] grow-0 shrink-0" size="large" @change="changedValue(field.nama_kolom)">
               <el-option :value="true" label="Nilai Asli"></el-option>
               <el-option :value="false" label="Berubah"></el-option>
             </el-select>
             <template v-if="field.input == 'input' || isEmpty(field.input)">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
-                class="w-full" @change="searchData(ind)" @input="form[field.nama_kolom] = runFunction(field.function_input, form[field.nama_kolom])"
+                class="w-full" @change="searchData(ind); changedValue(field.nama_kolom)" @input="form[field.nama_kolom] = runFunction(field.function_input, form[field.nama_kolom])"
                 :size="size">
                 <template #prepend v-if="!isEmpty(field.prepend)"> {{ field.prepend }}</template>
                 <template #apppend v-if="!isEmpty(field.apppend)"> {{ field.append }}</template>  
@@ -24,6 +24,7 @@
             <template v-else-if="field.input == 'password'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 class="w-full in-password" type="password" show-password
+                @change="changedValue(field.nama_kolom)"
                 :size="size">
                 <template #prefix>
                   <icons icon="material-symbols:lock-outline" />
@@ -32,16 +33,19 @@
             </template>
             <template v-else-if="field.input == 'input-number'">
               <el-input-number v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
+                @change="changedValue(field.nama_kolom)"
                 class="w-full" :size="size"/>
             </template>
             <template v-else-if="field.input == 'number'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 class="w-full" type="number"
+                @change="changedValue(field.nama_kolom)"
                 :size="size"/>
             </template>
             <template v-else-if="field.input == 'textarea'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 class="w-full" type="textarea" row="3"
+                @change="changedValue(field.nama_kolom)"
                 :size="size"/>
             </template>
             <template v-else-if="field.input == 'select' || field.input == 'select-multiple'">
@@ -51,7 +55,8 @@
                   [&_li]:h-auto
                   [&_li_span]:whitespace-normal
                   [&_li_span]:block [&_li_span]:leading-[1.6] [&_li_span]:py-2"
-                :size="size">
+                :size="size"
+                @change="changedValue(field.nama_kolom)">
                 <template #prefix v-if="!isEmpty(field.prepend)"> {{ field.prepend }}</template>
                 <template 
                   v-for="item in field.options"
@@ -94,7 +99,7 @@
                 popper-class="h-auto max-w-[600px]
                   [&_li]:h-auto [&_li]:py-1
                   [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] [&_li_span]:py-2"
-                @change="form[field.nama_kolom] = ''"
+                @change="form[field.nama_kolom] = ''; changedValue(field.nama_kolom)"
                 :size="size">
                 <template #prefix v-if="!isEmpty(field.prepend1)"> {{ field.prepend1 }}</template>
                 <template 
@@ -112,6 +117,7 @@
                   [&_li]:h-auto [&_li]:py-1
                   [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] "
                 :size="size"
+                @change="changedValue(field.nama_kolom)"
                 :style="{width:field.width_input}">
                 <template #prefix v-if="!isEmpty(field.prepend2)"> {{ field.prepend2 }}</template>
                 <template 
@@ -150,7 +156,8 @@
               </el-dialog>
             </template>
             <template v-else-if="field.input=='radio'">
-              <el-radio-group v-model="form[field.nama_kolom]">
+              <el-radio-group v-model="form[field.nama_kolom]"
+                @change="changedValue(field.nama_kolom)">
                 <template 
                   v-for="item in field.options"
                   :key="item">
@@ -165,7 +172,7 @@
                 value-format="YYYY-MM-DD"
                 format="DD MMMM YYYY"
                 :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
-                @change="changeData"
+                @change="changedValue(field.nama_kolom)"
                 @blur="changeData"
                 :size="size"
               />
@@ -285,7 +292,7 @@ export default {
       default:[],
     },
   },
-  emits:['update:id','saved','error','changeId','update:formValue'],
+  emits:['update:id','saved','error','changeId','update:formValue','changedValue'],
   data: function() {
     return {
       saving: false,
@@ -326,8 +333,18 @@ export default {
     
   },
   methods: {
-    changeData(field, val){
-      this.form[field] = val
+    changeData(field, val, dest = 'form'){
+      if (dest == 'form')
+        this.form[field] = val
+      else if (dest == 'parent')
+        this.fields[field].parentSelect = val
+    },
+    changedValue(field){
+      this.$emit('changedValue', {
+        field: field,
+        value: this.form[field],
+        parent: this.fields[field]?.parentSelect
+      })
     },
     searchData(ind){
       let field = this.fieldsData[ind]
@@ -457,7 +474,7 @@ export default {
           }
         }
       })
-      console.log(vm.form)
+      // console.log(vm.form)
     }
   },
   mounted(){

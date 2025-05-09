@@ -21,13 +21,14 @@
       </el-button>
     </div>
     <el-container>
-      <el-main class="p-0 mt-[50px] px-3 md:px-10 pb-12 overflow-[unset]
+      <el-main class="p-0 mt-[50px] px-3 md:px-10 pb-12 overflow-visible
         min-h-[calc(100vh-110px)] 
         relative
         flex flex-col">
         <div class="fixed w-screen h-screen left-0 top-0
           -scale-x-100 z-[0]
-          bg-cover bg-no-repeat bg-left-center bg-fixed"
+          opacity-50
+          bg-cover bg-no-repeat bg-left-center bg-fixed" 
           :style="`background-image:url('${$baseUrl}assets/images/back-sketch.png')`">
         </div>
         <div :class="`${user.vertical == '1' ? 'md:ml-[--width-menu]' : 'ml-0' } h-full flex-1 bg-transparent z-[1]`">

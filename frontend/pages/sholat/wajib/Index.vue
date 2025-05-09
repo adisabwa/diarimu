@@ -10,7 +10,7 @@
           class="absolute z-[0] top-[-60px] right-[-20px]
             opacity-[0.5]"/>
       <template #header>
-        <div id="header-scroll" class="relative px-0 py-4 font-bold text-xl overflow-x-scroll
+        <div id="header-scroll" class="relative px-0 py-4 font-bold text-[18px] overflow-x-scroll
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
             <el-date-picker
@@ -38,11 +38,11 @@
           </div>
         </div>
         <icons @click="scrollHeader(-1)"
-          class="m-0 text-3xl pointer
+          class="m-0 text-[35px] pointer
             absolute top-1/2 -translate-y-1/2 left-5"
           icon="iconamoon:arrow-left-2-bold"/>
         <icons @click="scrollHeader(1)"
-          class="m-0 text-3xl pointer
+          class="m-0 text-[35px] pointer
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
@@ -51,18 +51,18 @@
         overflow-x-scroll
         snap-x snap-mandatory">
         <template v-for="(_data, ind) in datas">
-          <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat px-auto
-            flex-col"
+          <el-container :id="'body'+ind" class="shrink-0 w-full snap-center font-montserrat px-auto
+            flex-col items-center"
             v-loading="loadings[ind]">
             <template v-for="sholat in _data.sholats">
               <div :class="`${setStatusColor(sholat.value)}
-                mx-5 pt-4 pb-3 mb-4 px-7
-                rounded-[15px] 
+                pt-4 pb-3 mb-4 px-7
+                rounded-[15px] min-w-[240px] max-w-[300px]
                 shadow-md
                 relative flex gap-x-3 items-center`">
-                <div class="text-xl font-bold leading-[1.3] w-full">
+                <div class="text-[18px] font-bold leading-[1.3] w-full">
                   <div>{{ ucFirst(sholat.nama_kolom) }}</div>
-                  <div class="text-sm font-semibold">
+                  <div class="text-[12px] font-semibold opacity-70">
                     {{ getLabel(sholat.value) }}
                   </div>
                 </div>
@@ -118,16 +118,16 @@
       rounded-[10px]
       z-[0] font-montserrat
       mb-3 p-0" 
-      body-class="relative p-0 ">
+      body-class="relative p-0 leading-[1]">
       <div class="relative flex px-3 py-5 gap-3 justify-center">
         <div class="relative w-fit text-center py-4 px-6
           border-2 border-solid border-indigo-200
           bg-sky-100/[0.4]
           rounded-[20px]">
-          <div class="text-gray-500 font-bold leading-[1.2] w-[100px]
-            mb-2">Nilai Terbaru</div>
-          <div class="text-gray-500"><b>( {{ dateShortIndo(lastData.tanggal) }} )</b></div>
-          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ lastData.total_score }}</div>
+          <div class="text-gray-500 font-bold w-[100px] text-[14px]
+            mb-4">Nilai Terbaru</div>
+          <div class="mb-2 text-gray-500  text-[13px]"><b>( {{ dateShortIndo(lastData.tanggal) }} )</b></div>
+          <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ lastData.total_score }}</div>
           <div class="flex items-start justify-center">
             <star :id="'1starlastdata'" width="28px"/>
             <star :id="'2starlastdata'" width="33px"/>
@@ -138,10 +138,10 @@
           border-2 border-solid border-indigo-200
           bg-sky-100/[0.4]
           rounded-[20px]">
-          <div class="text-gray-500 font-bold leading-[1.2] w-[100px]
-            mb-2">Nilai Terbaik</div>
-          <div class=" text-gray-500"><b>( {{ dateShortIndo(bestData.tanggal) }} )</b></div>
-          <div class="text-[58px] leading-[1.1] font-semibold mb-0">{{ bestData.total_score }}</div>
+          <div class="text-gray-500 font-bold w-[100px] text-[14px]
+            mb-4">Nilai Terbaik</div>
+          <div class="mb-2  text-gray-500  text-[13px]"><b>( {{ dateShortIndo(bestData.tanggal) }} )</b></div>
+          <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ bestData.total_score }}</div>
           <div class="flex items-start justify-center">
             <star :id="'1starbestdata'" width="28px"/>
             <star :id="'2starbestdata'" width="33px"/>
@@ -234,22 +234,12 @@ export default {
         tanggal:'',
         total_score:'',
       },
-      fields:{
-        tanggal:'',
-        surat_selesai:'',
-        ayat_selesai:'',
-      },
-      formValue:{},
       sizeWindow:window.innerWidth,
-      showCreate:false,
-      success:false,
       sholat: topMenu.sholatWajib,
       statistic:{
 				labels:[],
 				datasets:[],
       },
-      max:5,
-      min:-1,
     };
   },
   watch: {
@@ -503,8 +493,8 @@ export default {
     },  
   },
   created: function() {
-    // this.tanggal = this.dateNow()
-    this.tanggal = '2025-05-01'
+    this.tanggal = this.dateNow()
+    // this.tanggal = '2025-05-01'
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
     this.setTanggalInitial()
     this.setDataInitiall()

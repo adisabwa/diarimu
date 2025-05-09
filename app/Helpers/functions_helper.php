@@ -54,3 +54,22 @@ function pluckFromObjectsNested(array $objects, string $path): array {
         return $value;
     }, $objects);
 }
+
+function getDateRange($start, $end)
+{
+    $start = new DateTime($start);
+    $end = new DateTime($end);
+
+    // Include the end date in the range
+    $end->modify('+1 day');
+
+    $interval = new DateInterval('P1D'); // 1 day interval
+    $period = new DatePeriod($start, $interval, $end);
+
+    $lists = [];
+    foreach ($period as $date) {
+        $lists[] = $date->format('Y-m-d');
+    }
+
+    return $lists;
+}

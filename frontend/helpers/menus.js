@@ -176,6 +176,14 @@ let topMenu = {
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/prayer-rug.png',
   },
+  infaqShadaqah: {
+    label:"Infaq / Shadaqah",
+    route:'shadaqah',
+    color:'bg-teal-200',
+    shadowColor:'shadow-teal-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/infaq.png',
+  },
 }
 
 export { iqab }

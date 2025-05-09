@@ -2,14 +2,14 @@
   <div id="quran" class="pt-0">
     <el-card class="relative overflow-hidden
        bg-gradient-to-tr from-yellow-50/[0.8] from-50% to-lime-200/[0.7] rounded-[10px]
-      z-[0] font-montserrat
+      z-[0] font-montserrat text-[13px]
       mb-3 p-0" 
       body-class="py-4 px-6">
       <div class="z-[10] text-gray-500">Terakhir Membaca : </div>
       <template v-if="!isEmpty(lastData.tanggal)">
-        <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
+        <div class="z-[10] text-[24px] font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
         </div>
-        <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
+        <div class="z-[10] text-gray-500"><b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
       </template>
       <template v-else>
         <div class="z-[10] text-2xl font-bold mb-3">
@@ -23,8 +23,8 @@
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px]
       mb-3 p-0"
-      body-class="py-3 px-5"
-      header-class="py-3 font-bold text-xl">
+      body-class="py-3 px-5 text-[14px]"
+      header-class="py-3 font-bold text-[16px]">
       <template #header>
         <div>Bacaan Quran hari ini</div>
       </template>
@@ -37,8 +37,10 @@
           <span>Anda berhasil menyimpan data baru</span>
         </div>
         <el-button size="large" type="primary"
-          class="rounded-[15px] w-full font-bold"
+          class="rounded-full w-full font-bold text-[13px]
+          py-2"
           @click="showCreate = true">
+          <icons icon="mdi:plus"/>
           Tambah Catatan
         </el-button>
       </template>
@@ -53,6 +55,7 @@
           href-get="quran/baca/get"
           :show-columns="['tanggal','surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']"
           @saved="submittedData" 
+          @changed-value="changedValue"
           @error="saving=false"
           size="large"
           :show-submit="false"
@@ -60,7 +63,8 @@
           :show-required-text="false">
         </form-comp>  
         <el-button size="large" type="success"
-          class="rounded-[15px] w-full font-bold"
+          class="rounded-full w-full font-bold text-[13px]
+          py-2"
           :loading="saving" :disable="saving"
           @click="$refs.formBaca.submitForm(); saving=false">
           Simpan Data
@@ -70,12 +74,11 @@
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
       header="Rekap Membaca AL-Qur'an"
-      header-class="py-3 font-bold text-xl" >
+      header-class="py-3 font-bold text-[16px]" >
       <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
-        <el-option value="day" label="Per Hari" />
-        <el-option value="week" label="Per Minggu" />
-        <el-option value="month" label="Per Bulan" />
+        <el-option value="week" label="7 Hari" />
+        <el-option value="month" label="1 Bulan" />
       </el-select>
       <div class="mb-4">
         <div v-if="!isEmpty(statistic.datasets)">
@@ -127,6 +130,7 @@ export default {
       setStatusType: setStatusType,
       showCreate:false,
       success:false,
+      saving:false,
       quran: topMenu.quranBaca,
       statistic:{
 				labels:[],
@@ -150,25 +154,34 @@ export default {
   },
   methods: {
     getInitial: async function() {
-        this.loading = true;
-        await this.$http.get('/quran/baca/get_last')
-          .then(result => {
-            var res = result.data;
-            this.lastData = this.fillAndAddObjectValue(this.lastData, res)
-          });
+      this.loading = true;
+      await this.$http.get('/quran/baca/get_last')
+        .then(result => {
+          var res = result.data;
+          this.lastData = this.fillAndAddObjectValue(this.lastData, res)
+        });
 
-        await this.$http.get('/kolom/preparation?table=mu_quran_baca&grouping=0&input=0')
-          .then(result => {
-            var res = result.data;
-            this.dataId = -1
-            this.fields = this.fillAndAddObjectValue(this.fields, res)
-            this.fields.tanggal.default = this.dateNow()
-            this.fields.id_anggota.default = this.$store.getters.loggedUser.id_anggota
-            this.formKey++
-            this.loading = false
-          });
-        await this.getChart();
-      },
+      await this.$http.get('/kolom/preparation?table=mu_quran_baca&grouping=0&input=0')
+        .then(result => {
+          var res = result.data;
+          this.dataId = -1
+          this.fields = this.fillAndAddObjectValue(this.fields, res)
+          this.fields.tanggal.default = this.dateNow()
+          this.fields.id_anggota.default = this.$store.getters.loggedUser.id_anggota
+          this.formKey++
+          this.loading = false
+        });
+      await this.getChart();
+    },
+    changedValue({ field, parent, value}){
+      console.log(field, parent, value)
+      if (field == 'surat_mulai-ayat_mulai') {
+      console.log(field)
+        let changedField = 'surat_selesai-ayat_selesai'
+        this.$refs.formBaca.changeData(changedField, parent, 'parent')
+        this.$refs.formBaca.changeData(changedField, value)
+      }
+    },
     submittedData(){
       this.saving = false;
       this.showCreate = false

@@ -248,7 +248,42 @@ INSERT INTO `mu_group_kolom` (`id`, `nama_tabel`, `group`, `group_icon`) VALUES
 (6,	'mu_quran_baca',	'Membaca Al-Qur\'an',	''),
 (7,	'mu_quran_hafal',	'Menghafal Al Qur\'an',	''),
 (8,	'mu_quran_tarjamah',	'Menterjemah Al Qur\'an',	''),
-(9,	'mu_sholat_wajib',	'Sholat Wajib',	'');
+(9,	'mu_sholat_wajib',	'Sholat Wajib',	''),
+(10,	'mu_sholat_sunnah',	'Sholat Sunnah',	''),
+(11,	'mu_infaq_shadaqah',	'Infaq / Shadaqah',	'');
+
+DROP TABLE IF EXISTS `mu_infaq_shadaqah`;
+CREATE TABLE `mu_infaq_shadaqah` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_anggota` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `jumlah` int NOT NULL,
+  `keterangan` varchar(100) NOT NULL,
+  `created_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL,
+  `created_by` int NOT NULL,
+  `updated_by` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_anggota` (`id_anggota`),
+  CONSTRAINT `mu_infaq_shadaqah_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `mu_anggota` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `mu_infaq_shadaqah` (`id`, `id_anggota`, `tanggal`, `jumlah`, `keterangan`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(1,	24,	'2025-05-09',	100000,	'Makan',	'2025-05-09 21:42:36',	'2025-05-09 13:58:52',	14,	0),
+(2,	24,	'2025-05-09',	200000,	'Lazismu',	'2025-05-09 21:42:36',	'2025-05-09 13:59:10',	14,	0),
+(3,	24,	'2025-05-09',	10000,	'Infaq Masjid',	'2025-05-09 21:42:36',	'2025-05-09 14:07:17',	14,	0),
+(4,	24,	'2025-05-09',	100000,	'Makan',	'2025-05-09 21:42:36',	'2025-05-09 13:58:52',	14,	0),
+(5,	24,	'2025-05-09',	200000,	'Lazismu',	'2025-05-09 21:42:36',	'2025-05-09 13:59:10',	14,	0),
+(6,	24,	'2025-05-09',	10000,	'Infaq Masjid',	'2025-05-09 21:42:36',	'2025-05-09 14:07:17',	14,	0),
+(7,	24,	'2025-05-09',	100000,	'Makan',	'2025-05-09 21:42:36',	'2025-05-09 13:58:52',	14,	0),
+(8,	24,	'2025-05-09',	200000,	'Lazismu',	'2025-05-09 21:42:36',	'2025-05-09 13:59:10',	14,	0),
+(9,	24,	'2025-05-09',	10000,	'Infaq Masjid',	'2025-05-09 21:42:36',	'2025-05-09 14:07:17',	14,	0),
+(10,	24,	'2025-05-09',	100000,	'Makan',	'2025-05-09 21:42:36',	'2025-05-09 13:58:52',	14,	0),
+(11,	24,	'2025-05-09',	200000,	'Lazismu',	'2025-05-09 21:42:36',	'2025-05-09 13:59:10',	14,	0),
+(12,	24,	'2025-05-09',	10000,	'Infaq Masjid',	'2025-05-09 21:42:36',	'2025-05-09 14:07:17',	14,	0),
+(14,	24,	'2025-05-10',	109000,	'Percobaan ERC',	'2025-05-09 22:08:12',	'2025-05-09 15:08:12',	14,	0),
+(15,	24,	'2025-05-11',	100000,	'133saA-AAA',	'2025-05-09 22:08:08',	'2025-05-09 15:08:08',	14,	0),
+(16,	24,	'2025-05-12',	1113000,	'CC',	'2025-05-09 15:09:39',	'2025-05-09 15:09:39',	14,	0);
 
 DROP TABLE IF EXISTS `mu_nama_kolom`;
 CREATE TABLE `mu_nama_kolom` (
@@ -344,7 +379,15 @@ INSERT INTO `mu_nama_kolom` (`id`, `id_group`, `order`, `nama_kolom`, `is_table`
 (126,	9,	5,	'asar',	NULL,	'0',	'',	'',	'int',	'Asar',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
 (127,	9,	6,	'maghrib',	NULL,	'0',	'',	'',	'int',	'Maghrib',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
 (128,	9,	7,	'isya',	NULL,	'0',	'',	'',	'int',	'Isya',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
-(129,	9,	7,	'total_score',	NULL,	'0',	'',	'',	'int',	'Nilai Total',	'input-number',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}');
+(129,	9,	7,	'total_score',	NULL,	'0',	'',	'',	'int',	'Nilai Total',	'input-number',	'',	'',	'0',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'a:4:{i:0;a:2:{s:5:\"value\";s:3:\"100\";s:5:\"label\";s:6:\"Jamaah\";}i:1;a:2:{s:5:\"value\";s:2:\"70\";s:5:\"label\";s:6:\"Masbuq\";}i:2;a:2:{s:5:\"value\";s:2:\"30\";s:5:\"label\";s:7:\"Sendiri\";}i:3;a:2:{s:5:\"value\";s:1:\"0\";s:5:\"label\";s:12:\"Tidak Sholat\";}}'),
+(130,	10,	1,	'id_anggota',	NULL,	'0',	'',	'',	'string',	'Nama',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(131,	10,	2,	'tanggal',	NULL,	'0',	'',	'',	'date',	'Tanggal',	'date',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(132,	10,	3,	'id_sholat',	NULL,	'0',	'',	'',	'int',	'Jenis Sholat',	'select',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(133,	10,	4,	'rakaat',	NULL,	'0',	'',	'',	'int',	'Jumlah Rakaat',	'input-number',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(137,	11,	1,	'id_anggota',	NULL,	'0',	'',	'',	'string',	'Nama',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(138,	11,	2,	'tanggal',	NULL,	'0',	'',	'',	'date',	'Tanggal',	'date',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(139,	11,	3,	'jumlah',	NULL,	'0',	'',	'',	'int',	'Jumlah Infaq',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'setCurrency',	'toNumber',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(140,	11,	4,	'keterangan',	NULL,	'0',	'',	'',	'string',	'Keterangan',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'');
 
 DROP TABLE IF EXISTS `mu_pengguna`;
 CREATE TABLE `mu_pengguna` (
@@ -407,7 +450,9 @@ INSERT INTO `mu_quran_baca` (`id`, `id_anggota`, `tanggal`, `tingkat`, `jenis_bu
 (12,	24,	'2025-05-05',	'lanjut',	'al-qur\'an',	1,	1,	6,	9,	16,	'2025-05-04 14:46:47',	14,	'2025-05-04 14:46:47',	NULL),
 (13,	24,	'2025-05-06',	'lanjut',	'al-qur\'an',	6,	1,	6,	110,	110,	'2025-05-05 02:01:38',	14,	'2025-05-05 02:01:38',	NULL),
 (14,	2,	'2025-05-05',	'lanjut',	'al-qur\'an',	1,	1,	2,	8,	15,	'2025-05-05 10:20:01',	20,	'2025-05-05 10:20:01',	NULL),
-(15,	2,	'2025-05-06',	'lanjut',	'al-qur\'an',	2,	8,	3,	9,	288,	'2025-05-05 10:20:23',	20,	'2025-05-05 10:20:23',	NULL);
+(15,	2,	'2025-05-06',	'lanjut',	'al-qur\'an',	2,	8,	3,	9,	288,	'2025-05-05 10:20:23',	20,	'2025-05-05 10:20:23',	NULL),
+(16,	24,	'2025-05-08',	'lanjut',	'al-qur\'an',	4,	1,	4,	9,	9,	'2025-05-08 15:03:31',	14,	'2025-05-08 15:03:31',	NULL),
+(17,	24,	'2025-05-08',	'lanjut',	'al-qur\'an',	3,	1,	3,	200,	200,	'2025-05-08 15:21:57',	14,	'2025-05-08 15:21:57',	NULL);
 
 DROP TABLE IF EXISTS `mu_quran_hafal`;
 CREATE TABLE `mu_quran_hafal` (
@@ -545,7 +590,7 @@ CREATE TABLE `mu_sholat_sunnah` (
   `id_sholat` int DEFAULT NULL,
   `rakaat` int NOT NULL,
   `created_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `update_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
   `created_by` int NOT NULL,
   `updated_by` int NOT NULL,
   PRIMARY KEY (`id`),
@@ -555,6 +600,9 @@ CREATE TABLE `mu_sholat_sunnah` (
   CONSTRAINT `mu_sholat_sunnah_ibfk_6` FOREIGN KEY (`id_sholat`) REFERENCES `mu__sholat_sunnah` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+INSERT INTO `mu_sholat_sunnah` (`id`, `id_anggota`, `tanggal`, `id_sholat`, `rakaat`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(2,	24,	'2025-05-01',	1,	2,	'2025-05-08 14:34:43',	'2025-05-08 14:34:43',	0,	0),
+(6,	24,	'2025-05-01',	2,	7,	'2025-05-08 14:35:42',	'2025-05-08 14:35:42',	0,	0);
 
 DROP TABLE IF EXISTS `mu_sholat_wajib`;
 CREATE TABLE `mu_sholat_wajib` (
@@ -579,9 +627,9 @@ CREATE TABLE `mu_sholat_wajib` (
 INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`, `asar`, `maghrib`, `isya`, `total_score`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
 (4,	24,	'2025-05-06',	75,	100,	100,	100,	100,	475,	'2025-05-06 03:51:57',	'2025-05-07 07:06:19',	14,	0),
 (5,	24,	'2025-05-07',	75,	100,	100,	100,	100,	475,	'2025-05-07 06:13:11',	'2025-05-07 07:06:26',	14,	0),
-(7,	24,	'2025-05-08',	75,	100,	75,	NULL,	NULL,	250,	'2025-05-07 06:16:25',	'2025-05-07 07:06:42',	14,	0),
+(7,	24,	'2025-05-08',	100,	100,	75,	NULL,	NULL,	275,	'2025-05-07 06:16:25',	'2025-05-08 03:05:04',	14,	0),
 (8,	24,	'2025-05-09',	100,	50,	NULL,	NULL,	NULL,	150,	'2025-05-07 06:45:54',	'2025-05-07 07:07:08',	14,	0),
-(10,	24,	'2025-05-01',	100,	25,	75,	0,	0,	200,	'2025-05-07 06:47:10',	'2025-05-07 12:46:09',	14,	0),
+(10,	24,	'2025-05-01',	100,	25,	100,	0,	0,	225,	'2025-05-07 06:47:10',	'2025-05-08 02:13:45',	14,	0),
 (13,	24,	'2025-05-10',	100,	100,	100,	NULL,	NULL,	300,	'2025-05-07 07:15:00',	'2025-05-07 12:58:42',	14,	0);
 
--- 2025-05-07 21:06:23
+-- 2025-05-09 15:10:04
