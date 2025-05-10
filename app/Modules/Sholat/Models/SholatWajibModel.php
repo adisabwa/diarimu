@@ -23,7 +23,7 @@ class SholatWajibModel extends Model
 
     }
 
-    public function getAll($whereAnd = [], $whereOr = [], $order = '')
+    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0, $groupBy = 'id')
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
@@ -36,6 +36,8 @@ class SholatWajibModel extends Model
                         ->orWhere($whereOr)
                     ->groupEnd()
                     ->orderBy($order)
+                    ->groupBy($groupBy)
+                    ->limit($limit, $offset)
                     ->get()
                     ->getResult();
     }

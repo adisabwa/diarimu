@@ -44,6 +44,7 @@ $routes->group('sholat/sunnah', [
     $routes->add('dashboard', [SholatSunnah::class, 'dashboard']);
     $routes->add('get_last_and_best', [SholatSunnah::class, 'get_last_and_best']);
     $routes->add('get_before', [SholatSunnah::class, 'get_before']);
+    // $routes->add('summary', [SholatSunnah::class, 'summary']);
 
 });
 

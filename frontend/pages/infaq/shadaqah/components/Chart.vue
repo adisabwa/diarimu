@@ -41,7 +41,7 @@
                       else
                         val = (value / 1000000) + ' Juta' 
 
-                      return 'Rp. ' + val;
+                      return val;
                     }
                   }
                 }

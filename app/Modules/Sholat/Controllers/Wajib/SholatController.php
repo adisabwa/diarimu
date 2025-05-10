@@ -15,6 +15,26 @@ class SholatController extends BaseData
         $this->model = model('SholatWajibModel');
     }
     
+    
+    public function index()
+    {
+        $where = $this->request->getGetPost('where') ?? [];
+        $whereOr = $this->request->getGetPost('or') ?? [];
+        $order = $this->request->getGetPost('order') ?? [];
+        $limit = $this->request->getGetPost('limit') ?? 5;
+        $offset = $this->request->getGetPost('offset') ?? 0;
+
+        $data = $this->model->getAll($where,$order,'tanggal desc, id',
+        $limit, $offset,'tanggal');
+
+        array_walk($data, function(&$value, $key) {
+            $value->show_detail = false;
+        });
+
+        return $this->respondCreated($data);
+
+    }
+
     public function get_last_and_best()
     {
         $last = $this->model->get_last(userdata()->id_anggota);
@@ -48,7 +68,7 @@ class SholatController extends BaseData
         foreach ($data as $key => $d) {
             if (empty($_data[$d->tanggal])) {
                 $tmp = (object)[
-                    'label' => date('d M y', strtotime($d->tanggal)),
+                    'label' => date('d M', strtotime($d->tanggal)),
                     'total' => $d->total_score
                 ];
                 $_data[$d->tanggal] = $tmp;

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { siteUrl } from "@/config/url"
-import { listFunction } from "../../plugins/functions"
+import { listFunction } from "@/config/plugins/data-functions"
 
 let { setCookie, getCookie, deleteCookie } = listFunction
 

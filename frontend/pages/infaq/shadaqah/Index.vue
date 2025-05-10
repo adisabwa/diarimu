@@ -27,10 +27,14 @@
         <div 
           v-infinite-scroll="loadingData"
           class="min-h-[200px] max-h-[50vh] overflow-auto px-8 "
-          :infinite-scroll-disabled="disabledScroll"
+          :infinite-scroll-disabled="noMoreScrolling"
           infinite-scroll-delay="1000"
           infinite-scroll-distance="10">
-          <template v-for="s in datas">
+          <template v-for="(s, key) in datas">
+            <div v-if="s.tanggal.slice(0, 7) != datas[key - 1]?.tanggal?.slice(0,7)" 
+              class="bg-slate-100
+              text-slate-400 text-[15px]
+              p-2 py-1 mb-3">{{ monthIndo(s.tanggal) }}</div>
             <div class="h-fit px-6 py-3 mb-3
               rounded-[15px]
               bg-cyan-50/[0.8] border border-solid border-cyan-200
@@ -157,9 +161,6 @@
       labelPosition(){
         return this.sizeWindow < 800 ? 'top' : 'left'
       },
-      disabledScroll(){
-        this.noMoreScrolling || this.loadingScroll
-      }
       
     },
     methods: {

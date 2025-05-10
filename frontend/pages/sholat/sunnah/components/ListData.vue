@@ -11,31 +11,30 @@
 				class="bg-slate-100
 				text-slate-400
 				p-2 mb-3">{{ monthIndo(s.tanggal) }}</div>
-			<div class="h-fit px-4 py-3 mb-3
+			<div class="h-fit px-5 py-3 mb-3
 				rounded-[15px]
-				bg-lime-50/[0.5] border border-solid border-lime-400
-				text-lime-900
+				bg-rose-50/[0.5] border border-solid border-rose-400
+				text-rose-900
 				flex items-center justify-between">
-				<div class="leading-[1.3]">
-					<div class="font-semibold text-[13px] opacity-70">
+				<div class="leading-[1.5]">
+					<div class="font-semibold text-[19px] opacity-70">
 					{{ dateDayIndo(s.tanggal)}}</div>
-					<div class="text-[16px]">Dari : 
-						<span class="font-bold">
-						{{ s.nama_surat_mulai }} ({{ s.surat_mulai }}) : {{ s.ayat_mulai }}
-						</span>
+					<div class="text-[15px] mt-1"> 
+						<div class="flex items-center"
+							@click="s.show_detail = !s.show_detail">
+							<icons v-if="s.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
+							<icons v-else icon="fe:arrow-up" class="text-[12px]"/>
+							Sholat Sunnah {{ s.total_rakaat }} Raka'at
+						</div>
+						<ol v-show="s.show_detail"
+							class="pl-[30px] italic mt-0 mb-1">
+							<li v-for="(j) in s.daftar_sholat.split('/')"
+								class="pl-1">
+								{{ getLabelSholat(j) }}
+							</li>
+						</ol>
 					</div>
-					<div class="text-[16px]">Sampai : 
-						<span class="font-bold">
-						{{ s.nama_surat_selesai }} ({{ s.surat_selesai }}) : {{ s.ayat_selesai }}
-						</span>
-					</div>
-					<div class="font-semibold text-[13px] opacity-70">{{ s.keterangan }}</div>
 				</div>
-				<el-button class="rounded-full h-[40px] w-[40px]
-					bg-lime-100/[0.4]"
-					@click="$emit('editData',{id:s.id})">
-					<icons icon="mdi:edit" class="m-0 text-[20px]" />
-				</el-button>
 			</div>
 		</template>
 		<p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
@@ -60,6 +59,10 @@ export default {
 		}
 	},
 	computed:{
+		disabledScroll(){
+			return this.noMoreScrolling || this.loadingScroll
+		}
+
 	},
 	methods:{
       async getData(reset = true){
@@ -68,7 +71,7 @@ export default {
 					this.offset = 0
 					this.limit = 5
 				}
-        await this.$http.get('quran/tarjamah', {
+        await this.$http.get('sholat/sunnah', {
             params: {
 							where:{
 								id_anggota: this.$store.getters.loggedUser?.id_anggota,
@@ -95,6 +98,12 @@ export default {
         this.loadingScroll = true
         await this.getData(false)
       },
+
+			getLabelSholat(sholat){
+				console.log(sholat)
+				let data = sholat.split('-')
+				return 'Sholat ' + data[0] + data[1] + ` Raka'at`
+			}
 	},
 	mounted(){
 	}

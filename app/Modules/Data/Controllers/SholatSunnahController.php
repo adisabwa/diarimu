@@ -7,13 +7,13 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use CodeIgniter\Files\File;
 
-class Unit extends BaseData
+class SholatSunnahController extends BaseData
 {
 
     public function __construct()
     {
         parent::__construct();
         
-        $this->model = model('UnitModel');
+        $this->model = model('DataSholatSunnahModel');
     }
 }

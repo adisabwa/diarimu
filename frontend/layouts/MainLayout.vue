@@ -57,6 +57,11 @@
           &copy; 2023 by <a href="https://codev-app.my.id/" target="_blank" class="no-underline text-green-900"> Codev-App</a>
         </div>
       </el-footer>
+      <div class="fixed bottom-0 h-[50px] w-screen z-[99999]
+        bg-white">
+        <icons icon="mdi:home"/>
+        <icons icon="mdi:logout"/>
+      </div>
     </el-container>
   </div>
 </template>

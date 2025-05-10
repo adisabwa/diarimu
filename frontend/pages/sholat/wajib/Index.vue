@@ -151,21 +151,28 @@
       </div>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-5"
-      header="Rekapitulasi Sholat Wajib"
-      header-class="py-3 font-bold text-xl text-center" >
-      <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
-        @change="getChart">
-        <el-option value="day" label="Per Hari" />
-        <el-option value="week" label="Per Minggu" />
-        <el-option value="month" label="Per Bulan" />
-      </el-select>
-      <div class="mb-4">
-        <div v-if="!isEmpty(statistic.datasets)">
-          <line-chart class="h-[300px]"
-            :statistic="statistic" :max="max" :min="min" />
+      body-class="py-3 px-0"
+      header-class="py-3 font-bold text-[16px]
+        text-lime-800
+        flex justify-between items-center" >
+      <template #header>
+        <div>Data Sholat Wajib</div>
+        <div class="flex items-center gap-1
+          [&_*]:text-[20px] text-emerald-900/[0.4]">
+          <icons icon="fa6-solid:chart-line" 
+            @click="showData='chart'"
+            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
+          <icons icon="material-symbols:view-list" 
+            @click="showData='list'"
+            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
-      </div>
+      </template>
+      <chart ref="sunnahChartData" v-if="showData == 'chart'" />
+      <list-data ref="sunnahListData" v-if="showData =='list'"
+        @edit-data="(({id}) => {
+          dataId = id
+          showCreate = true
+        })"/>
     </el-card>
   </div>
 </template>
@@ -177,7 +184,8 @@
 <script>
 import { mapGetters } from 'vuex';
 import Form from '@/components/Form.vue'
-import LineChart from '@/components/charts/Line.vue'
+import Chart from './components/Chart.vue'
+import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 import Star from '../components/Star.vue'
 import { getGlobalThis } from '@vue/shared';
@@ -186,7 +194,8 @@ export default {
   name: "sholat",
   components: {
     'form-comp' : Form,
-    LineChart,
+    Chart,
+    ListData,
     Star,
   },
   data: function() {
@@ -236,10 +245,7 @@ export default {
       },
       sizeWindow:window.innerWidth,
       sholat: topMenu.sholatWajib,
-      statistic:{
-				labels:[],
-				datasets:[],
-      },
+      showData:'list',
     };
   },
   watch: {
@@ -383,27 +389,6 @@ export default {
       setTimeout(() => {
         vm.jquery('#editTanggal.el-input__inner')[0].focus();
       }, 300);
-    },
-    async getChart(){
-      // return;
-      await this.$http.get('sholat/wajib/dashboard', {
-          params: {}
-        })
-          .then(res => {
-            let data = res.data
-            this.statistic = data
-            this.min = data.min
-            this.max = data.max
-            this.loaded = true
-          })
-          .catch(err => {
-            this.$notify({
-              type:'error',
-              title: 'Gagal',
-              message: 'Tidak dapat mengambil data',
-              position: 'bottom-right',
-            });
-          })
     },
     setHeaderToCenter(){
       console.log('center')

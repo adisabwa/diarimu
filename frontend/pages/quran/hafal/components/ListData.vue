@@ -2,7 +2,7 @@
 	<div 
 		v-infinite-scroll="loadingData"
 		class="min-h-[200px] max-h-[50vh] overflow-auto px-6 "
-		:infinite-scroll-disabled="disabledScroll"
+		:infinite-scroll-disabled="noMoreScrolling"
 		infinite-scroll-delay="1000"
 		infinite-scroll-distance="10">
 		<template v-for="(s, key) in datas">
@@ -59,9 +59,6 @@ export default {
 		}
 	},
 	computed:{
-		disabledScroll(){
-			this.noMoreScrolling || this.loadingScroll
-		}
 
 	},
 	methods:{

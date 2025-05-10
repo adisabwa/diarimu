@@ -5,9 +5,23 @@ use Modules\Data\Controllers\Prm;
 use Modules\Data\Controllers\Anggota;
 use Modules\Data\Controllers\Iqab;
 use Modules\Data\Controllers\Jabatan;
-use Modules\Data\Controllers\Unit;
+use Modules\Data\Controllers\SholatSunnahController as SholatSunnah;
 
 //----------------------------------Section Data-------------------------------------
+
+//----------------------------------Data Sholat Sunnah-------------------------------------
+$routes->group('data/sholat-sunnah', static function ($routes) {
+    $routes->add('/', [SholatSunnah::class, 'index']);
+    $routes->add('get', [SholatSunnah::class, 'get']);
+    $routes->add('reset_options', [SholatSunnah::class, 'resetOptions']);
+    $routes->add('store', [SholatSunnah::class, 'store'], [ 'filter' => 'api-validation:mu__sholat_sunnah']);
+    $routes->add('delete/(:any)', [SholatSunnah::class, 'delete/$1']);
+    $routes->add('delete_many', [SholatSunnah::class, 'delete_many']);
+    $routes->add('template', [SholatSunnah::class, 'template']);
+    $routes->add('upload', [SholatSunnah::class, 'upload']);
+    $routes->add('options', [SholatSunnah::class, 'options']);
+});
+
 
 //----------------------------------Data Anggota-------------------------------------
 $routes->group('data/anggota', static function ($routes) {
@@ -73,19 +87,6 @@ $routes->group('jabatan', static function ($routes) {
 });
 
 
-//----------------------------------Data Unit-------------------------------------
-$routes->group('unit', static function ($routes) {
-    $routes->add('/', [Unit::class, 'index']);
-    $routes->add('prodi', [Unit::class, 'prodi']);
-    $routes->add('get', [Unit::class, 'get']);
-    $routes->add('reset_options', [Unit::class, 'resetOptions']);
-    $routes->add('store', [Unit::class, 'store'], [ 'filter' => 'api-validation:mu_unit']);
-    $routes->add('delete/(:any)', [Unit::class, 'delete/$1']);
-    $routes->add('delete_many', [Unit::class, 'delete_many']);
-    $routes->add('template', [Unit::class, 'template']);
-    $routes->add('upload', [Unit::class, 'upload']);
-    $routes->add('options', [Unit::class, 'options']);
-});
 
 //----------------------------------Data Iqab-------------------------------------
     $routes->group('iqab', static function ($routes) {

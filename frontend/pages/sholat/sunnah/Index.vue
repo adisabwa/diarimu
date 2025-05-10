@@ -98,8 +98,8 @@
                       text-sm w-fit">
                     <div v-if="!sholat.edit"
                       @click="sholat.edit = true"
-                      class="flex items-center translate-y-[-2px]">
-                      <span class="mr-1 text-[12px] translate-y-[1px]"> {{ sholat.rakaat }} Rakaat</span>
+                      class="flex items-center translate-y-[-3px]">
+                      <span class="mr-1 text-[13px] translate-y-[1px]"> {{ sholat.rakaat }} Rakaat</span>
                       <icons 
                         icon="flowbite:edit-solid" class="text-[20px] mr-1"/>
                     </div>
@@ -149,26 +149,108 @@
                 
               </div>
             </template>
+            <div class="text-center text-slate-400
+                pt-4 pb-3 mb-4 px-5
+                rounded-[15px] min-w-[240px] max-w-[300px]
+                shadow-md
+                relative flex items-center justify-center
+                animate [--duration:0.5s]
+                active:scale-75"
+                @click="showAdd = true">
+                <icons icon="mdi:plus" class="text-[18px]" />
+                <span class="font-semibold">Sholat Lainnya</span>
+              </div>
           </el-container>
         </template>
       </div>
     </el-card>
-    <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-5"
-      header="Rekapitulasi Sholat Sunnah"
-      header-class="py-3 font-bold text-[18px] text-center" >
-      <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
-        @change="getChart">
-        <el-option value="day" label="Per Hari" />
-        <el-option value="week" label="Per Minggu" />
-        <el-option value="month" label="Per Bulan" />
-      </el-select>
-      <div class="mb-4">
-        <div v-if="!isEmpty(statistic.datasets)">
-          <line-chart class="h-[300px]"
-            :statistic="statistic" :max="max" :min="min" />
+    <el-dialog v-model="showAdd"
+      width="80%" 
+      lock-scroll
+      header-class="text-center text-[17px]"
+      body-class="relative">
+      <template #header>
+        <div>Tambah Data Sholat Baru</div>
+      </template>
+      <el-input v-model="filterSunnah" size="large"
+        class="[&_*]:text-center mb-2"
+        placeholder="Cari Sholat Sunnah">
+      </el-input>
+      <div class="relative flex flex-col
+        max-h-[250px] overflow-auto">
+        <template v-for="so in sholatSunnah.filter((res) => {
+          let q = filterSunnah.toLowerCase()
+          return res.nama_sholat.toLowerCase().includes(q)
+        })">
+          <div :class="[`px-4 py-2 mb-2
+            text-center text-[16px]
+            border border-solid border-slate-200
+            rounded-xl
+            shadow-md
+            active:scale-[0.8]`,
+            so.id == sunnahAdd ? 'bg-emerald-200 text-emerald-900 font-bold' : '']"
+            @click="sunnahAdd = so.id">
+            {{ so.nama_sholat }}
+          </div>
+        </template>
+      </div>
+      <div>
+        <div v-if="showInput">
+          <el-input v-model="sunnahInput" size="large"
+            class="[&_*]:text-center"
+            placeholder="Sholat Sunnah Baru">
+            <template #prepend>
+              <icons icon="mdi:close" class="m-0 active:scale-75"
+                @click="showInput = false"/>
+            </template>
+            <template #append>
+              <icons icon="mdi:check" class="m-0 active:scale-75"
+                @click="saveSunnah"/>
+            </template>
+          </el-input>
+        </div>
+        <div v-else
+          class="px-4 py-2 mb-1
+          text-center text-[16px] text-white
+          bg-slate-700
+          border border-solid border-slate-200
+          rounded-xl
+          shadow-md
+          flex items-center justify-center
+          active:scale-[0.8]"
+          @click="showInput = true">
+          <icons icon="mdi:plus" />
+          Tambah Baru
         </div>
       </div>
+      <template #footer>
+          <el-button @click="showAdd = false">Batal</el-button>
+          <el-button @click="addInput" type="success">Simpan</el-button>
+      </template>
+    </el-dialog>
+    <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
+      body-class="py-3 px-0"
+      header-class="py-3 font-bold text-[16px]
+        text-lime-800
+        flex justify-between items-center" >
+      <template #header>
+        <div>Data Sholat Sunnah</div>
+        <div class="flex items-center gap-1
+          [&_*]:text-[20px] text-emerald-900/[0.4]">
+          <icons icon="fa6-solid:chart-line" 
+            @click="showData='chart'"
+            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
+          <icons icon="material-symbols:view-list" 
+            @click="showData='list'"
+            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
+        </div>
+      </template>
+      <chart ref="sunnahChartData" v-if="showData == 'chart'" />
+      <list-data ref="sunnahListData" v-if="showData =='list'"
+        @edit-data="(({id}) => {
+          dataId = id
+          showCreate = true
+        })"/>
     </el-card>
   </div>
 </template>
@@ -179,20 +261,22 @@
 <script>
 import { mapGetters } from 'vuex';
 import Form from '@/components/Form.vue'
-import LineChart from '@/components/charts/Line.vue'
+import Chart from './components/Chart.vue'
+import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
-import { getGlobalThis } from '@vue/shared';
 
 export default {
   name: "sholat",
   components: {
     'form-comp' : Form,
-    LineChart,
+    Chart,
+    ListData,
   },
   data: function() {
     return {
       loading: false,
       editTanggal:false,
+      showAdd:false,
       dataId:-1,
       idAnggota:-1,
       tanggals:[],
@@ -204,10 +288,12 @@ export default {
       hideOnClick:true,
       sizeWindow:window.innerWidth,
       sholat: topMenu.sholatSunnah,
-      statistic:{
-				labels:[],
-				datasets:[],
-      },
+      showData:'list',
+      filterSunnah:'',
+      sholatSunnah:[],
+      showInput:false,
+      sunnahAdd:'',
+      sunnahInput:'',
     };
   },
   watch: {
@@ -261,6 +347,56 @@ export default {
             })
       // }, 1000)
     },
+    getAllSunnah(initial = true){
+      this.$http.get('data/sholat-sunnah', {
+            params: {
+              where:{
+                type:'additional'
+              },
+              limit:0,
+            }
+          })
+            .then(res => {
+              let data = res.data
+              this.sholatSunnah = data
+              if (!initial)
+                this.sunnahAdd = data[data.length - 1]?.id
+            })
+    },
+    saveSunnah()
+    {
+      let form = {
+        id:-1,
+        nama_sholat:this.sunnahInput,
+      }
+      var formData = window.jsonToFormData(form); 
+      this.$http.post('data/sholat-sunnah/store', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      } )
+        .then(result => {
+          this.getAllSunnah(false);
+          this.showInput = false
+        })
+        .catch(err => {
+          
+        });
+    },
+    addInput(){
+      let ind = 1
+      let kolom = this.sholatSunnah.findIndex(res => res.id == this.sunnahAdd)
+      let sholat = this.sholatSunnah[kolom]
+      console.log(sholat)
+      this.datas[ind][sholat.id] = {
+        "id_sholat": sholat.id,
+        "nama_sholat": sholat.nama_sholat,
+        "do": true,
+        "edit": false,
+        "rakaat": 2,
+        "min": 2,
+      }
+      this.saveData(1, sholat.id)
+      this.showAdd = false
+    },
     saveData(ind, kolom){
       let data = this.datas[ind]
       console.log(data)
@@ -278,6 +414,8 @@ export default {
       } )
         .then(result => {
           // this.getData()
+          if (this.showData == 'chart') this.$refs.sunnahChartData.getChart();
+          if (this.showData == 'list') this.$refs.sunnahListData.getData(true);
         })
         .catch(err => {
           
@@ -289,27 +427,6 @@ export default {
       setTimeout(() => {
         vm.jquery('#editTanggal.el-input__inner')[0].focus();
       }, 300);
-    },
-    async getChart(){
-      // return;
-      await this.$http.get('sholat/sunnah/dashboard', {
-          params: {}
-        })
-          .then(res => {
-            let data = res.data
-            this.statistic = data
-            this.min = data.min
-            this.max = data.max
-            this.loaded = true
-          })
-          .catch(err => {
-            this.$notify({
-              type:'error',
-              title: 'Gagal',
-              message: 'Tidak dapat mengambil data',
-              position: 'bottom-right',
-            });
-          })
     },
     setHeaderToCenter(){
       console.log('center')
@@ -399,12 +516,14 @@ export default {
     },  
   },
   created: function() {
-    // this.tanggal = this.dateNow()
-    this.tanggal = '2025-05-01'
+    this.tanggal = this.dateNow()
+    // this.tanggal = '2025-05-01'
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
     this.setTanggalInitial()
     this.setDataInitiall()
+    this.getAllSunnah()
   },
+
   mounted: function() {
     let vm = this
     vm.sizeWindow = window.innerWidth
