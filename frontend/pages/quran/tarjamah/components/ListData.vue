@@ -72,7 +72,7 @@ export default {
 					this.offset = 0
 					this.limit = 5
 				}
-        await this.$http.get('quran/baca', {
+        await this.$http.get('quran/tarjamah', {
             params: {
 							where:{
 								id_anggota: this.$store.getters.loggedUser?.id_anggota,

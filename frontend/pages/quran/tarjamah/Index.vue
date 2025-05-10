@@ -2,14 +2,14 @@
   <div id="quran" class="pt-0">
     <el-card class="relative overflow-hidden
        bg-gradient-to-tr from-white/[0.8] from-50% to-sky-200/[0.7] rounded-[10px]
-      z-[0] font-montserrat
+      z-[0] font-montserrat text-[14px] leading-[1.3]
       mb-3 p-0" 
       body-class="py-4 px-6">
-      <div class="z-[10] text-gray-500">Terakhir Mentarjamah : </div>
+      <div class="z-[10] text-gray-500">Terakhir Membaca : </div>
       <template v-if="!isEmpty(lastData.tanggal)">
-        <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
+        <div class="z-[10] text-[24px] font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
         </div>
-        <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
+        <div class="z-[10] text-gray-500 mt-1"><b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
       </template>
       <template v-else>
         <div class="z-[10] text-2xl font-bold mb-3">
@@ -23,8 +23,8 @@
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px]
       mb-3 p-0"
-      body-class="py-3 px-5"
-      header-class="py-3 font-bold text-xl">
+      body-class="py-3 px-5 text-[14px]"
+      header-class="py-3 font-bold text-[16px]">
       <template #header>
         <div>Tarjamahan hari ini</div>
       </template>
@@ -37,14 +37,16 @@
           <span>Anda berhasil menyimpan data baru</span>
         </div>
         <el-button size="large" type="primary"
-          class="rounded-[15px] w-full font-bold"
+          class="rounded-full w-full font-bold text-[13px]
+          py-2"
           @click="showCreate = true">
+          <icons icon="mdi:plus"/>
           Tambah Catatan
         </el-button>
       </template>
       <template v-else>
         <form-comp ref="formTarjamah"
-          class="[&_*]:rounded-[15px]"
+          class="[&_.el-form-item\_\_label]:mb-1 mb-2"
           :key="'form-tarjamah-'+formKey"
           :fields="fields" 
           v-model:id="dataId"
@@ -53,14 +55,18 @@
           href-get="quran/tarjamah/get"
           :show-columns="['tanggal','surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']"
           @saved="submittedData" 
+          @changed-value="changedValue"
           @error="saving=false"
           size="large"
           :show-submit="false"
           label-position="top"
+          form-item-class="mb-2"
+          input-class="[&_*]:rounded-[15px]"
           :show-required-text="false">
         </form-comp>  
         <el-button size="large" type="success"
-          class="rounded-[15px] w-full font-bold"
+          class="rounded-[15px] w-full font-bold text-[13px]
+          py-2"
           :loading="saving" :disable="saving"
           @click="$refs.formTarjamah.submitForm(); saving=false">
           Simpan Data
@@ -68,21 +74,28 @@
       </template>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-5"
-      header="Rekap Mentarjamah AL-Qur'an"
-      header-class="py-3 font-bold text-xl" >
-      <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
-        @change="getChart">
-        <el-option value="day" label="Per Hari" />
-        <el-option value="week" label="Per Minggu" />
-        <el-option value="month" label="Per Bulan" />
-      </el-select>
-      <div class="mb-4">
-        <div v-if="!isEmpty(statistic.datasets)">
-          <line-chart class="h-[300px]"
-            :statistic="statistic" :max="max" :min="min" />
+      body-class="py-3 px-0"
+      header-class="py-3 font-bold text-[16px]
+        text-lime-800
+        flex justify-between items-center" >
+      <template #header>
+        <div>Data Kajian Tarjamah</div>
+        <div class="flex items-center gap-1
+          [&_*]:text-[20px] text-emerald-900/[0.4]">
+          <icons icon="fa6-solid:chart-line" 
+            @click="showData='chart'"
+            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
+          <icons icon="material-symbols:view-list" 
+            @click="showData='list'"
+            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
-      </div>
+      </template>
+      <chart ref="quranChartData" v-if="showData == 'chart'" />
+      <list-data ref="quranListData" v-if="showData =='list'"
+        @edit-data="(({id}) => {
+          dataId = id
+          showCreate = true
+        })"/>
     </el-card>
   </div>
 </template>
@@ -91,14 +104,16 @@
 import { mapGetters } from 'vuex';
 import { setStatusText, setStatusType } from '@/helpers/quran'
 import Form from '@/components/Form.vue'
-import LineChart from '@/components/charts/Line.vue'
+import Chart from './components/Chart.vue'
+import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
   name: "quran",
   components: {
     'form-comp' : Form,
-    LineChart,
+    Chart,
+    ListData,
   },
   data: function() {
     return {
@@ -128,12 +143,7 @@ export default {
       showCreate:false,
       success:false,
       quran: topMenu.quranTarjamah,
-      statistic:{
-				labels:[],
-				datasets:[],
-      },
-      max:5,
-      min:-1,
+      showData:'list',
     };
   },
   watch: {
@@ -169,33 +179,23 @@ export default {
           });
         await this.getChart();
       },
+    changedValue({ field, parent, value}){
+      console.log(field, parent, value)
+      if (field == 'surat_mulai-ayat_mulai') {
+      console.log(field)
+        let changedField = 'surat_selesai-ayat_selesai'
+        this.$refs.formBaca.changeData(changedField, parent, 'parent')
+        this.$refs.formBaca.changeData(changedField, value)
+      }
+    },
     submittedData(){
       this.saving = false;
       this.showCreate = false
       this.success = true
+      if (this.showData == 'chart') this.$refs.quranChartData.getChart();
+      if (this.showData == 'list') this.$refs.quranListData.getData(true);
       this.getInitial();
     },
-    async getChart(){
-      // return;
-      await this.$http.get('quran/tarjamah/dashboard', {
-          params: {}
-        })
-          .then(res => {
-            let data = res.data
-            this.statistic = data
-            this.min = data.min
-            this.max = data.max
-            this.loaded = true
-          })
-          .catch(err => {
-            this.$notify({
-              type:'error',
-              title: 'Gagal',
-              message: 'Tidak dapat mengambil data',
-              position: 'bottom-right',
-            });
-          })
-    }
   },
   created: function() {
     // let filter = this.$store.getters.filter

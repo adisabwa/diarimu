@@ -36,46 +36,47 @@ class InfaqController extends BaseData
     public function dashboard()
     {
         $postData = $this->request->getGetPost();
+        $type = $postData['tipe'] ?? 'week';
+        $end = $postData['end'] ?? date('Y-m-d');
+        $start = $postData['start'] ?? date('Y-m-d');
 
+        $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
-            ['id_anggota' => userdata()->id_anggota],
-            [],
-            'tanggal asc'
+            [
+                'id_anggota' => userdata()->id_anggota,
+                "tanggal >= '$start'" => NULL,
+                "tanggal <= '$end'" => NULL,
+            ]
         );
         $_data = [];
         foreach ($data as $key => $d) {
             if (empty($_data[$d->tanggal])) {
-                $tmp = (object)[
-                    'label' => date('d M y', strtotime($d->tanggal)),
-                    'total' => $d->total_score
-                ];
-                $_data[$d->tanggal] = $tmp;
+                $_data[$d->tanggal] = $d->jumlah;
             } else {
-                $_data[$d->tanggal]->total += $d->total_score;
+                $_data[$d->tanggal] += $d->jumlah;
             }
         }
         // var_dump($_data);
         $total = $labels = [];
         $max = $min = 0;
 
-        foreach ($_data as $key => $value) {
-            if (empty($labels[$value->label])) {
-                $labels[$value->label] = $value->label;
-                $total[$value->label] = $value->total;
-            }
+        foreach ($date_range as $key => $tgl) {
+            // var_dump($tgl);
+            $labels[$tgl] = date("d M", strtotime($tgl));
+            $total[$tgl] = $_data[$tgl] ?? 0;
         }
         
         $color =  setRandomColor();
         $datasets[] = (object)[
-            'label' => 'Nilai Infaq',
+            'label' => 'Jumlah Shadaqah',
             'data' => array_values($total),
             'tension' => 0.1,
             'borderColor' => $color,
             'backgroundColor' => $color,
             'pointRadius' => 5,
         ];
-        $max = empty($total) ? 1 : max($total);
-        $min = empty($total) ? -1 : min($total);
+        $max = empty($total) ? 10000 : max($total);
+        $min = empty($total) ? 0 : min($total);
         
         // $datasets = array_values($datasets);
         $labels = array_values($labels);

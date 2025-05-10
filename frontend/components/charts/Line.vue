@@ -28,13 +28,18 @@ export default {
 		min:{
 			type:Number,
 			default:-1,
-		}
+		},
+    addOptions:{
+      type:Object,
+      default:{}
+    }
 	},
 	watch: {
 		statistic: {
 			handler(newVal, oldVal){
-				this.options.scales.y.suggestedMax = parseInt(this.max) + 1
-        this.options.scales.y.suggestedMin = parseInt(this.min) - 1
+        let size = this.coalesce[this.options?.scales?.y?.ticks?.stepSize, 1];
+				this.options.scales.y.suggestedMax = parseInt(this.max) + (size)
+        this.options.scales.y.suggestedMin = parseInt(this.min) - (size)
 				let chart = this.$refs.line.chart;
 				chart.options = this.options;
 				chart.update();
@@ -120,10 +125,15 @@ export default {
 		}
 	},
 	methods: {
-
+    addingOptions(){
+      this.traverse(this.addOptions, (path, value) => {
+        console.log(path, value)
+        this.setObjectValueByPath(this.options, path, value)
+      })
+    },
 	},
-	mounted(){
-		
+	created(){
+		this.addingOptions()
 	}
 	
 }

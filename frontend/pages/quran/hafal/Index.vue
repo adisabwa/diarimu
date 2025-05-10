@@ -10,20 +10,21 @@
             opacity-[0.5]"/>
       <div class="relative w-fit overflow-x-scroll z-[10]
         snap-mandatory snap-x">
-        <div class="w-[200%] flex h-[90px] py-4">
-          <div class="snap-center w-full px-6 h-[90px]">
+        <div class="w-[200%] flex h-[80px] py-4">
+          <div class="snap-center w-full px-6 h-[90px] text-[14px] leading-[1.5]">
             <div class="z-[10] text-gray-500">Setoran Terakhir : </div>
-            <div class="z-[10] text-2xl font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
+            <div class="z-[10] text-[22px] font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
             </div>
-            <div class="z-[10] text-gray-500">Terakhir : <b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
+            <div class="z-[10] text-gray-500 text-[15px]"><b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
             
           </div>
           <div class="snap-center w-full px-6 h-[90px] overflow-scroll">
             <div class="z-[10] mb-2 text-md font-bold italic">
               <div>Total Hafalan :</div> 
-              <ol class="m-0 pl-4 text-[90%]">
+              <ol class="m-0 pl-4 py-2 text-[90%] font-normal
+                bg-white/[0.8]">
                 <template v-for="data in juz">
-                  <li>{{ data.nama_surat_mulai }} :{{ data.ayat_mulai }} ( Juz {{ data.juz_mulai }} ) s/d {{ data.nama_surat_selesai }} : {{ data.ayat_selesai }} ( Juz {{ data.juz_selesai }} )</li>
+                  <li class="py-[3px]">{{ data.nama_surat_mulai }} :{{ data.ayat_mulai }} ( Juz {{ data.juz_mulai }} ) - {{ data.nama_surat_selesai }} : {{ data.ayat_selesai }} ( Juz {{ data.juz_selesai }} )</li>
                 </template>
               </ol>
             </div>
@@ -34,14 +35,14 @@
     <el-card class="bg-white/[0.9] rounded-[10px]
       mb-3 p-0"
       body-class="py-3 px-5"
-      header-class="py-3 font-bold text-xl">
+      header-class="py-3 font-bold text-[18px]">
       <template #header>
         <div>Setoran Hafalan hari ini</div>
       </template>
       <template v-if="!showCreate">
         <div v-if="success"
-          class="text-center text-green-500 
-            mb-5
+          class="text-center text-green-500 text-[15px]
+            mb-3
             flex items-center justify-center">
           <icons icon="mdi:check-circle" />
           <span>Anda berhasil menyimpan data baru</span>
@@ -49,12 +50,13 @@
         <el-button size="large" type="primary"
           class="rounded-[15px] w-full font-bold"
           @click="showCreate = true">
+          <icons icon="mdi:plus" />
           Tambah Catatan
         </el-button>
       </template>
       <template v-else>
         <form-comp ref="formBaca"
-          class="[&_*]:rounded-[15px]"
+          class="[&_.el-form-item\_\_label]:mb-1 mb-2"
           :key="'form-hafal-'+formKey"
           :fields="fields" 
           v-model:id="dataId"
@@ -67,10 +69,12 @@
           size="large"
           :show-submit="false"
           label-position="top"
+          form-item-class="mb-2"
+          input-class="[&_*]:rounded-[15px]"
           :show-required-text="false">
         </form-comp>  
         <el-button size="large" type="success"
-          class="rounded-[15px] w-full font-bold"
+          class="rounded-xl w-full font-bold py-1 text-[13px]"
           :loading="saving" :disable="saving"
           @click="$refs.formBaca.submitForm(); saving=false">
           Simpan Data
@@ -78,21 +82,28 @@
       </template>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-5"
-      header="Rekap Menghafal AL-Qur'an"
-      header-class="py-3 font-bold text-xl" >
-      <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
-        @change="getChart">
-        <el-option value="day" label="Per Hari" />
-        <el-option value="week" label="Per Minggu" />
-        <el-option value="month" label="Per Bulan" />
-      </el-select>
-      <div class="mb-4">
-        <div v-if="!isEmpty(statistic.datasets)">
-          <line-chart class="h-[300px]"
-            :statistic="statistic" :max="max" :min="min" />
+      body-class="py-3 px-0"
+      header-class="py-3 font-bold text-[16px]
+        text-lime-800
+        flex justify-between items-center" >
+      <template #header>
+        <div>Data Setoran Hafalan Qur'an</div>
+        <div class="flex items-center gap-1
+          [&_*]:text-[20px] text-emerald-900/[0.4]">
+          <icons icon="fa6-solid:chart-line" 
+            @click="showData='chart'"
+            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
+          <icons icon="material-symbols:view-list" 
+            @click="showData='list'"
+            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
-      </div>
+      </template>
+      <chart ref="quranChartData" v-if="showData == 'chart'" />
+      <list-data ref="quranListData" v-if="showData =='list'"
+        @edit-data="(({id}) => {
+          dataId = id
+          showCreate = true
+        })"/>
     </el-card>
   </div>
 </template>
@@ -101,14 +112,16 @@
 import { mapGetters } from 'vuex';
 import { setStatusText, setStatusType } from '@/helpers/quran'
 import Form from '@/components/Form.vue'
-import LineChart from '@/components/charts/Line.vue'
+import Chart from './components/Chart.vue'
+import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
   name: "quran",
   components: {
     'form-comp' : Form,
-    LineChart,
+    Chart,
+    ListData,
   },
   data: function() {
     return {
@@ -139,12 +152,7 @@ export default {
       showCreate:false,
       success:false,
       quran: topMenu.quranHafal,
-      statistic:{
-				labels:[],
-				datasets:[],
-      },
-      max:5,
-      min:-1,
+      showData:'list',
     };
   },
   watch: {
@@ -179,35 +187,15 @@ export default {
             this.formKey++
             this.loading = false
           });
-        await this.getChart();
       },
     submittedData(){
       this.saving = false;
       this.showCreate = false
       this.success = true
+      if (this.showData == 'chart') this.$refs.quranChartData.getChart();
+      if (this.showData == 'list') this.$refs.quranListData.getData(true);
       this.getInitial();
     },
-    async getChart(){
-      // return;
-      await this.$http.get('quran/hafal/dashboard', {
-          params: {}
-        })
-          .then(res => {
-            let data = res.data
-            this.statistic = data
-            this.min = data.min
-            this.max = data.max
-            this.loaded = true
-          })
-          .catch(err => {
-            this.$notify({
-              type:'error',
-              title: 'Gagal',
-              message: 'Tidak dapat mengambil data',
-              position: 'bottom-right',
-            });
-          })
-    }
   },
   created: function() {
     // let filter = this.$store.getters.filter

@@ -87,7 +87,7 @@ export default {
     async getChart(){
       // return;
       let dates = this.dates.split('/')
-      await this.$http.get('quran/baca/dashboard', {
+      await this.$http.get('quran/hafal/dashboard', {
           params: {
             start:dates[0],
             end:dates[1],

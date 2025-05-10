@@ -92,34 +92,11 @@
           </div>
         </template>
       </el-dialog>
-      <!-- <el-dialog :v-model="true"
-        class="bg-white/[0.9] rounded-[10px]
-        mb-3 p-0"
-        <template>
-          <el-button size="large" type="success"
-            class="rounded-full w-full font-bold text-[13px]
-            py-2"
-            :loading="saving" :disable="saving"
-            @click="$refs.formInfaq.submitForm(); saving=false">
-            Simpan Data
-          </el-button>
-        </template>
-      </el-dialog> -->
       <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
         body-class="py-3 px-5"
-        header="Rekap Memshadaqah AL-Qur'an"
-        header-class="py-3 font-bold text-[16px]" >
-        <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
-          @change="getChart">
-          <el-option value="week" label="7 Hari" />
-          <el-option value="month" label="1 Bulan" />
-        </el-select>
-        <div class="mb-4">
-          <div v-if="!isEmpty(statistic.datasets)">
-            <line-chart class="h-[300px]"
-              :statistic="statistic" :max="max" :min="min" />
-          </div>
-        </div>
+        header="Statistik Sadaqah"
+        header-class="py-3 font-bold text-[18px] text-center" >
+        <chart />
       </el-card>
     </div>
 </template>
@@ -127,14 +104,14 @@
   <script>
   import { mapGetters } from 'vuex';
   import Form from '@/components/Form.vue'
-  import LineChart from '@/components/charts/Line.vue'
+  import Chart from './components/Chart.vue'
   import { topMenu } from '@/helpers/menus.js'
   
   export default {
     name: "infaq",
     components: {
       'form-comp' : Form,
-      LineChart,
+      Chart,
     },
     data: function() {
       return {
@@ -168,12 +145,6 @@
         success:false,
         saving:false,
         infaq: topMenu.infaqShadaqah,
-        statistic:{
-                  labels:[],
-                  datasets:[],
-        },
-        max:5,
-        min:-1,
       };
     },
     watch: {

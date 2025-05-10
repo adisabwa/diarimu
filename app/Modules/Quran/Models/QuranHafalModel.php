@@ -41,7 +41,7 @@ class QuranHafalModel extends Model
     }
 
 
-    public function getAll($whereAnd = [], $whereOr = [], $order = '')
+    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0)
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
@@ -57,6 +57,7 @@ class QuranHafalModel extends Model
                         ->orWhere($whereOr)
                     ->groupEnd()
                     ->orderBy($order)
+                    ->limit($limit, $offset)
                     ->get()
                     ->getResultObject();
 

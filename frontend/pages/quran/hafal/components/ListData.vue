@@ -1,5 +1,4 @@
 <template>
-	
 	<div 
 		v-infinite-scroll="loadingData"
 		class="min-h-[200px] max-h-[50vh] overflow-auto px-6 "
@@ -72,7 +71,7 @@ export default {
 					this.offset = 0
 					this.limit = 5
 				}
-        await this.$http.get('quran/baca', {
+        await this.$http.get('quran/hafal', {
             params: {
 							where:{
 								id_anggota: this.$store.getters.loggedUser?.id_anggota,

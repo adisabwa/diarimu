@@ -46,7 +46,7 @@
       </template>
       <template v-else>
         <form-comp ref="formBaca"
-          class="[&_*]:rounded-[15px]"
+          class="[&_.el-form-item\_\_label]:mb-1 mb-2"
           :key="'form-baca-'+formKey"
           :fields="fields" 
           v-model:id="dataId"
@@ -60,6 +60,8 @@
           size="large"
           :show-submit="false"
           label-position="top"
+          form-item-class="mb-2"
+          input-class="[&_*]:rounded-[15px]"
           :show-required-text="false">
         </form-comp>  
         <el-button size="large" type="success"
@@ -68,8 +70,6 @@
           :loading="saving" :disable="saving"
           @click="() => {
             $refs.formBaca.submitForm();
-            if (showData == 'chart') $refs.quranChartData.getChart();
-            if (showData == 'list') $refs.quranListData.getData(true);
             saving=false
           }">
           Simpan Data
@@ -194,6 +194,8 @@ export default {
       this.saving = false;
       this.showCreate = false
       this.success = true
+      if (this.showData == 'chart') this.$refs.quranChartData.getChart();
+      if (this.showData == 'list') this.$refs.quranListData.getData(true);
       this.getInitial();
     },
   },

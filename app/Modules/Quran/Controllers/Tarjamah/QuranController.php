@@ -21,7 +21,23 @@ class QuranController extends BaseData
         $this->model = model('QuranTarjamahModel');
         $this->quran = model('DataSuratQuranModel');
     }
+    
+    
+    public function index()
+    {
+        $where = $this->request->getGetPost('where') ?? [];
+        $whereOr = $this->request->getGetPost('or') ?? [];
+        $order = $this->request->getGetPost('order') ?? [];
+        $limit = $this->request->getGetPost('limit') ?? 5;
+        $offset = $this->request->getGetPost('offset') ?? 0;
 
+        $data = $this->model->getAll($where,$order,'tanggal desc, id',
+        $limit, $offset);
+
+        return $this->respondCreated($data);
+
+    }
+    
     public function get()
     {
         $id = $this->request->getGet('id');
@@ -63,31 +79,35 @@ class QuranController extends BaseData
     public function dashboard()
     {
         $postData = $this->request->getGetPost();
+        $type = $postData['tipe'] ?? 'week';
+        $end = $postData['end'] ?? date('Y-m-d');
+        $start = $postData['start'] ?? date('Y-m-d');
 
+        $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
-            ['id_anggota' => userdata()->id_anggota]
+            [
+                'id_anggota' => userdata()->id_anggota,
+                "tanggal >= '$start'" => NULL,
+                "tanggal <= '$end'" => NULL,
+            ]
         );
         $_data = [];
+        // var_dump($data);
         foreach ($data as $key => $d) {
             if (empty($_data[$d->tanggal])) {
-                $tmp = (object)[
-                    'label' => date('d M y', strtotime($d->tanggal)),
-                    'total' => $d->total_ayat
-                ];
-                $_data[$d->tanggal] = $tmp;
+                $_data[$d->tanggal] = $d->total_ayat ?? 0;
             } else {
-                $_data[$d->tanggal]->total += $d->total_ayat;
+                $_data[$d->tanggal] += $d->total_ayat ?? 0;
             }
         }
         // var_dump($_data);
         $total = $labels = [];
         $max = $min = 0;
 
-        foreach ($_data as $key => $value) {
-            if (empty($labels[$value->label])) {
-                $labels[$value->label] = $value->label;
-                $total[$value->label] = $value->total;
-            }
+        foreach ($date_range as $key => $tgl) {
+            // var_dump($tgl);
+            $labels[$tgl] = date("d M", strtotime($tgl));
+            $total[$tgl] = $_data[$tgl] ?? 0;
         }
         
         $color =  setRandomColor();

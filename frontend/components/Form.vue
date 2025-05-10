@@ -1,12 +1,13 @@
 <template>
 	<div class="">
-    <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving">
+    <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving"
+      :class="[formClass]">
       <template  v-for="(field, ind) in fieldsData">
-        <el-form-item class="mb-3"
+        <el-form-item :class="[formItemClass]"
           v-if="showColumns.length > 0 ? showColumns.includes(field.nama_kolom) : !passColumns.includes(field.nama_kolom)"
           :error="errors[field.nama_kolom]">
           <template #label v-if="showLabel">
-            <span :class="`${field.required == '1' ? 'required' : ''} leading-[1.5] mt-2`"> {{ field.label }} </span>
+            <span :class="[field.required == '1' ? 'required' : '','leading-[1.5] mt-2', labelClass]"> {{ field.label }} </span>
           </template>
           <div class="flex space-x-3 w-full">
             <el-select v-if="showOriginal" v-model="original[field.nama_kolom]" class="w-[130px] grow-0 shrink-0" size="large" @change="changedValue(field.nama_kolom)">
@@ -15,7 +16,8 @@
             </el-select>
             <template v-if="field.input == 'input' || isEmpty(field.input)">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
-                class="w-full" @change="searchData(ind); changedValue(field.nama_kolom)" @input="form[field.nama_kolom] = runFunction(field.function_input, form[field.nama_kolom])"
+                :class="['w-full',inputClass]" 
+                @change="searchData(ind); changedValue(field.nama_kolom)" @input="form[field.nama_kolom] = runFunction(field.function_input, form[field.nama_kolom])"
                 :size="size">
                 <template #prepend v-if="!isEmpty(field.prepend)"> {{ field.prepend }}</template>
                 <template #apppend v-if="!isEmpty(field.apppend)"> {{ field.append }}</template>  
@@ -23,7 +25,8 @@
             </template> 
             <template v-else-if="field.input == 'password'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
-                class="w-full in-password" type="password" show-password
+                :class="['w-full in-password',inputClass]" 
+                type="password" show-password
                 @change="changedValue(field.nama_kolom)"
                 :size="size">
                 <template #prefix>
@@ -34,22 +37,26 @@
             <template v-else-if="field.input == 'input-number'">
               <el-input-number v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 @change="changedValue(field.nama_kolom)"
-                class="w-full" :size="size"/>
+                :class="['w-full',inputClass]" 
+                :size="size"/>
             </template>
             <template v-else-if="field.input == 'number'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
-                class="w-full" type="number"
+                :class="['w-full',inputClass]" 
+                type="number"
                 @change="changedValue(field.nama_kolom)"
                 :size="size"/>
             </template>
             <template v-else-if="field.input == 'textarea'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
-                class="w-full" type="textarea" row="3"
+                :class="['w-full',inputClass]" 
+                type="textarea" row="3"
                 @change="changedValue(field.nama_kolom)"
                 :size="size"/>
             </template>
             <template v-else-if="field.input == 'select' || field.input == 'select-multiple'">
-              <el-select v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" class="w-full"
+              <el-select v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
+                :class="['w-full',inputClass]" 
                 filterable clearable :multiple="field.input == 'select-multiple'"
                 popper-class="h-auto min-w-[350px] max-w-[800px]
                   [&_li]:h-auto
@@ -94,7 +101,8 @@
               </el-select>
             </template>
             <template v-else-if="field.input == 'select-double'">
-              <el-select v-model="field.parentSelect" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label1}`" class="w-full"
+              <el-select v-model="field.parentSelect" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label1}`" 
+                :class="['w-full',inputClass]" 
                 filterable clearable 
                 popper-class="h-auto max-w-[600px]
                   [&_li]:h-auto [&_li]:py-1
@@ -113,6 +121,7 @@
               </el-select>
               <el-select v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
                 filterable clearable
+                :class="['w-full',inputClass]" 
                 popper-class="h-auto max-w-[600px]
                   [&_li]:h-auto [&_li]:py-1
                   [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] "
@@ -157,6 +166,7 @@
             </template>
             <template v-else-if="field.input=='radio'">
               <el-radio-group v-model="form[field.nama_kolom]"
+                :class="[inputClass]" 
                 @change="changedValue(field.nama_kolom)">
                 <template 
                   v-for="item in field.options"
@@ -167,7 +177,7 @@
             </template>
             <template v-else-if="field.input=='date'">
               <el-date-picker
-                class="w-full"
+                :class="['w-full',inputClass]" 
                 v-model="form[field.nama_kolom]"
                 value-format="YYYY-MM-DD"
                 format="DD MMMM YYYY"
@@ -178,7 +188,7 @@
               />
             </template>
             <template v-else-if="field.input == 'file'">
-              <div class="w-full">
+              <div  :class="['w-full',inputClass]" >
                 <div v-if="!isEmpty(links[field.nama_kolom])">
                   <el-checkbox v-model="field.change">Upload Ulang</el-checkbox>
                 </div>
@@ -291,6 +301,22 @@ export default {
       type:Array,
       default:[],
     },
+    formClass:{
+      type:String,
+      default:'mb-4',
+    },
+    formItemClass:{
+      type:String,
+      default:'mb-3',
+    },
+    labelClass:{
+      type:String,
+      default:'',
+    },
+    inputClass:{
+      type:String,
+      default:'',
+    }
   },
   emits:['update:id','saved','error','changeId','update:formValue','changedValue'],
   data: function() {

@@ -22,11 +22,19 @@ app.component('file', File)
 //Plugins
 import elementPlugin from '@/config/plugins/element-ui-global'
 import funcPlugin from '@/config/plugins/functions'
+import numberFuncPlugin from '@/config/plugins/number-functions'
+import dataFuncPlugin from '@/config/plugins/data-functions'
+import dateFuncPlugin from '@/config/plugins/date-functions'
+import uiFuncPlugin from '@/config/plugins/ui-functions'
 import directives from '@/config/plugins/directives' // import your plugin
 
 app.use(directives)
 app.use(elementPlugin)
 app.use(funcPlugin)
+app.use(numberFuncPlugin)
+app.use(dataFuncPlugin)
+app.use(dateFuncPlugin)
+app.use(uiFuncPlugin)
 
 import jsonToFormData from 'json-form-data'
 window.jsonToFormData = jsonToFormData
