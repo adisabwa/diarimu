@@ -27,6 +27,8 @@ $routes->group('sholat/wajib', [
     $routes->add('store', [SholatWajib::class, 'store'], [ 'filter' => 'api-validation:mu_sholat-wajib,sholat/wajib/total_score']);
     $routes->add('dashboard', [SholatWajib::class, 'dashboard']);
     $routes->add('get_last_and_best', [SholatWajib::class, 'get_last_and_best']);
+    $routes->add('get_before', [SholatWajib::class, 'get_before']);
+
 });
 
 //-----------------------------------------------------------------------------------------------------
@@ -41,6 +43,8 @@ $routes->group('sholat/sunnah', [
     $routes->add('store', [SholatSunnah::class, 'store'], [ 'filter' => 'api-validation:mu_sholat-sunnah,sholat/sunnah/total_score']);
     $routes->add('dashboard', [SholatSunnah::class, 'dashboard']);
     $routes->add('get_last_and_best', [SholatSunnah::class, 'get_last_and_best']);
+    $routes->add('get_before', [SholatSunnah::class, 'get_before']);
+
 });
 
 //-----------------------------------------------------------------------------------------------------

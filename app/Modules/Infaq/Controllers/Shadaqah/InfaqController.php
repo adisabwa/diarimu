@@ -27,6 +27,11 @@ class InfaqController extends BaseData
         return $this->respondCreated($data);
 
     }
+    
+    public function get_last()
+    {
+        return $this->respondCreated($this->model->get_last(userdata()->id_anggota));
+    }
 
     public function dashboard()
     {

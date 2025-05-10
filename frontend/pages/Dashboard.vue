@@ -31,18 +31,21 @@
 								@click="$router.push({name:menu.route})">
 								<div class="animate pointer duration-500 group/app
 									hover:scale-90"	>
-									<div :class="`${menu.color} ${menu.textColor} ${menu.shadowColor}
-										shadow-md
-										h-[65px] rounded-full
-										relative overflow-hidden
-										flex items-center justify-center align-middle`">
-										<img :src="menu.image" height="45px" width="45px"
-											class="rounded-full"/>
-										<div class="absolute w-[90px] h-[200%] rotate-[-25deg] top-[-50%]
-											bg-gradient-to-r from-transparent via-white/[0.2] to-transparent
-											animate-[fly-in-absolute_4s_infinite_ease-in-out] [--from-left:-70%] [--left:350%] "
-											:style="{animationDelay: ind + 's !important'}"/>
-									</div>
+									<el-badge :value="menu.before" :offset="['-5','10']"
+										:show-zero="false">
+										<div :class="`${menu.color} ${menu.textColor} ${menu.shadowColor}
+											shadow-md
+											h-[65px] w-[65px] rounded-full
+											relative overflow-hidden
+											flex items-center justify-center align-middle`">
+											<img :src="menu.image" height="45px" width="45px"
+												class="rounded-full"/>
+											<div class="absolute w-[90px] h-[200%] rotate-[-25deg] top-[-50%]
+												bg-gradient-to-r from-transparent via-white/[0.2] to-transparent
+												animate-[fly-in-absolute_4s_infinite_ease-in-out] [--from-left:-70%] [--left:350%] "
+												:style="{animationDelay: ind + 's !important'}"/>
+										</div>
+									</el-badge>
 									<div class="text-center mt-2 text-[15px] text-emerald-800 w-fit
 										absolute -translate-x-1/2 left-1/2
 										leading-[1.1]">{{ menu.label }}</div>
@@ -82,6 +85,22 @@ export default {
       user: 'loggedUser',
     }),
   },
+	methods:{
+		getBefore(){
+			let keys = Object.keys(topMenu)
+			for (let i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				const d = this.topMenu[key]
+				this.$http.get(d.url+'/get_before')
+					.then(res => {
+						d.before = res?.data
+					})
+			}
+		}
+	},
+	mounted(){
+		this.getBefore()
+	}
 	
 }
 </script>

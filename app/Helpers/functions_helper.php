@@ -73,3 +73,13 @@ function getDateRange($start, $end)
 
     return $lists;
 }
+
+function get_date_interval($start, $end)
+{
+    $start = new DateTime($start);
+    $end = new DateTime($end);
+
+    $interval = $start->diff($end);
+
+    return $interval->d;
+}

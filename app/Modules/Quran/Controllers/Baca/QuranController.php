@@ -22,23 +22,20 @@ class QuranController extends BaseData
         $this->quran = model('DataSuratQuranModel');
     }
 
+    
     public function index()
-    {   
-        $nama = $this->request->getPostGet('nama');
-        $kelas = $this->request->getPostGet('kelas'); 
-        $order = implode(",", $this->request->getPostGet('order') ?? []);
-        $whereAnd = [
-            "nama LIKE '%$nama%'" => NULL,
-            empty($kelas) ? '1=1' : "kelas='$kelas'" => NULL
-        ];
-        
-        $whereOr = [
-            
-        ];
-        $data = $this->model->getAll($whereAnd, $whereOr, $order);
+    {
+        $where = $this->request->getGetPost('where') ?? [];
+        $whereOr = $this->request->getGetPost('or') ?? [];
+        $order = $this->request->getGetPost('order') ?? [];
+        $limit = $this->request->getGetPost('limit') ?? 5;
+        $offset = $this->request->getGetPost('offset') ?? 0;
 
-        // var_dump($this->model->db->getLastQuery());
+        $data = $this->model->getAll($where,$order,'tanggal desc, id',
+        $limit, $offset);
+
         return $this->respondCreated($data);
+
     }
 
     public function get()
@@ -54,6 +51,15 @@ class QuranController extends BaseData
             $data->{'surat_selesai-ayat_selesai'} = "$data->surat_selesai-$data->ayat_selesai";
         }
         return $this->respondCreated($data);
+    }
+
+    public function get_before()
+    {
+        $data = $this->model->orderBy('tanggal desc')->find()[0];
+        $now = date('Y-m-d');
+
+        // var_dump($data->tanggal, $now);
+        return $this->respondCreated(get_date_interval($data->tanggal ?? $now, $now));
     }
 
     public function save()
@@ -73,11 +79,10 @@ class QuranController extends BaseData
     public function dashboard()
     {
         $postData = $this->request->getGetPost();
-        $type = $postData['type'] ?? 'week';
+        $type = $postData['tipe'] ?? 'week';
         $end = $postData['end'] ?? date('Y-m-d');
-        if ($type == 'week') {
-            $start = date('Y-m-d', strtotime('-6 days', strtotime($end)));
-        }
+        $start = $postData['start'] ?? date('Y-m-d');
+
         $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
             [

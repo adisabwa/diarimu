@@ -66,26 +66,39 @@
           class="rounded-full w-full font-bold text-[13px]
           py-2"
           :loading="saving" :disable="saving"
-          @click="$refs.formBaca.submitForm(); saving=false">
+          @click="() => {
+            $refs.formBaca.submitForm();
+            if (showData == 'chart') $refs.quranChartData.getChart();
+            if (showData == 'list') $refs.quranListData.getData(true);
+            saving=false
+          }">
           Simpan Data
         </el-button>
       </template>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-5"
-      header="Rekap Membaca AL-Qur'an"
-      header-class="py-3 font-bold text-[16px]" >
-      <el-select size="large" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
-        @change="getChart">
-        <el-option value="week" label="7 Hari" />
-        <el-option value="month" label="1 Bulan" />
-      </el-select>
-      <div class="mb-4">
-        <div v-if="!isEmpty(statistic.datasets)">
-          <line-chart class="h-[300px]"
-            :statistic="statistic" :max="max" :min="min" />
+      body-class="py-3 px-0"
+      header-class="py-3 font-bold text-[16px]
+        text-lime-800
+        flex justify-between items-center" >
+      <template #header>
+        <div>Data Membaca Al-Qur'an</div>
+        <div class="flex items-center gap-1
+          [&_*]:text-[20px] text-emerald-900/[0.4]">
+          <icons icon="fa6-solid:chart-line" 
+            @click="showData='chart'"
+            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
+          <icons icon="material-symbols:view-list" 
+            @click="showData='list'"
+            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
-      </div>
+      </template>
+      <chart ref="quranChartData" v-if="showData == 'chart'" />
+      <list-data ref="quranListData" v-if="showData =='list'"
+        @edit-data="(({id}) => {
+          dataId = id
+          showCreate = true
+        })"/>
     </el-card>
   </div>
 </template>
@@ -94,20 +107,21 @@
 import { mapGetters } from 'vuex';
 import { setStatusText, setStatusType } from '@/helpers/quran'
 import Form from '@/components/Form.vue'
-import LineChart from '@/components/charts/Line.vue'
+import Chart from './components/Chart.vue'
+import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
   name: "quran",
   components: {
     'form-comp' : Form,
-    LineChart,
+    Chart,
+    ListData,
   },
   data: function() {
     return {
       loading: false,
       showAdd: false,
-      tipe:'',
       formKey:1,
       dataId:-1,
       lastData:{
@@ -132,12 +146,7 @@ export default {
       success:false,
       saving:false,
       quran: topMenu.quranBaca,
-      statistic:{
-				labels:[],
-				datasets:[],
-      },
-      max:5,
-      min:-1,
+      showData:'list',
     };
   },
   watch: {
@@ -171,7 +180,6 @@ export default {
           this.formKey++
           this.loading = false
         });
-      await this.getChart();
     },
     changedValue({ field, parent, value}){
       console.log(field, parent, value)
@@ -188,27 +196,6 @@ export default {
       this.success = true
       this.getInitial();
     },
-    async getChart(){
-      // return;
-      await this.$http.get('quran/baca/dashboard', {
-          params: {}
-        })
-          .then(res => {
-            let data = res.data
-            this.statistic = data
-            this.min = data.min
-            this.max = data.max
-            this.loaded = true
-          })
-          .catch(err => {
-            this.$notify({
-              type:'error',
-              title: 'Gagal',
-              message: 'Tidak dapat mengambil data',
-              position: 'bottom-right',
-            });
-          })
-    }
   },
   created: function() {
     // let filter = this.$store.getters.filter

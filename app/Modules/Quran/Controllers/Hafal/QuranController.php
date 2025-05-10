@@ -24,25 +24,6 @@ class QuranController extends BaseData
         $this->data = model('QuranHafalDataModel');
     }
 
-    public function index()
-    {   
-        $nama = $this->request->getPostGet('nama');
-        $kelas = $this->request->getPostGet('kelas'); 
-        $order = implode(",", $this->request->getPostGet('order') ?? []);
-        $whereAnd = [
-            "nama LIKE '%$nama%'" => NULL,
-            empty($kelas) ? '1=1' : "kelas='$kelas'" => NULL
-        ];
-        
-        $whereOr = [
-            
-        ];
-        $data = $this->model->getAll($whereAnd, $whereOr, $order);
-
-        // var_dump($this->model->db->getLastQuery());
-        return $this->respondCreated($data);
-    }
-
     public function get()
     {
         $id = $this->request->getGet('id');
@@ -58,6 +39,15 @@ class QuranController extends BaseData
         return $this->respondCreated($data);
     }
 
+    public function get_before()
+    {
+        $data = $this->model->orderBy('tanggal desc')->find()[0];
+        $now = date('Y-m-d');
+
+        // var_dump($data->tanggal, $now);
+        return $this->respondCreated(get_date_interval($data->tanggal ?? $now, $now));
+    }
+    
     public function save()
     {
         $posted_data = $this->request->getPost();

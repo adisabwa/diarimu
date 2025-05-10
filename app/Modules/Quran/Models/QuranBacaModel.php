@@ -23,26 +23,7 @@ class QuranBacaModel extends Model
 
     }
 
-    
-    public function get_last($id_anggota)
-    {
-        $data = $this->db->table('mu_quran_baca qb')
-                    ->select("qb.*, s.nama, 
-                        sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
-                    ->join('mu_anggota s','qb.id_anggota=s.id')
-                    ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
-                    ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
-                    ->orderBy('qb.tanggal desc,surat_selesai desc,surat_mulai desc')
-                    ->where('id_anggota',$id_anggota)
-                    ->get()
-                    ->getRowObject();
-        // var_dump($data);
-        return $data;
-    }
-
-
-
-    public function getAll($whereAnd = [], $whereOr = [], $order = '')
+    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0)
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
@@ -58,9 +39,26 @@ class QuranBacaModel extends Model
                         ->orWhere($whereOr)
                     ->groupEnd()
                     ->orderBy($order)
+                    ->limit($limit, $offset)
                     ->get()
                     ->getResultObject();
 
+        return $data;
+    }
+
+    public function get_last($id_anggota)
+    {
+        $data = $this->db->table('mu_quran_baca qb')
+                    ->select("qb.*, s.nama, 
+                        sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
+                    ->join('mu_anggota s','qb.id_anggota=s.id')
+                    ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
+                    ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
+                    ->orderBy('qb.tanggal desc,surat_selesai desc,surat_mulai desc')
+                    ->where('id_anggota',$id_anggota)
+                    ->get()
+                    ->getRowObject();
+        // var_dump($data);
         return $data;
     }
 

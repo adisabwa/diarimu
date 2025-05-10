@@ -83,4 +83,13 @@ class SholatController extends BaseData
         $labels = array_values($labels);
         return $this->respondCreated(compact('labels','datasets','max','min'));
     }
+
+    public function get_before()
+    {
+        $data = $this->model->orderBy('tanggal desc')->find()[0];
+        $now = date('Y-m-d');
+
+        // var_dump($data->tanggal, $now);
+        return $this->respondCreated(get_date_interval($data->tanggal ?? $now, $now));
+    }
 }

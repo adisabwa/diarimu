@@ -29,7 +29,7 @@ $routes->group('quran/baca', [
     $routes->add('get', [Quran::class, 'get']);
     $routes->add('get_last', [Quran::class, 'get_last']);
     $routes->add('store', [Quran::class, 'save'], [ 'filter' => 'api-validation:mu_quran_baca']);
-    // $routes->add('template', [Quran::class, 'template']);
+    $routes->add('get_before', [Quran::class, 'get_before']);
     // $routes->add('upload', [Quran::class, 'upload']);
     $routes->add('dashboard', [Quran::class, 'dashboard']);
     // $routes->add('status/(:any)/(:any)', [Quran::class, 'status/$1/$2']);
@@ -57,6 +57,7 @@ $routes->group('quran/hafal', [
     $routes->add('dashboard', [QuranHafal::class, 'dashboard']);
     $routes->add('save_data', [QuranHafal::class, 'save_data']);
     $routes->add('merge_data', [QuranHafal::class, 'merge_data']);
+    $routes->add('get_before', [QuranHafal::class, 'get_before']);
 });     
 
 //-----------------------------------------------------------------------------------------------------
@@ -70,6 +71,7 @@ $routes->group('quran/tarjamah', [
     $routes->add('get_last', [QuranTarjamah::class, 'get_last']);
     $routes->add('store', [QuranTarjamah::class, 'save'], [ 'filter' => 'api-validation:mu_quran_tarjamah']);
     $routes->add('dashboard', [QuranTarjamah::class, 'dashboard']);
+    $routes->add('get_before', [QuranTarjamah::class, 'get_before']);
 });
 
 //-----------------------------------------------------------------------------------------------------

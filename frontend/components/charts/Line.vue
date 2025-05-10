@@ -33,7 +33,6 @@ export default {
 	watch: {
 		statistic: {
 			handler(newVal, oldVal){
-				console.log(newVal)
 				this.options.scales.y.suggestedMax = parseInt(this.max) + 1
         this.options.scales.y.suggestedMin = parseInt(this.min) - 1
 				let chart = this.$refs.line.chart;
@@ -83,15 +82,18 @@ export default {
 				},
 				plugins: {
 					legend: {
-						position: 'top',
+						position: 'bottom',
 						labels: {
 							font: {
-								size: 12,
+								size: 10,
 								family:'montserrat'
 							},
+							boxWidth: 20,
+							padding: 15,  
 						},
 						title: {
 							padding: {
+								top:100,
 								bottom: 100,
 							},
 						},

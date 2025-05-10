@@ -83,6 +83,15 @@ class SholatController extends BaseData
 
     }
 
+    public function get_before()
+    {
+        $data = $this->model->orderBy('tanggal desc')->find()[0];
+        $now = date('Y-m-d');
+
+        // var_dump($data->tanggal, $now);
+        return $this->respondCreated(get_date_interval($data->tanggal ?? $now, $now));
+    }
+
     public function dashboard()
     {
         $postData = $this->request->getGetPost();

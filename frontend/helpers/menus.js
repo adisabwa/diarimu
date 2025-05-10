@@ -137,6 +137,7 @@ let saving = [
 
 let topMenu = {
   quranBaca: {
+    url:'quran/baca',
     label:"Baca Qur'an",
     route:'quran-baca',
     color:'bg-lime-200',
@@ -145,6 +146,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/quran.png',
   },
   quranHafal: {
+    url:'quran/hafal',
     label:"Hafal Qur'an",
     route:'quran-hafal',
     color:'bg-yellow-200',
@@ -153,6 +155,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/memorization.png',
   },
   quranTarjamah: {
+    url:'quran/tarjamah',
     label:"Tarjamahan Qur'an",
     route:'quran-tarjamah',
     color:'bg-sky-200',
@@ -161,6 +164,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/kajian.png',
   },
   sholatWajib: {
+    url:'sholat/wajib',
     label:"Sholat Wajib",
     route:'sholat-wajib',
     color:'bg-purple-200',
@@ -169,6 +173,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/mosque.png',
   },
   sholatSunnah: {
+    url:'sholat/sunnah',
     label:"Sholat Sunnah",
     route:'sholat-sunnah',
     color:'bg-rose-200',
@@ -177,6 +182,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/prayer-rug.png',
   },
   infaqShadaqah: {
+    url:'infaq/shadaqah',
     label:"Infaq / Shadaqah",
     route:'shadaqah',
     color:'bg-teal-200',

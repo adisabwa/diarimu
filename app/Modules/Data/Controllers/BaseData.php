@@ -20,11 +20,18 @@ class BaseData extends BaseController
 
     public function index()
     {
-        $where = $this->request->getGet('where') ?? [];
-        $order = $this->request->getGet('order') ?? [];
+        $where = $this->request->getGetPost('where') ?? [];
+        $order = $this->request->getGetPost('order') ?? [];
+        $limit = $this->request->getGetPost('limit') ?? 5;
+        $offset = $this->request->getGetPost('offset') ?? 0;
+
         $order = implode(",", $order);
 
-        $data = $this->model->where($where)->orderBy($order)->findAll();
+        $data = $this->model->builder()
+                            ->where($where)->orderBy($order)
+                            ->limit($limit, $offset)
+                            ->get()->getResult();
+        // var_dump($this->model->getLastQuery());
         foreach ($data as $key => $d) {
             $d->checked = false;
         }
