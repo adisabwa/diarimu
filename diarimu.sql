@@ -56,21 +56,36 @@ CREATE TABLE `mu__sholat_sunnah` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nama_sholat` varchar(30) NOT NULL,
   `rakaat` enum('odd','even') NOT NULL DEFAULT 'even',
+  `type` enum('main','additional') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'additional',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int NOT NULL,
+  `updated_by` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `mu__sholat_sunnah` (`id`, `nama_sholat`, `rakaat`) VALUES
-(1,	'Tahajud',	'even'),
-(2,	'Witir',	'odd'),
-(3,	'Qobliyah Shubuh',	'even'),
-(4,	'Syuruq',	'even'),
-(5,	'Dhuha',	'even'),
-(6,	'Qobliyah Dhuhur',	'even'),
-(7,	'Ba\'diyah Dhuhur',	'even'),
-(8,	'Qobliyah Asar',	'even'),
-(9,	'Qobliyah Maghrib',	'even'),
-(10,	'Ba\'diyah Maghrib',	'even'),
-(11,	'Ba\'diyah Isya',	'even');
+INSERT INTO `mu__sholat_sunnah` (`id`, `nama_sholat`, `rakaat`, `type`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(1,	'Tahajud',	'even',	'main',	NULL,	NULL,	0,	0),
+(2,	'Witir',	'odd',	'main',	NULL,	NULL,	0,	0),
+(3,	'Qobliyah Shubuh',	'even',	'main',	NULL,	NULL,	0,	0),
+(4,	'Syuruq',	'even',	'main',	NULL,	NULL,	0,	0),
+(5,	'Dhuha',	'even',	'main',	NULL,	NULL,	0,	0),
+(6,	'Qobliyah Dhuhur',	'even',	'main',	NULL,	NULL,	0,	0),
+(7,	'Ba\'diyah Dhuhur',	'even',	'main',	NULL,	NULL,	0,	0),
+(8,	'Qobliyah Asar',	'even',	'main',	NULL,	NULL,	0,	0),
+(9,	'Qobliyah Maghrib',	'even',	'main',	NULL,	NULL,	0,	0),
+(10,	'Ba\'diyah Maghrib',	'even',	'main',	NULL,	NULL,	0,	0),
+(11,	'Ba\'diyah Isya',	'even',	'main',	NULL,	NULL,	0,	0),
+(12,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(13,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(14,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(15,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(17,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(18,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(19,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(20,	'Tahiyatul Masjid',	'even',	'additional',	NULL,	NULL,	0,	0),
+(24,	'Tarawih',	'even',	'additional',	'2025-05-10 18:22:21',	'2025-05-10 18:22:21',	14,	0),
+(25,	'Sunnah Wudhu',	'even',	'additional',	'2025-05-10 18:32:25',	'2025-05-10 18:32:25',	14,	0);
 
 DROP TABLE IF EXISTS `mu__surat_quran`;
 CREATE TABLE `mu__surat_quran` (
@@ -275,15 +290,15 @@ INSERT INTO `mu_infaq_shadaqah` (`id`, `id_anggota`, `tanggal`, `jumlah`, `keter
 (4,	24,	'2025-05-09',	100000,	'Makan',	'2025-05-09 21:42:36',	'2025-05-09 13:58:52',	14,	0),
 (5,	24,	'2025-05-09',	200000,	'Lazismu',	'2025-05-09 21:42:36',	'2025-05-09 13:59:10',	14,	0),
 (6,	24,	'2025-05-09',	10000,	'Infaq Masjid',	'2025-05-09 21:42:36',	'2025-05-09 14:07:17',	14,	0),
-(7,	24,	'2025-05-09',	100000,	'Makan',	'2025-05-09 21:42:36',	'2025-05-09 13:58:52',	14,	0),
+(7,	24,	'2025-04-30',	109000,	'Percobaan ERC',	'2025-05-10 23:26:34',	'2025-05-10 16:26:34',	14,	0),
 (8,	24,	'2025-05-09',	200000,	'Lazismu',	'2025-05-09 21:42:36',	'2025-05-09 13:59:10',	14,	0),
 (9,	24,	'2025-05-09',	10000,	'Infaq Masjid',	'2025-05-09 21:42:36',	'2025-05-09 14:07:17',	14,	0),
 (10,	24,	'2025-05-09',	100000,	'Makan',	'2025-05-09 21:42:36',	'2025-05-09 13:58:52',	14,	0),
 (11,	24,	'2025-05-09',	200000,	'Lazismu',	'2025-05-09 21:42:36',	'2025-05-09 13:59:10',	14,	0),
 (12,	24,	'2025-05-09',	10000,	'Infaq Masjid',	'2025-05-09 21:42:36',	'2025-05-09 14:07:17',	14,	0),
-(14,	24,	'2025-05-10',	109000,	'Percobaan ERC',	'2025-05-09 22:08:12',	'2025-05-09 15:08:12',	14,	0),
+(14,	24,	'2025-05-10',	109000,	'Percobaan ERC',	'2025-05-10 23:25:05',	'2025-05-10 16:25:05',	14,	0),
 (15,	24,	'2025-05-11',	100000,	'133saA-AAA',	'2025-05-09 22:08:08',	'2025-05-09 15:08:08',	14,	0),
-(16,	24,	'2025-05-12',	1113000,	'CC',	'2025-05-09 15:09:39',	'2025-05-09 15:09:39',	14,	0);
+(16,	24,	'2025-05-12',	1113000,	'CC',	'2025-05-10 23:25:00',	'2025-05-10 16:25:00',	14,	0);
 
 DROP TABLE IF EXISTS `mu_nama_kolom`;
 CREATE TABLE `mu_nama_kolom` (
@@ -602,7 +617,23 @@ CREATE TABLE `mu_sholat_sunnah` (
 
 INSERT INTO `mu_sholat_sunnah` (`id`, `id_anggota`, `tanggal`, `id_sholat`, `rakaat`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
 (2,	24,	'2025-05-01',	1,	2,	'2025-05-08 14:34:43',	'2025-05-08 14:34:43',	0,	0),
-(6,	24,	'2025-05-01',	2,	7,	'2025-05-08 14:35:42',	'2025-05-08 14:35:42',	0,	0);
+(6,	24,	'2025-05-01',	2,	7,	'2025-05-08 14:35:42',	'2025-05-08 14:35:42',	0,	0),
+(7,	24,	'2025-05-01',	3,	2,	'2025-05-10 16:32:11',	'2025-05-10 16:32:11',	0,	0),
+(10,	24,	'2025-05-01',	4,	4,	'2025-05-10 16:32:33',	'2025-05-10 16:32:33',	0,	0),
+(12,	24,	'2025-05-01',	10,	2,	'2025-05-10 16:58:40',	'2025-05-10 16:58:40',	0,	0),
+(13,	24,	'2025-05-01',	11,	2,	'2025-05-10 17:03:44',	'2025-05-10 17:03:44',	0,	0),
+(15,	24,	'2025-05-01',	5,	2,	'2025-05-10 17:08:17',	'2025-05-10 17:08:17',	0,	0),
+(17,	24,	'2025-05-01',	17,	2,	'2025-05-10 18:46:34',	'2025-05-10 18:46:34',	0,	0),
+(22,	24,	'2025-05-01',	24,	2,	'2025-05-10 19:14:26',	'2025-05-10 19:14:26',	0,	0),
+(23,	24,	'2025-05-02',	1,	2,	'2025-05-10 19:46:10',	'2025-05-10 19:46:10',	0,	0),
+(24,	24,	'2025-05-02',	2,	1,	'2025-05-10 19:46:11',	'2025-05-10 19:46:11',	0,	0),
+(25,	24,	'2025-05-02',	3,	2,	'2025-05-10 19:46:12',	'2025-05-10 19:46:12',	0,	0),
+(26,	24,	'2025-05-02',	4,	2,	'2025-05-10 19:46:12',	'2025-05-10 19:46:12',	0,	0),
+(27,	24,	'2025-05-02',	5,	2,	'2025-05-10 19:46:14',	'2025-05-10 19:46:14',	0,	0),
+(28,	24,	'2025-05-02',	6,	2,	'2025-05-10 19:46:14',	'2025-05-10 19:46:14',	0,	0),
+(29,	24,	'2025-05-11',	7,	2,	'2025-05-10 20:05:17',	'2025-05-10 20:05:17',	0,	0),
+(30,	24,	'2025-05-11',	6,	2,	'2025-05-10 20:05:18',	'2025-05-10 20:05:18',	0,	0),
+(31,	24,	'2025-05-11',	5,	2,	'2025-05-10 20:05:19',	'2025-05-10 20:05:19',	0,	0);
 
 DROP TABLE IF EXISTS `mu_sholat_wajib`;
 CREATE TABLE `mu_sholat_wajib` (
@@ -630,6 +661,9 @@ INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`
 (7,	24,	'2025-05-08',	100,	100,	75,	NULL,	NULL,	275,	'2025-05-07 06:16:25',	'2025-05-08 03:05:04',	14,	0),
 (8,	24,	'2025-05-09',	100,	50,	NULL,	NULL,	NULL,	150,	'2025-05-07 06:45:54',	'2025-05-07 07:07:08',	14,	0),
 (10,	24,	'2025-05-01',	100,	25,	100,	0,	0,	225,	'2025-05-07 06:47:10',	'2025-05-08 02:13:45',	14,	0),
-(13,	24,	'2025-05-10',	100,	100,	100,	NULL,	NULL,	300,	'2025-05-07 07:15:00',	'2025-05-07 12:58:42',	14,	0);
+(13,	24,	'2025-05-10',	100,	100,	100,	NULL,	NULL,	300,	'2025-05-07 07:15:00',	'2025-05-07 12:58:42',	14,	0),
+(14,	24,	'2025-05-11',	100,	100,	75,	50,	25,	350,	'2025-05-10 20:39:29',	'2025-05-10 21:13:23',	14,	0),
+(15,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:32',	'2025-05-10 20:39:32',	14,	0),
+(16,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:35',	'2025-05-10 20:39:35',	14,	0);
 
--- 2025-05-09 15:10:04
+-- 2025-05-10 21:26:16
