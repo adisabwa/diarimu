@@ -8,6 +8,9 @@ let listFunction = {
     dateNow() {
       return moment().format('yyyy-MM-DD');
     },
+    dayIndo(date) {
+      return moment(date).format('dddd');
+    },
     dateIndo(date) {
       return moment(date).format('DD MMMM yyyy');
     },

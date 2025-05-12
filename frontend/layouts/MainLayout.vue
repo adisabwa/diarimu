@@ -12,13 +12,23 @@
         <component :is="MenuComponent" :key="MenuComponent" 
           :active-menu="activeMenu" :menus="menus" @action="handleActionClick" @toggle="toggleMenu"/>
       </transition>
-      <el-button class="fixed z-[200] bottom-7 right-7 rounded-full
+      <el-button v-if="$route.name != 'dashboard' "
+        class="fixed z-[200] top-6 left-4
+        rounded-full
+        w-[40px] h-[40px] p-3
+        md:hidden flex justify-center items-center
+        opacity-[0.7]
+        bg-yellow-50/[0.7]"  
+        @click="$router.back()">
+        <icons icon="mdi:arrow-left" class="m-0 text-2xl text-teal-700 font-bold"/>
+      </el-button>
+      <!-- <el-button class="fixed z-[200] bottom-7 right-7 rounded-full
         w-[70px] h-[70px] p-3
         md:hidden flex justify-center items-center
         bg-yellow-50/[0.7]"  
-        @click="toggleClass('.el-menu-vertical-demo','-translate-x-full')">
+        @click="toggleClass('#menu-vertical','-translate-x-full')">
         <icons icon="mdi:menu" class="m-0 text-4xl text-teal-700"/>
-      </el-button>
+      </el-button> -->
     </div>
     <el-container>
       <el-main class="p-0 mt-[50px] px-3 md:px-10 pb-12 overflow-visible
@@ -45,7 +55,7 @@
           </router-view>
         </div>
       </el-main>
-      <el-footer height="auto" class="h-[20px] px-0 z-[99999] relative">
+      <!-- <el-footer height="auto" class="h-[20px] px-0 z-[99999] relative">
         <div class="overflow-hidden h-[45px] w-screen
           absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-[20px]">
           <div id="bottom" class="bg-cover bg-top bg-repeat 
@@ -56,12 +66,7 @@
         <div class="text-[12px] text-center h-full bg-gray-100 flex items-center justify-center gap-2">
           &copy; 2023 by <a href="https://codev-app.my.id/" target="_blank" class="no-underline text-green-900"> Codev-App</a>
         </div>
-      </el-footer>
-      <div class="fixed bottom-0 h-[50px] w-screen z-[99999]
-        bg-white">
-        <icons icon="mdi:home"/>
-        <icons icon="mdi:logout"/>
-      </div>
+      </el-footer> -->
     </el-container>
   </div>
 </template>

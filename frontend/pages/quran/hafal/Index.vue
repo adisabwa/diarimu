@@ -19,10 +19,11 @@
             
           </div>
           <div class="snap-center w-full px-6 h-[90px] overflow-scroll">
-            <div class="z-[10] mb-2 text-md font-bold italic">
-              <div>Total Hafalan :</div> 
-              <ol class="m-0 pl-4 py-2 text-[90%] font-normal
-                bg-white/[0.8]">
+            <div class="z-[10] mb-2 text-md font-bold italic 
+              py-2
+              bg-white/[0.8]">
+              <div >Total Hafalan :</div> 
+              <ol class="m-0 pl-4 text-[90%] font-normal">
                 <template v-for="data in juz">
                   <li class="py-[3px]">{{ data.nama_surat_mulai }} :{{ data.ayat_mulai }} ( Juz {{ data.juz_mulai }} ) - {{ data.nama_surat_selesai }} : {{ data.ayat_selesai }} ( Juz {{ data.juz_selesai }} )</li>
                 </template>

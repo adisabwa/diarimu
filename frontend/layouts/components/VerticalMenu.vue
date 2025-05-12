@@ -16,9 +16,9 @@
           md:-translate-x-[calc(50%-125px)]"/>
       </div>
     </div>
-    <div class="h-screen w-[--width-menu] bg-white
-      transition-all duration-500
-      -translate-x-full md:translate-x-0
+    <div id="menu-vertical" class="h-screen w-[--width-menu] bg-white
+      animate
+      -translate-x-full
       fixed left-0 top-0
       z-[50] md:z-[1]
       flex flex-col justify-between">

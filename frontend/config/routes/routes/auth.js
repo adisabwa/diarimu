@@ -24,16 +24,6 @@ let routes = [
           }
         },
         {
-          path: 'account',
-          alias: '',
-          name: 'account', 
-          component: () => import('@/pages/auths/Account.vue'),
-          meta: {
-            requiresAuth: true,
-            pageTitle: '<b>Pengaturan Account</b>',
-          }
-        },
-        {
           path: 'users',
           alias: '',
           name: 'users', 
@@ -71,6 +61,16 @@ let routes = [
           component: () => import('@/pages/auths/Register.vue'),
           meta: {
             pageTitle: '<b>Pendaftaran Akun Baru</b>',
+          }
+        },
+        {
+          path: 'account',
+          alias: '',
+          name: 'account', 
+          component: () => import('@/pages/auths/Account.vue'),
+          meta: {
+            requiresAuth: true,
+            pageTitle: '<b>Pengaturan Account</b>',
           }
         },
       ]

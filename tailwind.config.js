@@ -14,6 +14,9 @@ module.exports = {
   important: true,
   theme: {
     extend: {
+      colors: {
+        brand: '#167a78',  // Custom brand blue
+      },
       fontFamily: {
        'montserrat': '"Montserrat", sans-serif',
        'avenir': 'avenir-lt-w01_35-light1475496, avenir-lt-w05_35-light, sans-serif',
