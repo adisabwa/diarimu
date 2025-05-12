@@ -224,7 +224,7 @@
       <el-button type="success" :size="size" @click="submitForm"
         :disabled="saving">
         <icons v-if="saving" icon="eos-icons:loading"/>
-        {{ textSubmit }}
+        {{ submitText }}
       </el-button>
     </div>
 	</div>
@@ -265,7 +265,7 @@ export default {
       type: String,
       default: 'left',
     },
-    textSubmit:{
+    submitText:{
       type:String,
       default: 'Submit',
     },

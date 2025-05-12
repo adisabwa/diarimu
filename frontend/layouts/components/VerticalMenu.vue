@@ -10,7 +10,7 @@
         <img id="logo" :src="$baseUrl + 'assets/images/logo-kecil.png'" height="90px" 
           @click="$router.push({name:defaultRoute})"
           class="pointer animate hover:scale-[0.8]
-          absolute z-[53] top-[5px]
+          absolute z-[53] top-[0px]
           mt-2
           translate-x-[calc(50vw-50%)]
           md:-translate-x-[calc(50%-125px)]"/>

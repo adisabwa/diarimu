@@ -81,11 +81,13 @@ class PenggunaModel extends Model
     public function getData($id)
     {
       $data = $this->db->table('mu_pengguna p')
-                    ->select("p.*")
-                    ->where('p.id',$id)
-                    ->groupBy('p.id')
-                    ->get()
-                    ->getRow();
+                  ->select("ang.*, p.*")
+                  ->join("mu_anggota ang","ang.id=p.id_anggota")
+                  ->where("p.id", $id)
+                  ->groupBy('p.id')
+                  ->get()
+                  ->getRow();
+                  
       return $data;
     }
 }

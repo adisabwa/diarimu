@@ -3,7 +3,7 @@
 		<img :src="`${$baseUrl}/assets/images/dashboard.png`"
 			class="absolute w-screen left-0 top-[-150px] z-[0]"/>
 		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto">
-			<div class="w-full h-[40px] px-2 mt-2 z-[1]
+			<div class="w-full h-[40px] px-2 mt-0 z-[1]
 				text-white leading-[1.3]">
 				Assalamu'aialkum,<br/>
 				<span class="text-xl font-semibold">{{ user.nama }}</span>
@@ -89,31 +89,6 @@
 					</div>
 			</div>
 		</div>
-		<div class="fixed left-0 bottom-0
-			w-screen z-[99999]
-			bg-white">
-			<div class="h-full px-6 pb-1
-				flex items-center justify-between">
-				<div class="icon-menu"
-					@click="$router.push({name:dashboard})">
-					<icons class="icon" icon="mdi:home"/>
-					<span>Beranda</span>
-				</div>
-				<div class="icon-menu">
-					<icons class="icon" icon="mingcute:group-3-fill"/>
-					<span>Group</span>
-				</div>
-				<div class="icon-menu"
-					@click="$router.push({name:account})">
-					<icons class="icon" icon="mdi:account"/>
-					<span>Account</span>
-				</div>
-				<div class="icon-menu">
-					<icons class="icon" icon="mdi:logout"/>
-					<span>Logout</span>
-				</div>
-			</div>
-		</div>
 		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat
 				h-[60px] min-w-[600px] w-full
@@ -125,19 +100,6 @@
 	</div>
 </template>
 
-<style lang="postcss" scoped>
-	:deep(.icon-menu){
-		@apply flex flex-col items-center cursor-pointer
-			p-2
-			active:scale-95;
-		svg {
-			@apply text-3xl text-teal-800 m-0;
-		}
-		span {
-			@apply text-[12px] leading-[1];
-		}
-	}
-</style>
 
 <script>
 import { mapGetters } from 'vuex';
@@ -175,7 +137,7 @@ export default {
 							this.beforeMax = d.before
 					})
 			}
-		}
+		},
 	},
 	mounted(){
 		this.getBefore()

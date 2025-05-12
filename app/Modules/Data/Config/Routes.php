@@ -26,6 +26,7 @@ $routes->group('data/sholat-sunnah', static function ($routes) {
 //----------------------------------Data Anggota-------------------------------------
 $routes->group('data/anggota', static function ($routes) {
     $routes->add('get', [Anggota::class, 'get']);
+    $routes->add('get_where', [Anggota::class, 'get_where']);
     $routes->add('store', [Anggota::class, 'store'], [ 'filter' => 'api-validation:mu_anggota']);
 });
 

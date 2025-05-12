@@ -1,4 +1,5 @@
 import PublicLayout from '@/layouts/PublicLayout.vue'
+import MainLayout from '@/layouts/MainLayout.vue'
 
 import config from '@/config/url'
 const baseUrl = config.baseUrl
@@ -63,18 +64,30 @@ let routes = [
             pageTitle: '<b>Pendaftaran Akun Baru</b>',
           }
         },
-        {
-          path: 'account',
-          alias: '',
-          name: 'account', 
-          component: () => import('@/pages/auths/Account.vue'),
-          meta: {
-            requiresAuth: true,
-            pageTitle: '<b>Pengaturan Account</b>',
-          }
+      ],
+    },
+    {
+        path: siteUrl + 'p/',
+        component: MainLayout,
+        meta: {
+          enterFromClass : "translate-x-full",
+          enterToClass : "translate-x-0",
+          leaveFromClass : "translate-x-0",
+          leaveToClass : "-translate-x-full",
         },
-      ]
-  },
+        children:[
+          {
+            path: 'account',
+            name: 'account', 
+            component: () => import('@/pages/auths/Account.vue'),
+            meta: {
+              requiresAuth: true,
+              pageTitle: '<b>Pengaturan Account</b>',
+            }
+          },
+        ]
+      
+    },
 ]
 
 export default routes;

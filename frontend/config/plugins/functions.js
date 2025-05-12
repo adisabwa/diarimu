@@ -21,22 +21,7 @@ let listFunction = {
     }
     document.body.removeChild(textArea);
   },
-  runFunction(_func, data, options = []) {
-    if (listFunction.isEmpty(_func)) {
-      if (listFunction.isEmpty(options))
-        return data
-      else {
-        for (let index = 0; index < options.length; index++) {
-          const el = options[index];
-          if (el.value == data)
-            return el.label
-        }
-      }
-    } else { 
-      return ( typeof _func == 'string' ? listFunction[_func](data) : _func(data) )
-    }
-    return data
-  },
+  
 }
 
 export { listFunction };
@@ -47,6 +32,23 @@ export default {
     for (var i = 0; i < keys.length; i++) {
       let ind = keys[i]
       app.config.globalProperties[ind] = listFunction[ind]
+    }
+    app.config.globalProperties.runFunction = (_func, data, options = []) => {
+      let listFunction = app.config.globalProperties
+      if (listFunction.isEmpty(_func)) {
+        if (listFunction.isEmpty(options))
+          return data
+        else {
+          for (let index = 0; index < options.length; index++) {
+            const el = options[index];
+            if (el.value == data)
+              return el.label
+          }
+        }
+      } else { 
+        return ( typeof _func == 'string' ? listFunction[_func](data) : _func(data) )
+      }
+      return data
     }
   }
 }

@@ -46,7 +46,7 @@ $routes->group('auth', static function ($routes) {
 //----------------------Data Pengguna-----------------------------//
 $routes->group('pengguna', static function ($routes) {
     $routes->add('/', 'Pengguna::index');
-    $routes->add('show', 'Pengguna::show');
+    $routes->add('show', 'Pengguna::get_where');
     $routes->add('get', 'Pengguna::get');
     $routes->add('store', 'Pengguna::store', [ 'filter' => 'api-validation:mu_pengguna' ]);
     $routes->add('delete/(:any)', 'Pengguna::delete/$1');

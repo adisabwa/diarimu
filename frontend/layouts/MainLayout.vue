@@ -68,8 +68,50 @@
         </div>
       </el-footer> -->
     </el-container>
+    
+		<div class="fixed left-0 bottom-0
+			w-screen z-[20]
+			bg-white"
+      v-if="['dashboard','group-list','account'].includes($route.name)">
+			<div class="h-full px-6 pb-1
+				flex items-center justify-between">
+				<div class="icon-menu"
+					@click="$router.push({name:'dashboard'})">
+					<icons class="icon" icon="mdi:home"/>
+					<span>Beranda</span>
+				</div>
+				<div class="icon-menu">
+					<icons class="icon" icon="mingcute:group-3-fill"/>
+					<span>Group</span>
+				</div>
+				<div class="icon-menu"
+					@click="$router.push({name:'account'})">
+					<icons class="icon" icon="mdi:account"/>
+					<span>Profil</span>
+				</div>
+				<div class="icon-menu"
+					@click="doLogout">
+					<icons class="icon" icon="mdi:logout"/>
+					<span>Logout</span>
+				</div>
+			</div>
+		</div>
   </div>
 </template>
+
+<style lang="postcss" scoped>
+	:deep(.icon-menu){
+		@apply flex flex-col items-center cursor-pointer
+			p-2
+			active:scale-[0.8];
+		svg {
+			@apply text-3xl text-teal-800 m-0;
+		}
+		span {
+			@apply text-[12px] leading-[1];
+		}
+	}
+</style>
 
 <script setup>
   import menu from '@/helpers/menus.js';
