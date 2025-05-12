@@ -10,6 +10,7 @@ use CodeIgniter\Files\File;
 class Iqab extends BaseData
 {
 
+    
     public function __construct()
     {
         parent::__construct();

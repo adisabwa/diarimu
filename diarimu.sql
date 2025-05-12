@@ -234,7 +234,7 @@ CREATE TABLE `mu_anggota` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `mu_anggota` (`id`, `nbm`, `nama`, `tanggal_lahir`, `created_at`, `tempat_lahir`, `alamat`, `no_hp`, `email`, `updated_at`, `created_by`) VALUES
-(1,	'123',	'AD',	'2024-11-28',	'2024-12-05 06:53:30',	'AD',	'ADA',	'6285799441371',	'adi.sabwa@gmail.com',	'2024-12-05 06:53:30',	1),
+(1,	'123',	'Adi Sabwa Isti Besari',	'2024-11-28',	'2024-12-05 06:53:30',	'AD',	'ADA',	'6285799441371',	'adi.sabwa@gmail.com',	'2025-05-12 06:22:32',	1),
 (2,	'1',	'1',	'2025-04-30',	'2025-05-03 13:11:52',	'1',	'1',	'1234578',	'',	'2025-05-05 03:52:51',	19),
 (18,	'1',	'1',	'2025-04-30',	'2025-05-03 14:11:37',	'1',	'1',	'122',	'',	'2025-05-03 14:11:37',	0),
 (19,	'1',	'1',	'2025-04-30',	'2025-05-03 14:12:44',	'1',	'1',	'123456',	'',	'2025-05-03 14:13:08',	0),
@@ -244,6 +244,37 @@ INSERT INTO `mu_anggota` (`id`, `nbm`, `nama`, `tanggal_lahir`, `created_at`, `t
 (23,	'1',	'1',	'0000-00-00',	'2025-05-03 14:31:15',	'1',	'1',	'1',	'1',	'2025-05-03 14:31:15',	0),
 (24,	'',	'etr',	'2025-05-07',	'2025-05-03 14:44:21',	'gs',	'afs',	'628123456',	'',	'2025-05-03 14:45:01',	0),
 (25,	'1234',	'Adi Sabwa',	'2025-05-22',	'2025-05-05 03:38:52',	'Kendal',	'Kendal',	'62857998902608',	'',	'2025-05-05 03:40:45',	0);
+
+DROP TABLE IF EXISTS `mu_group`;
+CREATE TABLE `mu_group` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nama_group` varchar(50) NOT NULL,
+  `created_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+DROP TABLE IF EXISTS `mu_group_anggota`;
+CREATE TABLE `mu_group_anggota` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_group` int NOT NULL,
+  `id_anggota` int NOT NULL,
+  `type` enum('anggota','mentor') NOT NULL DEFAULT 'anggota',
+  `created_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_anggota_type` (`id_anggota`,`type`),
+  KEY `id_anggota` (`id_anggota`),
+  KEY `id_group` (`id_group`),
+  CONSTRAINT `mu_group_anggota_ibfk_2` FOREIGN KEY (`id_anggota`) REFERENCES `mu_anggota` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `mu_group_anggota_ibfk_3` FOREIGN KEY (`id_group`) REFERENCES `mu_group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 DROP TABLE IF EXISTS `mu_group_kolom`;
 CREATE TABLE `mu_group_kolom` (
@@ -265,7 +296,8 @@ INSERT INTO `mu_group_kolom` (`id`, `nama_tabel`, `group`, `group_icon`) VALUES
 (8,	'mu_quran_tarjamah',	'Menterjemah Al Qur\'an',	''),
 (9,	'mu_sholat_wajib',	'Sholat Wajib',	''),
 (10,	'mu_sholat_sunnah',	'Sholat Sunnah',	''),
-(11,	'mu_infaq_shadaqah',	'Infaq / Shadaqah',	'');
+(11,	'mu_infaq_shadaqah',	'Infaq / Shadaqah',	''),
+(12,	'mu_group',	'Group Mentoring',	'');
 
 DROP TABLE IF EXISTS `mu_infaq_shadaqah`;
 CREATE TABLE `mu_infaq_shadaqah` (
@@ -402,7 +434,8 @@ INSERT INTO `mu_nama_kolom` (`id`, `id_group`, `order`, `nama_kolom`, `is_table`
 (137,	11,	1,	'id_anggota',	NULL,	'0',	'',	'',	'string',	'Nama',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
 (138,	11,	2,	'tanggal',	NULL,	'0',	'',	'',	'date',	'Tanggal',	'date',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
 (139,	11,	3,	'jumlah',	NULL,	'0',	'',	'',	'int',	'Jumlah Infaq',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'setCurrency',	'toNumber',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
-(140,	11,	4,	'keterangan',	NULL,	'0',	'',	'',	'string',	'Keterangan',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'');
+(140,	11,	4,	'keterangan',	NULL,	'0',	'',	'',	'string',	'Keterangan',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(141,	12,	1,	'nama_group',	'0',	'0',	'',	'',	'string',	'Nama Group',	'input',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'md5',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'');
 
 DROP TABLE IF EXISTS `mu_pengguna`;
 CREATE TABLE `mu_pengguna` (
@@ -666,4 +699,4 @@ INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`
 (15,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:32',	'2025-05-10 20:39:32',	14,	0),
 (16,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:35',	'2025-05-10 20:39:35',	14,	0);
 
--- 2025-05-10 21:26:16
+-- 2025-05-12 08:06:55

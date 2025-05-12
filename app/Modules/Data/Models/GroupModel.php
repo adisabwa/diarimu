@@ -4,9 +4,9 @@ namespace Modules\Data\Models;
 
 use CodeIgniter\Model;
 
-class PcmModel extends Model
+class GroupModel extends Model
 {
-    protected $table         = 'mu_pcm';
+    protected $table         = 'mu_group';
     protected $primaryKey = 'id';
 
     protected $useAutoIncrement = true;
@@ -23,6 +23,27 @@ class PcmModel extends Model
 
     }
 
+    
+    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0)
+    {
+        $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
+        $whereOr = empty($whereOr) ? '1=1' : $whereOr;
+
+        $data = $this->db->table('mu_group qb')
+                    ->select("qb.*, s.nama")
+                    ->join('mu_anggota s','qb.id_anggota=s.id')
+                    ->where($whereAnd)
+                    ->groupStart()
+                        ->orWhere($whereOr)
+                    ->groupEnd()
+                    ->orderBy($order)
+                    ->limit($limit, $offset)
+                    ->get()
+                    ->getResultObject();
+
+        return $data;
+    }
+
     public function getTableName()
     {
         return $this->table;
@@ -31,7 +52,7 @@ class PcmModel extends Model
     public function getOptions($where = [])
     {
       $options = [];
-      $data = $this->db->table('mu_pcm p')
+      $data = $this->db->table('mu_group p')
                     ->select('*')
                     ->where($where)
                     ->get()
@@ -39,7 +60,7 @@ class PcmModel extends Model
       foreach ($data as $key => $d) {
         $options[] = (object)[
           'value' => "$d->id",
-          'label' => "$d->pcm"
+          'label' => "$d->nama_group"
         ];
       }
       return $options;

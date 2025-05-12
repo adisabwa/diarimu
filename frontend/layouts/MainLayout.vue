@@ -72,46 +72,22 @@
 		<div class="fixed left-0 bottom-0
 			w-screen z-[20]
 			bg-white"
-      v-if="['dashboard','group-list','account'].includes($route.name)">
+      v-if="Object.keys(mainMenus).includes($route.name)">
 			<div class="h-full px-6 pb-1
 				flex items-center justify-between">
-				<div class="icon-menu"
-					@click="$router.push({name:'dashboard'})">
-					<icons class="icon" icon="mdi:home"/>
-					<span>Beranda</span>
-				</div>
-				<div class="icon-menu">
-					<icons class="icon" icon="mingcute:group-3-fill"/>
-					<span>Group</span>
-				</div>
-				<div class="icon-menu"
-					@click="$router.push({name:'account'})">
-					<icons class="icon" icon="mdi:account"/>
-					<span>Profil</span>
-				</div>
-				<div class="icon-menu"
-					@click="doLogout">
-					<icons class="icon" icon="mdi:logout"/>
-					<span>Logout</span>
+				<div v-for="m in mainMenus"
+          :class="['flex flex-col items-center cursor-pointer p-2 active:scale-[0.8]',
+            ($route.name == m.route ? '[&_*]:text-teal-600' : '[&_*]:text-teal-800'),]"
+					@click="isEmpty(m.route) ?
+            m.function() :
+            $router.push({name:m.route})">
+					<icons class="text-3xl m-0" :icon="m.icon"/>
+					<span class="text-[12px] leading-[1]">{{ m.label }}</span>
 				</div>
 			</div>
 		</div>
   </div>
 </template>
-
-<style lang="postcss" scoped>
-	:deep(.icon-menu){
-		@apply flex flex-col items-center cursor-pointer
-			p-2
-			active:scale-[0.8];
-		svg {
-			@apply text-3xl text-teal-800 m-0;
-		}
-		span {
-			@apply text-[12px] leading-[1];
-		}
-	}
-</style>
 
 <script setup>
   import menu from '@/helpers/menus.js';
@@ -131,6 +107,32 @@ export default {
       showMenu2: true,
       scrollPosition:0,
       menus:[],
+      mainMenus:{
+        dashboard:{
+          route:'dashboard',
+          function:'',
+          icon:'mdi:home',
+          label:'Beranda',
+        },
+        'group-admin':{
+          route:'group-admin',
+          function:'',
+          icon:'mingcute:group-3-fill',
+          label:'Group',
+        },
+        account:{
+          route:'account',
+          function:'',
+          icon:'mdi:account',
+          label:'Profil',
+        },
+        logout:{
+          route:'',
+          function:'',
+          icon:'mdi:logout',
+          label:'Keluar',
+        },
+      }
     };
   },
   components: {
@@ -224,6 +226,7 @@ export default {
   created: async function() {
     this.getMenus()
     this.scrollPosition = window.scrollY;
+    this.mainMenus.logout.function = this.doLogout
   },
   mounted(){
    

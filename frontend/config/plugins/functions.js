@@ -35,6 +35,7 @@ export default {
     }
     app.config.globalProperties.runFunction = (_func, data, options = []) => {
       let listFunction = app.config.globalProperties
+      // console.log(listFunction, _func)
       if (listFunction.isEmpty(_func)) {
         if (listFunction.isEmpty(options))
           return data

@@ -12,8 +12,8 @@
 				overflow-hidden
 				mb-3 pt-0 
 				flex flex-col items-center
-				h-[190px] w-full">
-				<div class="font-montserrat px-10 py-3 pt-[60px] *:w-fit
+				h-[205px] w-full">
+				<div class="font-montserrat px-10 py-3 pt-[70px] *:w-fit
 					rounded-xl
 					flex flex-col items-center
 					bg-emerald-100/[0.3]">

@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory , createWebHashHistory} from 'vue-router'
 
 import store from '@/config/store'
-import config from '@/config/url'
 
-import managementRoute from './routes/management'
+import groupRoute from './routes/group'
 import quranRoute from './routes/quran'
 import authRoute from './routes/auth'
 import infaqRoute from './routes/infaq'
@@ -13,7 +12,7 @@ import sholatRoute from './routes/sholat'
 const routes = new createRouter({
   history: createWebHistory(),
   routes: [
-    ...managementRoute,
+    ...groupRoute,
     ...defaultRoute,
     ...infaqRoute,
     ...authRoute,

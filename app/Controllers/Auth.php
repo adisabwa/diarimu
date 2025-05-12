@@ -68,11 +68,11 @@ class Auth extends BaseController
     public function reset()
     {
         $user = userdata();
-        clear_userdata();
-        $user = $this->penggunaModel->login($user->no_hp, $user->password);
+        $user = $this->penggunaModel->login($user->email, $user->no_hp, $user->password);
         
         if ($user) {
             // Getting user positions
+            clear_userdata();
             set_userdata($user);
             return $this->respondCreated($user);
         } else {

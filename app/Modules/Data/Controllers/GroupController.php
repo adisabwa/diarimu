@@ -7,28 +7,14 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use CodeIgniter\Files\File;
 
-class Prm extends BaseData
+class GroupController extends BaseData
 {
 
     public function __construct()
     {
         parent::__construct();
         
-        $this->model = model('PrmModel');
-    }
-
-    
-    public function index()
-    {
-        $where = $this->request->getGet('where') ?? [];
-        $order = $this->request->getGet('order') ?? [];
-        $order = implode(",", $order);
-
-        $data = $this->model->getAll($where, [], $order);
-        foreach ($data as $key => $d) {
-            $d->checked = false;
-        }
-        return $this->respondCreated($data);
+        $this->model = model('GroupModel');
     }
 
     public function template()

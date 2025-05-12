@@ -20,7 +20,8 @@
 					v-model:form-value="formValue"
 					href="data/anggota/store"
 					href-get="data/anggota/get"
-					@saved="saving = false; showEdit = false;"  
+					@saved="saving = false; showEdit = false;
+            $store.dispatch('resetAccount')"  
 					@error="saving=false"
 					size="large"
 					submit-text="Simpan Data"
