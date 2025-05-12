@@ -47,7 +47,7 @@ class BaseData extends BaseController
     {
         $id = $this->request->getGet('id');
 
-        return $this->respondCreated($this->model->find($id));
+        return $this->respondCreated(function_exists($this->model->getData) ? $this->model->getData($id) : $this->model->find($id));
     }
 
     
@@ -75,29 +75,16 @@ class BaseData extends BaseController
     public function store()
     {
         $posted_data = $this->request->getPost();
+        // var_dump($posted_data);
+        // return $this->failServerError();
         $data = $posted_data;
         unset($data['id']);
         $data["created_by"] = userdata()->id ?? 0;
-        $child_key = [];
-        $child_table = [];
-        foreach ($data as $key => $values) {
-            if (is_array($values)) {
-                $el = explode('-',$key);
-                $table_name = $el[0];
-                $child_table[$table_name] = [];
-                array_shift($el);
-                foreach($values as $value) {
-                    $vals = explode('-',$value);
-                    $tmp = [];
-                    foreach ($el as $ind => $e){
-                        $tmp[$e] = $vals[$ind];
-                    }
-                    $child_table[$table_name][] = $tmp;
-                }
-                $child_key[$table_name] = $key;
-                unset($data[$key]);
-            }
-        }
+        $child_key = $data['nama_fk'];
+        $child_table = $data['tables'];
+        unset($data['nama_fk']);
+        unset($data['tables']);
+
         // Start the transaction
 
         $this->model->transBegin();
@@ -111,16 +98,15 @@ class BaseData extends BaseController
         // var_dump( $this->model->error());
         // Append ID to data
         foreach ($child_table as $table => $values) {
-            $data_kolom = $this->kolomClass->getKolomDetail($this->model->getTableName(), $child_key[$table]);
-            // var_dump($data_kolom);
-            $fk = $data_kolom->nama_fk;
+            $fk = $child_key[$table];
+            $id = $posted_data['id'];
             $model = $this->kolomClass->getModelFromTable($table);
             if ($model) {
                 $model->where([$fk => $posted_data['id']])->delete();
-                foreach($values as $val){
-                    $val[$fk] = $posted_data['id'];
-                    $model->insert($val);
-                }
+                array_walk($values, function(&$value) use ($fk, $id) {
+                    $value[$fk] = $id;
+                });
+                $model->insertBatch($values);
             }
         }
 

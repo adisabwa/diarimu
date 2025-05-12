@@ -16,7 +16,6 @@ class ValidationFilter implements FilterInterface
         if (is_array($params)){
             $table = $params[0];
         }
-        helper('functions'); 
 
         $validation = Services::validation();
 
@@ -30,45 +29,10 @@ class ValidationFilter implements FilterInterface
         $files_data = $_FILES;
         $folders = [];
         $validationRule = [];
-        $double_input = [];
-        $input_only = [];
-        $func = [];
-        foreach ($datas as $key => $data) {
-           $nama = $data->nama_kolom;
-           $label = $data->label;
-           if (isset($postData[$nama])) {
-                $validationRule[$nama] = [
-                    'label' => $label,
-                    // 'rules' => 'even'
-                    'rules' => ($data->required == '1' ? 'required' : 'permit_empty').(empty($data->rules) ? '' : '|'.$data->rules),
-                ];
-                if ($data->input == 'select-double')
-                    $double_input[$nama] = $postData[$nama];
 
-                if ($data->input_only == '1')
-                    $input_only[$nama] = $postData[$nama];
+        $validationRule = $this->setValidation('', $datas, $postData, $files_data, $model, $id, $validationRule);
 
-                if (!empty($data->function_submit)) {
-                    $func[$nama] = $data->function_submit;
-                }
-
-                $validationRule[$nama]['rules'] = str_replace("{id}",$id,$validationRule[$nama]['rules']);
-                // var_dump("{id}",$id,$validationRule[$nama]['rules']);
-                // $koloms[] = $data;
-           } else if (isset($files_data[$nama])) {
-                $validationRule[$nama] = [
-                    'label' => $label,
-                    'rules' => "uploaded[$nama]|max_size[$nama,5120]|mime_in[$nama,image/jpg,image/jpeg,image/png,application/pdf]",
-                    'errors' => [
-                        'uploaded' => 'Anda harus memilih file yang akan diupload.',
-                        'max_size' => 'Ukuran file tidak boleh lebih dari 5MB.',
-                        'mime_in'  => 'Hanya File JPG, JPEG, PNG atau PDF yang dapat diupload.',
-                    ],
-                ];
-                $folders[$nama] = $data->folder;
-           }
-        }
-        // var_dump($validationRule);
+        // var_dump($validationRule, $postData);
             // return failValidationErrors([]);
         if (empty($validationRule))
             return TRUE;
@@ -82,6 +46,7 @@ class ValidationFilter implements FilterInterface
         }
 
         $postData = $request->getPost();
+        $postData = $this->groupingData($datas, $postData, $model, $folders);
         
         foreach ($_FILES as $inputName => $fileData) {
             // Get the file object
@@ -97,6 +62,94 @@ class ValidationFilter implements FilterInterface
             }
         }
 
+        $postData['id'] = $id;
+        $newRequest = $request->setGlobal('post', $postData);
+
+        return $newRequest;
+    }
+
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
+    {
+        // Do something here
+    }
+
+    //Fungsi membuat validation rule
+    //prev = prefix untuk array, $datas = Kolom tabel, $postData = data post, $files_data = data_file, $model = Kolom Model, $id = ID utama, untuk bypass pas update
+    public function setValidation($prev, $datas, $postData, $files_data, $model, $id)
+    {
+        $validationRule = [];
+
+        foreach ($datas as $key => $data) {
+            $nama = $data->nama_kolom;
+            $nama_rule = $prev.$data->nama_kolom;
+            $label = $data->label;
+            if (isset($postData[$nama])) {
+                 if (is_array($postData[$nama])) {
+                     $kolom_child = $model->getAll($nama);
+                     $prev = "$nama.*.";
+                     $validationRule = [...$validationRule, ...$this->setValidation($prev, $kolom_child, $postData[$nama][0], $files_data[$nama][0] ?? [], $model, $id)];
+                 } else {
+                     $validationRule[$nama_rule] = [
+                         'label' => $label,
+                         // 'rules' => 'even'
+                         'rules' => ($data->required == '1' ? 'required' : 'permit_empty').(empty($data->rules) ? '' : '|'.$data->rules),
+                     ]; 
+                     $validationRule[$nama_rule]['rules'] = str_replace("{id}",$id,$validationRule[$nama_rule]['rules']);
+                     // var_dump("{id}",$id,$validationRule[$nama]['rules']);
+                     // $koloms[] = $data;
+                 }
+            } else if (isset($files_data[$nama])) {
+                 $validationRule[$nama_rule] = [
+                     'label' => $label,
+                     'rules' => "uploaded[$nama]|max_size[$nama,5120]|mime_in[$nama,image/jpg,image/jpeg,image/png,application/pdf]",
+                     'errors' => [
+                         'uploaded' => 'Anda harus memilih file yang akan diupload.',
+                         'max_size' => 'Ukuran file tidak boleh lebih dari 5MB.',
+                         'mime_in'  => 'Hanya File JPG, JPEG, PNG atau PDF yang dapat diupload.',
+                     ],
+                 ];
+            }
+        }
+        return $validationRule;
+    }
+
+    public function groupingData($datas, $postData, $model, &$folders)
+    {
+        helper('functions'); 
+
+        $double_input = [];
+        $input_only = [];
+        $tables = [];
+        $nama_fk = [];
+        $func = [];
+        foreach ($datas as $key => $data) {
+            $nama = $data->nama_kolom;
+            $label = $data->label;
+            if (isset($postData[$nama])) {
+                 if (is_array($postData[$nama])) {
+                    $tables[$nama] = $postData[$nama];
+                    $nama_fk[$nama] = $data->nama_fk;
+                    $kolom_child = $model->getAll($nama);
+                    foreach ($postData[$nama] as $ind => &$elements) {
+                        $elements = $this->groupingData($kolom_child, $elements, $model, $folders);
+                    }
+                 } else {
+                     if ($data->input == 'select-double')
+                         $double_input[$nama] = $postData[$nama];
+ 
+                     if ($data->input_only == '1')
+                         $input_only[$nama] = $postData[$nama];
+ 
+                     if (!empty($data->function_submit)) {
+                         $func[$nama] = $data->function_submit;
+                     }
+                 }
+            } else if (isset($files_data[$nama])) {
+                 $folders[$nama] = $data->folder;
+            }
+        }
+
+        // var_dump($func);
         foreach ($func as $nama_kolom => $f) {
             $postData[$nama_kolom] = $f($postData[$nama_kolom]);
         }
@@ -109,18 +162,17 @@ class ValidationFilter implements FilterInterface
             }
             unset($postData[$nama_kolom]);
         }
+        
+        foreach ($tables as $nama_kolom => $data) {
+            $postData['tables'][$nama_kolom] = $data;
+            $postData['nama_fk'][$nama_kolom] = $nama_fk[$nama_kolom];
+            unset($postData[$nama_kolom]);
+        }
 
         foreach ($input_only as $nama_kolom => $data) {
             unset($postData[$nama_kolom]);
         }
-
-        $postData['id'] = $id;
-        $newRequest = $request->setGlobal('post', $postData);
-        return $newRequest;
-    }
-
-    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
-    {
-        // Do something here
+        
+        return $postData;
     }
 }

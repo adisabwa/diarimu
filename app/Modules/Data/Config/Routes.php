@@ -1,6 +1,6 @@
 <?php
 
-use Modules\Data\Controllers\Pcm;
+use Modules\Data\Controllers\GroupController as Group;
 use Modules\Data\Controllers\Prm;
 use Modules\Data\Controllers\Anggota;
 use Modules\Data\Controllers\Iqab;
@@ -31,19 +31,18 @@ $routes->group('data/anggota', static function ($routes) {
 });
 
 $routes->group('data', [
-    'filter' => 'api-auth:admin',
+    'filter' => 'api-auth',
 ], static function ($routes) {
-//----------------------------------Data PCM-------------------------------------
-    $routes->group('pcm', static function ($routes) {
-        $routes->add('/', [Pcm::class, 'index']);
-        $routes->add('prodi', [Pcm::class, 'prodi']);
-        $routes->add('get', [Pcm::class, 'get']);
-        $routes->add('store', [Pcm::class, 'store'], [ 'filter' => 'api-validation:mu_pcm']);
-        $routes->add('delete/(:any)', [Pcm::class, 'delete/$1']);
-        $routes->add('delete_many', [Pcm::class, 'delete_many']);
-        $routes->add('template', [Pcm::class, 'template']);
-        $routes->add('options', [Pcm::class, 'options']);
-        $routes->add('upload', [Pcm::class, 'upload']);
+//----------------------------------Data Group-------------------------------------
+    $routes->group('group', static function ($routes) {
+        $routes->add('/', [Group::class, 'index']);
+        $routes->add('get', [Group::class, 'get']);
+        $routes->add('store', [Group::class, 'store'], [ 'filter' => 'api-validation:mu_group']);
+        $routes->add('delete/(:any)', [Group::class, 'delete/$1']);
+        $routes->add('delete_many', [Group::class, 'delete_many']);
+        $routes->add('template', [Group::class, 'template']);
+        $routes->add('options', [Group::class, 'options']);
+        $routes->add('upload', [Group::class, 'upload']);
     });
     
 //----------------------------------Data Anggota-------------------------------------
@@ -57,20 +56,6 @@ $routes->group('data', [
         $routes->add('kelas', [Anggota::class, 'kelas']);
         $routes->add('options', [Anggota::class, 'options']);
         $routes->add('search', [Anggota::class, 'search']);
-    });
-    
-//----------------------------------Data Prm-------------------------------------
-    $routes->group('prm', static function ($routes) {
-        $routes->add('/', [Prm::class, 'index']);
-        $routes->add('prodi', [Prm::class, 'prodi']);
-        $routes->add('get', [Prm::class, 'get']);
-        $routes->add('reset_options', [Prm::class, 'resetOptions']);
-        $routes->add('store', [Prm::class, 'store'], [ 'filter' => 'api-validation:mu_prm']);
-        $routes->add('delete/(:any)', [Prm::class, 'delete/$1']);
-        $routes->add('delete_many', [Prm::class, 'delete_many']);
-        $routes->add('template', [Prm::class, 'template']);
-        $routes->add('upload', [Prm::class, 'upload']);
-        $routes->add('options', [Prm::class, 'options']);
     });
 
 //----------------------------------Data Jabatan-------------------------------------

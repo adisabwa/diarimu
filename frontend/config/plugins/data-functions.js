@@ -1,9 +1,18 @@
+import { type } from "jquery";
+import { isArray } from "lodash";
 
 let listFunction = {
     fillObjectValue(src, data) {
-      Object.keys(src).forEach(key => {
-        if (data.hasOwnProperty(key)) {
-          src[key] = data[key];
+      console.log('source', src)
+      console.log('data', data)
+      Object.keys(data).forEach(key => {
+        // key = key + '.coba'
+        console.log(src, key, this.getObjectValueByPath(src, key))
+        if (this.getObjectValueByPath(src, key) !== undefined) {
+          // src[key] = data[key];
+          console.log('run')
+          let res = this.setObjectValueByPath(src, key, data[key])
+          console.log('res', res, src)
         }
       });
       return src;
@@ -19,10 +28,18 @@ let listFunction = {
       });
       return {...src,...adds};
     },
+    isArrayOrObject(val){
+      return typeof val == 'object' || Array.isArray(val);
+    },
     resetObjectValue(src, exception = []) {
+      if (this.isArrayOrObject(src)) return;
       Object.keys(src).forEach(key => {
-        if (!exception.includes(key))
-          src[key] = null; 
+        if (!exception.includes(key)) {
+          if (this.isArrayOrObject(src[key])) {
+            this.resetObjectValue(src[key], exception)
+          } else
+            src[key] = null; 
+        }
       });
       return src;
     },
@@ -38,7 +55,8 @@ let listFunction = {
       });
     },
     getObjectValueByPath(obj, path) {
-      return path.split('.').reduce((acc, key) => acc?.[key], obj);
+      path = path.split('.')
+      return path.reduce((acc, key) => acc?.[key], obj);
     },
     setObjectValueByPath(obj, path, value) {
       const keys = path.split('.'); // Split the path into individual keys

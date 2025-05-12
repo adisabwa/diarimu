@@ -27,7 +27,7 @@ class KolomModel extends Model
     {
         return $this->db->table('mu_nama_kolom n')
                     ->select('gk.*, n.*')
-                    ->join('mu_group_kolom gk','gk.id=n.id_group')
+                    ->join('mu_nama_tabel gk','gk.id=n.id_group')
                     ->where('nama_tabel',$nama_tabel)
                     ->where($input ? "from_user='1'" : "1=1")
                     ->orderBy('gk.id, n.order')
@@ -40,7 +40,7 @@ class KolomModel extends Model
     {
         return $this->db->table('mu_nama_kolom n')
                     ->select('gk.*, n.*')
-                    ->join('mu_group_kolom gk','gk.id=n.id_group')
+                    ->join('mu_nama_tabel gk','gk.id=n.id_group')
                     ->where('nama_tabel',$nama_tabel)
                     ->where('nama_kolom',$nama_kolom)
                     ->orderBy('gk.id, n.order')

@@ -72,6 +72,10 @@ class Kolom extends BaseController
             $data->sort = '';
           }
 
+          if ($data->tipe == 'table') {
+            $data->fields = $this->preparation($data->nama_kolom, TRUE);
+          }
+
           if ($grouping) {
             if (empty($results[ $data->group ])) {
               $result = new stdClass;

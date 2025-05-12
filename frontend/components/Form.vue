@@ -1,11 +1,12 @@
 <template>
 	<div class="">
-    <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving"
+    <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving" :inline="inline"
       :class="[formClass]">
       <template  v-for="(field, ind) in fieldsData">
-        <el-form-item :class="[formItemClass]"
+        <el-form-item :class="['grow-0',  formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
           v-if="showColumns.length > 0 ? showColumns.includes(field.nama_kolom) : !passColumns.includes(field.nama_kolom)"
-          :error="errors[field.nama_kolom]">
+          :error="field.input == 'array' ? '' : errors[field.nama_kolom]"
+          :style="{width:field.width_input + ' !important'}">
           <template #label v-if="showLabel">
             <span :class="[field.required == '1' ? 'required' : '','leading-[1.5] mt-2', labelClass]"> {{ field.label }} </span>
           </template>
@@ -58,7 +59,7 @@
               <el-select v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
                 :class="['w-full',inputClass]" 
                 filterable clearable :multiple="field.input == 'select-multiple'"
-                popper-class="h-auto min-w-[350px] max-w-[800px]
+                popper-class="h-auto max-w-[800px]
                   [&_li]:h-auto
                   [&_li_span]:whitespace-normal
                   [&_li_span]:block [&_li_span]:leading-[1.6] [&_li_span]:py-2"
@@ -126,8 +127,7 @@
                   [&_li]:h-auto [&_li]:py-1
                   [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] "
                 :size="size"
-                @change="changedValue(field.nama_kolom)"
-                :style="{width:field.width_input}">
+                @change="changedValue(field.nama_kolom)">
                 <template #prefix v-if="!isEmpty(field.prepend2)"> {{ field.prepend2 }}</template>
                 <template 
                   v-for="subItem in field.options[field.parentSelect] === undefined ? [] : field.options[field.parentSelect].options"
@@ -212,6 +212,23 @@
                 </el-upload>
               </div>
             </template>
+            <template v-else-if="field.input == 'array'">
+              <Form ref="formItem"
+                class=""
+                :key="'form-item-'+ ind"
+                :fields="field.fields"
+                v-model:form-value="form[field.nama_kolom][0]" 
+                v-model:error-value="errors[field.nama_kolom][0]"
+                size="large"
+                :show-submit="false"
+                :show-label="false"
+                :inline="true"
+                form-class="flex gap-2"
+                form-item-class="w-full m-0"
+                input-class="[&_*]:rounded-[15px]"
+                :show-required-text="false">
+            </Form>  
+            </template> 
           </div>
         </el-form-item>
       </template>
@@ -233,7 +250,7 @@
 <script>
 
 export default {
-  name: 'loading',
+  name: 'Form',
   components: {
   },
   props: {
@@ -242,6 +259,10 @@ export default {
       default: ''
     },
     formValue: {
+      type:[Array, Object],
+      default:[],
+    },
+    errorValue:{
       type:[Array, Object],
       default:[],
     },
@@ -272,6 +293,10 @@ export default {
     showSubmit:{
       type:Boolean,
       default: true,
+    },
+    inline:{
+      type:Boolean,
+      default: false,
     },
     href:{
       type:String,
@@ -318,7 +343,7 @@ export default {
       default:'',
     }
   },
-  emits:['update:id','saved','error','changeId','update:formValue','changedValue'],
+  emits:['update:id','saved','error','changeId','update:formValue','changedValue','update:errorValue'],
   data: function() {
     return {
       saving: false,
@@ -354,6 +379,19 @@ export default {
       },
       deep: true, // Watch nested properties
     },
+    errors: {
+      handler(newVal, oldVal) {
+        this.$emit('update:errorValue', newVal)
+      },
+      deep: true, // Watch nested properties
+    },
+    errorValue: {
+      handler(newVal, oldVal) {
+        this.fillObjectValue(this.errors, newVal)
+        // console.log('new-error', this.errors)
+      },
+      deep: true, // Watch nested properties
+    },
   },
   computed: {
     
@@ -381,6 +419,7 @@ export default {
       }   
     },
     getData(where, changeId){
+      if (this.hrefGet == '') return
       this.$http.get(this.hrefGet,
         {
           params:where
@@ -444,7 +483,7 @@ export default {
           delete form[ind]
       });
       form.id = this.dataId
-      console.log(form)
+      // console.log(form)
       var formData = window.jsonToFormData(form); 
 
       this.$http.post(this.href, formData, {
@@ -465,7 +504,7 @@ export default {
           
           if (code == '400') {
             // Populating error message
-            console.log(res.data.messages, this.errors)
+            // console.log(res.data.messages, this.errors)
             this.fillObjectValue(this.errors, res.data.messages);
             if (this.showNotification)
               this.$notify.error({
@@ -491,8 +530,8 @@ export default {
       fieldsData.forEach(d => {
         if (d.from_user == '1' || d.from_user == undefined) {
           vm.fieldsData[d.nama_kolom] = d
-          vm.form[d.nama_kolom] = vm.coalesce([d.default,''])
-          vm.errors[d.nama_kolom] = ''
+          vm.form[d.nama_kolom] = d.input == 'array' ? [''] : vm.coalesce([d.default,''])
+          vm.errors[d.nama_kolom] = d.input == 'array' ? [''] : ''
           vm.original[d.nama_kolom] = false
           if (d.input == 'file') {
             // delete vm.form[d.nama_kolom]
@@ -500,7 +539,7 @@ export default {
           }
         }
       })
-      // console.log(vm.form)
+      // console.log('form isi', vm.form, vm.errors)
     }
   },
   mounted(){

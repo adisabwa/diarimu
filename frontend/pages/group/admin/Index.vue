@@ -43,16 +43,80 @@
         </div>
       </div>
     </el-card>
+    
+    <el-dialog v-model="showAdd" draggable
+      :append-to-body="true"
+      class="w-fit max-w-[80%] py-3
+        bg-gradient-to-tr from-white from-50% to-teal-100"
+      header-class="font-bold text-[16px]"
+      body-class="text-[14px]">
+      <template #header>
+        <div>Data Shadaqah</div>
+      </template>
+      <form-comp ref="formGroup"
+        class="[&_*]:rounded-[15px]"
+        :key="'form-group-'+formKey"
+        :fields="fields" 
+        v-model:id="dataId"
+        href="data/group/store"
+        href-get="data/group/get"
+        @saved="submittedData" 
+        @error="saving=false"
+        size="large"
+        :show-submit="false"
+        label-position="top"
+        :show-required-text="false">
+      </form-comp>  
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="showAdd = false">Batal</el-button>
+          <el-button type="primary" @click="$refs.formGroup.submitForm()"
+            class="bg-teal-700">
+            Simpan
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import Form from '@/components/Form.vue'
+
 export default {
   name:'group-admin',
+  components:{
+    'form-comp': Form,
+  },
   data: () => {
     return {
       show:true,
+      showAdd: true,
+      formKey:0,
+      fields:{},
+      dataId:-1,
     }
-  }
+  },
+  methods: {
+    getInitial: async function() {
+        this.loading = true;
+        
+        await this.$http.get('/kolom/preparation?table=mu_group&grouping=0&input=0')
+          .then(result => {
+            var res = result.data;
+            this.dataId = -1
+            this.fields = this.fillAndAddObjectValue(this.fields, res)
+            // console.log(this.fields)
+            this.formKey++
+            this.loading = false
+          });
+      },
+    submittedData(){
+      this.saving = false
+    },
+  },
+  created: function() {
+    this.getInitial()
+  },
 }
 </script>

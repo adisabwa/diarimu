@@ -165,7 +165,8 @@ export default {
           })
         }
       })
-      // console.log(index)
+      if (!index) index = ''
+      
       this.activeMenu = index
     },
     async getMenus(){
