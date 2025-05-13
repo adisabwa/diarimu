@@ -3,36 +3,35 @@ import { isArray } from "lodash";
 
 let listFunction = {
     fillObjectValue(src, data) {
-      console.log('source', src)
-      console.log('data', data)
+      // console.log('source', src)
+      // console.log('data', data)
       Object.keys(data).forEach(key => {
         // key = key + '.coba'
-        console.log(src, key, this.getObjectValueByPath(src, key))
         if (this.getObjectValueByPath(src, key) !== undefined) {
           // src[key] = data[key];
-          console.log('run')
+          // console.log('run')
           let res = this.setObjectValueByPath(src, key, data[key])
-          console.log('res', res, src)
+          // console.log('res', res, src)
         }
       });
+      // console.log(src)
       return src;
     },
     fillAndAddObjectValue(src, data) {
       let adds = []
       Object.keys(data).forEach(key => {
-        if (src.hasOwnProperty(key)) {
-          src[key] = data[key];
-        } else {
-          adds[key] = data[key]
-        }
+        let res = this.setObjectValueByPath(src, key, data[key])
       });
-      return {...src,...adds};
+      return src;
     },
     isArrayOrObject(val){
       return typeof val == 'object' || Array.isArray(val);
     },
     resetObjectValue(src, exception = []) {
-      if (this.isArrayOrObject(src)) return;
+      if (!this.isArrayOrObject(src))
+        return;
+      if (src === null || src == undefined)
+        return;
       Object.keys(src).forEach(key => {
         if (!exception.includes(key)) {
           if (this.isArrayOrObject(src[key])) {
@@ -41,6 +40,7 @@ let listFunction = {
             src[key] = null; 
         }
       });
+      console.log(src)
       return src;
     },
     traverse(obj, callback, path = '') {

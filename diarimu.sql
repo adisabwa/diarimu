@@ -234,7 +234,7 @@ CREATE TABLE `mu_anggota` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `mu_anggota` (`id`, `nbm`, `nama`, `tanggal_lahir`, `created_at`, `tempat_lahir`, `alamat`, `no_hp`, `email`, `updated_at`, `created_by`) VALUES
-(1,	'123',	'Adi Sabwa Isti Besari',	'2024-11-28',	'2024-12-05 06:53:30',	'AD',	'ADA',	'6285799441371',	'adi.sabwa@gmail.com',	'2025-05-12 06:22:32',	1),
+(1,	'123',	'Adi Sabwa Isti Besari',	'2024-11-28',	'2024-12-05 06:53:30',	'AD',	'ADA',	'6285799441371',	'adi.sabwa@gmail.com',	'2025-05-13 06:40:59',	1),
 (2,	'1',	'1A',	'2025-04-30',	'2025-05-03 13:11:52',	'1',	'1',	'1234578',	'',	'2025-05-05 03:52:51',	19),
 (18,	'1',	'1V',	'2025-04-30',	'2025-05-03 14:11:37',	'1',	'1',	'122',	'',	'2025-05-03 14:11:37',	0),
 (19,	'1',	'1BB',	'2025-04-30',	'2025-05-03 14:12:44',	'1',	'1',	'123456',	'',	'2025-05-03 14:13:08',	0),
@@ -257,7 +257,9 @@ CREATE TABLE `mu_group` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `mu_group` (`id`, `nama_group`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(4,	'A',	'2025-05-12 23:12:27',	'2025-05-12 23:12:27',	1,	NULL);
+(4,	'A',	'2025-05-13 13:20:49',	'2025-05-13 06:20:49',	1,	NULL),
+(14,	'CC',	'2025-05-13 13:20:54',	'2025-05-13 06:20:54',	1,	NULL),
+(15,	'Kel 3',	'2025-05-13 06:40:49',	'2025-05-13 06:40:49',	1,	NULL);
 
 DROP TABLE IF EXISTS `mu_group_anggota`;
 CREATE TABLE `mu_group_anggota` (
@@ -278,7 +280,38 @@ CREATE TABLE `mu_group_anggota` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `mu_group_anggota` (`id`, `id_group`, `id_anggota`, `type`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(1,	4,	2,	'mentor',	'2025-05-12 23:12:27',	'2025-05-12 23:12:27',	NULL,	NULL);
+(33,	4,	2,	'mentor',	'2025-05-13 06:20:49',	'2025-05-13 06:20:49',	NULL,	NULL),
+(34,	4,	19,	'anggota',	'2025-05-13 06:20:49',	'2025-05-13 06:20:49',	NULL,	NULL),
+(35,	4,	21,	'anggota',	'2025-05-13 06:20:49',	'2025-05-13 06:20:49',	NULL,	NULL),
+(36,	14,	22,	'mentor',	'2025-05-13 06:20:54',	'2025-05-13 06:20:54',	NULL,	NULL),
+(37,	14,	23,	'anggota',	'2025-05-13 06:20:54',	'2025-05-13 06:20:54',	NULL,	NULL),
+(38,	14,	25,	'anggota',	'2025-05-13 06:20:54',	'2025-05-13 06:20:54',	NULL,	NULL),
+(39,	15,	1,	'mentor',	'2025-05-13 06:40:49',	'2025-05-13 06:40:49',	NULL,	NULL),
+(40,	15,	24,	'anggota',	'2025-05-13 06:40:49',	'2025-05-13 06:40:49',	NULL,	NULL),
+(41,	15,	18,	'anggota',	'2025-05-13 06:40:49',	'2025-05-13 06:40:49',	NULL,	NULL);
+
+DROP TABLE IF EXISTS `mu_group_kolom`;
+CREATE TABLE `mu_group_kolom` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nama_tabel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `group` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `group_icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `mu_group_kolom` (`id`, `nama_tabel`, `group`, `group_icon`) VALUES
+(1,	'mu_pengguna',	'Pengguna',	'mdi:users'),
+(2,	'mu_pengguna_akses',	'Akses Pengguna',	'mdi:users'),
+(3,	'pdm_pcm',	'Daftar PCM',	''),
+(4,	'pdm_prm',	'Daftar PRM',	''),
+(5,	'mu_anggota',	'Anggota',	''),
+(6,	'mu_quran_baca',	'Membaca Al-Qur\'an',	''),
+(7,	'mu_quran_hafal',	'Menghafal Al Qur\'an',	''),
+(8,	'mu_quran_tarjamah',	'Menterjemah Al Qur\'an',	''),
+(9,	'mu_sholat_wajib',	'Sholat Wajib',	''),
+(10,	'mu_sholat_sunnah',	'Sholat Sunnah',	''),
+(11,	'mu_infaq_shadaqah',	'Infaq / Shadaqah',	''),
+(12,	'mu_group',	'Group Mentoring',	'');
 
 DROP TABLE IF EXISTS `mu_infaq_shadaqah`;
 CREATE TABLE `mu_infaq_shadaqah` (
@@ -331,7 +364,7 @@ CREATE TABLE `mu_nama_kolom` (
   `from_user` enum('0','1') NOT NULL DEFAULT '1',
   `input_only` enum('0','1') NOT NULL DEFAULT '0',
   `required` enum('0','1') NOT NULL DEFAULT '1',
-  `rules` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `rules` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `default` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
   `search` enum('0','1') NOT NULL DEFAULT '0',
   `function` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
@@ -420,8 +453,8 @@ INSERT INTO `mu_nama_kolom` (`id`, `id_group`, `id_kolom`, `order`, `nama_kolom`
 (140,	11,	NULL,	4,	'keterangan',	'0',	'',	'',	'string',	'Keterangan',	'input',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
 (141,	12,	NULL,	1,	'nama_group',	'0',	'',	'',	'string',	'Nama Group',	'input',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	''),
 (142,	12,	NULL,	2,	'mu_group_anggota',	'0',	'id_group',	'',	'table',	'Anggota Group',	'array',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	''),
-(143,	13,	142,	1,	'id_anggota',	'0',	'',	'',	'string',	'Nama Anggota',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'AnggotaModel'),
-(144,	13,	142,	2,	'type',	'0',	'',	'',	'string',	'Tipe',	'select',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'150px',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'mentor,anggota');
+(143,	13,	142,	1,	'id_anggota',	'0',	'',	'',	'string',	'Nama Anggota',	'select',	'',	'',	'1',	'0',	'1',	'unique_input[id_anggota,type,{field}]|unique_combination[mu_group_anggota.id_anggota-type,id_group,{id},{field}]',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'AnggotaModel'),
+(144,	13,	142,	2,	'type',	'0',	'',	'',	'string',	'Tipe',	'select',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'150px',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'mentor,anggota');
 
 DROP TABLE IF EXISTS `mu_nama_tabel`;
 CREATE TABLE `mu_nama_tabel` (
@@ -709,4 +742,4 @@ INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`
 (15,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:32',	'2025-05-10 20:39:32',	14,	0),
 (16,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:35',	'2025-05-10 20:39:35',	14,	0);
 
--- 2025-05-12 23:13:03
+-- 2025-05-13 07:56:58

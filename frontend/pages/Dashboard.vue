@@ -1,3 +1,8 @@
+<style lang="postcss">
+  .dropdown-user {
+    @apply bg-teal-600 text-white !important;
+  }
+</style>
 <template>
 	<div>
 		<img :src="`${$baseUrl}/assets/images/dashboard.png`"
@@ -6,7 +11,40 @@
 			<div class="w-full h-[40px] px-2 mt-0 z-[1]
 				text-white leading-[1.3]">
 				Assalamu'aialkum,<br/>
-				<span class="text-xl font-semibold">{{ user.nama }}</span>
+				<div class="text-xl font-semibold">{{ user.nama }}</div>
+				<div class="text-md leading-[1]"
+          @click="showRole = true">
+          <span class="el-dropdown-link text-white flex items-end gap-1">
+            {{ ucFirst(user.role) }}
+            <icons icon="fe:arrow-down" class="text-[90%]" />
+          </span>
+        </div>
+          <el-dialog v-model="showRole" width="60%"
+            class="[&_*]:font-montserrat text-teal-800 ">
+            <template #header>
+              <div>Masuk Sebagai</div>
+            </template>
+            <el-radio-group class="flex flex-col gap-2"
+              v-model="role">
+              <el-radio-button v-for="rl in user.allowed_roles"
+                :value="rl" class="
+                border border-solid border-teal-700/[0.5]
+                text-teal-800 
+                [&_*]:w-full w-full
+                [&_*]:border-0">
+                {{ ucFirst(rl) }}</el-radio-button>
+            </el-radio-group>
+            <template #footer>
+              <div class="dialog-footer flex justify-between">
+                <el-button @click="showRole = false">Batal</el-button>
+                <el-button type="primary" @click="showRole = false;
+                  $store.dispatch('changeRole', {role:role})"
+                  class="bg-teal-700 border-0">
+                  Ubah
+                </el-button>
+              </div>
+            </template>
+          </el-dialog>
 			</div>
 			<div class="bg-white rounded-xl shadow-md shadow-emerald-700/[0.2]
 				overflow-hidden
@@ -113,6 +151,8 @@ export default {
     return {
 			topMenu:topMenu,
 			beforeMax:-1,
+      showRole:false,
+      role:'',
 			information:{
 
 			}
@@ -141,6 +181,7 @@ export default {
 	},
 	mounted(){
 		this.getBefore()
+    this.role = this.user.role
 	}
 	
 }

@@ -72,7 +72,7 @@
 		<div class="fixed left-0 bottom-0
 			w-screen z-[20]
 			bg-white"
-      v-if="Object.keys(mainMenus).includes($route.name)">
+      v-if="[...Object.keys(mainMenus), ...['unauthorized']].includes($route.name)">
 			<div class="h-full px-6 pb-1
 				flex items-center justify-between">
 				<div v-for="m in mainMenus"

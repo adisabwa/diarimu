@@ -53,20 +53,24 @@ routes.beforeEach(async (to, from, next) => {
         query: { nextUrl: to.fullPath }
       })
     } else {
-      // if (to.meta.app) {
-      //   // console.log(to.meta.app, loggedUser.app);
-      //   if (!loggedUser.app.includes(to.meta.app)) {
-      //     next({
-      //       name: 'unauthorized',
-      //     })
-      //   } 
-      //   else {
-      //     next()
-      //   }
-      // } 
-      // else {
+      if (to.meta.allowedRoles) {
+        // console.log(to.meta.app, loggedUser.app);
+        if (!loggedUser.role.includes(to.meta.allowedRoles)) {
+          let name = 'unauthorized'
+          if (to.meta.redirect)
+            name = to.meta.redirect
+          
+          next({
+            name: name,
+          })
+        } 
+        else {
+          next()
+        }
+      } 
+      else {
         next()
-      // }
+      }
     }
   } else if (to.matched.some(record => record.meta.guest)) {
     next()

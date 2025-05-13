@@ -38,6 +38,7 @@ $routes->group('data', [
         $routes->add('/', [Group::class, 'index']);
         $routes->add('get', [Group::class, 'get']);
         $routes->add('store', [Group::class, 'store'], [ 'filter' => 'api-validation:mu_group']);
+        $routes->add('get_anggota', [Group::class, 'get_anggota']);
         $routes->add('delete/(:any)', [Group::class, 'delete/$1']);
         $routes->add('delete_many', [Group::class, 'delete_many']);
         $routes->add('template', [Group::class, 'template']);

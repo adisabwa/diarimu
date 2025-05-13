@@ -29,15 +29,33 @@ class GroupModel extends Model
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        $data = $this->db->table('mu_group qb')
-                    ->select("qb.*, s.nama")
-                    ->join('mu_anggota s','qb.id_anggota=s.id')
+        $subQuery =  $this->db->table('mu_group g')
+                              ->select('*')
+                              ->limit($limit, $offset);
+
+        $data = $this->db->table('mu_group_anggota ga')
+                    ->select("ga.*, g.*, ga.id id_ga, s.nama")
+                    ->join("({$subQuery->getCompiledSelect()}) g",'ga.id_group=g.id')
+                    ->join('mu_anggota s','ga.id_anggota=s.id')
                     ->where($whereAnd)
                     ->groupStart()
                         ->orWhere($whereOr)
                     ->groupEnd()
                     ->orderBy($order)
-                    ->limit($limit, $offset)
+                    ->get()
+                    ->getResultObject();
+
+        return $data;
+    }
+
+    
+    public function getData($id)
+    {
+        $data = $this->db->table('mu_group_anggota ga')
+                    ->select("ga.*, g.*, ga.id id_ga, s.nama")
+                    ->join("mu_group g",'ga.id_group=g.id')
+                    ->join('mu_anggota s','ga.id_anggota=s.id')
+                    ->where("g.id", $id)
                     ->get()
                     ->getResultObject();
 

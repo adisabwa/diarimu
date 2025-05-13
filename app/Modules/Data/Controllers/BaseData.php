@@ -35,7 +35,8 @@ class BaseData extends BaseController
                             ->groupEnd()
                             ->orderBy($order)
                             ->limit($limit, $offset)
-                            ->get()->getResult();
+                            ->get()
+                            ->getResult();
         // var_dump($this->model->getLastQuery());
         foreach ($data as $key => $d) {
             $d->checked = false;
@@ -80,8 +81,8 @@ class BaseData extends BaseController
         $data = $posted_data;
         unset($data['id']);
         $data["created_by"] = userdata()->id ?? 0;
-        $child_key = $data['nama_fk'];
-        $child_table = $data['tables'];
+        $child_key = $data['nama_fk'] ?? [];
+        $child_table = $data['tables'] ?? [];
         unset($data['nama_fk']);
         unset($data['tables']);
 
@@ -114,7 +115,6 @@ class BaseData extends BaseController
 
         if ($this->model->transStatus() === false) {
             $this->model->transRollback();
-            // var_dump($this->model->error());
             return $this->failServerError();
         } else {
             $this->model->transCommit();

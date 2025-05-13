@@ -31,7 +31,8 @@
 					</div>
 					<div class="font-semibold text-[13px] opacity-70">{{ s.keterangan }}</div>
 				</div>
-				<el-button class="rounded-full h-[40px] w-[40px]
+				<el-button v-if="$store.getters.loggedUser.role == 'user'"
+          class="rounded-full h-[40px] w-[40px]
 					bg-lime-100/[0.4]"
 					@click="$emit('editData',{id:s.id})">
 					<icons icon="mdi:edit" class="m-0 text-[20px]" />
@@ -47,6 +48,12 @@
 
 export default {
   name: "data",
+  props:{
+    idAnggota:{
+      type:[String, Number],
+      default:null,
+    }
+  },
 	emits:['editData'],
   components: {
   },
@@ -72,7 +79,7 @@ export default {
         await this.$http.get('quran/baca', {
             params: {
 							where:{
-								id_anggota: this.$store.getters.loggedUser?.id_anggota,
+								id_anggota: this.idAnggota,
 							},
 							order:['tanggal desc'],
               limit:this.limit,

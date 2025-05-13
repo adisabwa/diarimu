@@ -17,29 +17,43 @@
             bg-teal-700
             text-white
             active:scale-90"
-            @click="showAdd = true;">
+            @click="showAdd = true;
+              getInitial()">
             <icons icon="mdi:plus" class="m-0"/>
           </el-button>
           Data Group
         </div>
       </template>
       <div class="px-4">
-        <div class="py-3 px-4 bg-white/[0.9] rounded-[15px]
-          border border-solid border-teal-700/[0.2]
+        <div v-for="data in datas"
+          class="relative py-3 px-5 pb-3 bg-white/[0.9] rounded-[15px] mb-3
+          border border-solid border-teal-700/[0.5]
+          flex gap-x-2
           text-[15px]">
-          <div>Kelompok 1</div>
-          <el-divider class="my-1"/>
-          <div class="text-[13px]
-            flex items-center"
-            @click="show = !show">
-            <icons :icon="show ? 'fe:arrow-down' : 'fe:arrow-up'" 
-              class="text-[13px]"/>
-            Nama Ketua</div>
-          <ol v-if="show" class="text-[12px] pl-8 m-0">
-            <template v-for="i in range(4)">
-              <li class="pl-1">Anggota {{ i }}</li>
-            </template>
-          </ol>
+          <div class="w-full">
+            <div class="font-bold">Kel. {{ data.nama_group }}</div>
+            <el-divider class="my-1
+              border-0 border-b border-solid border-teal-700/[0.5]"/>
+            <div class="text-[13px] font-semibold
+              flex items-center"
+              @click="data.show = !data.show">
+              <icons :icon="data.show ? 'fe:arrow-down' : 'fe:arrow-up'" 
+                class="text-[13px]"/>
+              Mentor : {{ data.anggota[0].nama }}</div>
+            <ol v-if="data.show" class="text-[12px] pl-8 m-0">
+              <template v-for="(i, key) in data.anggota">
+                <li class="pl-1"
+                  v-if="key > 0">{{ i.nama }}</li>
+              </template>
+            </ol>
+          </div>
+          <icons icon="mdi:edit-circle"
+            class="m-0 text-[40px] mt-[5px]
+              active:scale-75 cursor-pointer
+              text-teal-700/[0.8]"
+            @click="showAdd = true;
+              dataId = data.id;
+              formKey = formKey + 1"/>
         </div>
       </div>
     </el-card>
@@ -91,13 +105,23 @@ export default {
   data: () => {
     return {
       show:true,
-      showAdd: true,
+      showAdd: false,
       formKey:0,
       fields:{},
+      datas:{},
       dataId:-1,
     }
   },
   methods: {
+    getData() {
+      this.loading = true;
+      this.$http.get('/data/group')
+          .then(result => {
+            var res = result.data;
+            this.datas = res
+            this.loading = false
+          });
+    },
     getInitial: async function() {
         this.loading = true;
         
@@ -113,9 +137,11 @@ export default {
       },
     submittedData(){
       this.saving = false
+      this.showAdd = false
     },
   },
   created: function() {
+    this.getData()
     this.getInitial()
   },
 }

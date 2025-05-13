@@ -1,38 +1,39 @@
 import axios from "axios";
+import { siteUrl } from "@/config/url"
 
 const namespaced = true;
 
 const state = {
-  psb: [],
-  psbs: [],
+  anggota: [],
+  anggotas: [],
   pengawas: {},
   pengawass: [],
 };
 
 const actions = {
-  getAllPsb: (context, payload) => {
+  getAllAnggotaInGroup: (context, payload) => {
     console.log(payload);
     return new Promise((resolve, reject) => {
       axios({
         method: "GET",
-        url: context.rootGetters.siteUrl + "data/psb/get_all",
+        url: siteUrl + "data/group/get_anggota",
         params: payload,
       }).then(response => {
-        context.commit("PSBS_UPDATE", response.data.data);
+        context.commit("ANGGOTAS_UPDATE", response.data);
         resolve(response);
       }).catch(error => {
         reject(error);
       });
     }); 
   },
-  getPsb: (context, payload) => {
+  getAnggota: (context, payload) => {
     return new Promise((resolve, reject) => {
       axios({
         method: "GET",
-        url: context.rootGetters.siteUrl + "data/psb/get/",
+        url: siteUrl + "data/anggota/get/",
         params: payload,
       }).then(response => {
-        context.commit("PSB_UPDATE", response.data.data);
+        context.commit("ANGGOTA_UPDATE", response.data);
         resolve(response);
       }).catch(error => {
         reject(error);
@@ -43,7 +44,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       axios({
         method: "GET",
-        url: context.rootGetters.siteUrl + "data/pengawas/get_all",
+        url: siteUrl + "data/pengawas/get_all",
       }).then(response => {
         context.commit("MEMBERS_UPDATE", response.data.data);
         resolve(response);
@@ -56,7 +57,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       axios({
         method: "GET",
-        url: context.rootGetters.siteUrl + "data/pengawas/get/",
+        url: siteUrl + "data/pengawas/get/",
         params: params,
       }).then(response => {
         context.commit("MEMBER_UPDATE", response.data.data);
@@ -69,11 +70,11 @@ const actions = {
 };
 
 const mutations = {
-  PSB_UPDATE: (state, psb) => {
-    state.psb = psb;
+  ANGGOTA_UPDATE: (state, anggota) => {
+    state.anggota = anggota;
   },
-  PSBS_UPDATE: (state, psbs) => {
-    state.psbs = psbs;
+  ANGGOTAS_UPDATE: (state, anggotas) => {
+    state.anggotas = anggotas;
   },
   MEMBERS_UPDATE: (state, pengawass) => {
     state.pengawass = pengawass;
@@ -84,8 +85,8 @@ const mutations = {
 };
 
 const getters = {
-  psb: state  => state.psb,
-  psbs: state  => state.psbs,
+  anggota: state  => state.anggota,
+  anggotas: state  => state.anggotas,
   pengawass: state  => state.pengawass,
   pengawas: state  => state.pengawas,
 };

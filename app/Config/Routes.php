@@ -40,6 +40,7 @@ $routes->group('auth', static function ($routes) {
     $routes->add('user', 'Auth::user');
     $routes->add('forbidden', 'Auth::forbidden');
     $routes->add('unauthorized', 'Auth::unauthorized');
+    $routes->add('change_role', 'Auth::change_role');
     $routes->add('reset', 'Auth::reset');
 });
 

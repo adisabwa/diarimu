@@ -34,8 +34,9 @@ class PenggunaModel extends Model
     public function login($email = '', $no_hp = '', $password = '')
     {
         $data = $this->db->table('mu_pengguna p')
-                    ->select("ang.*, p.*")
+                    ->select("ang.*, p.*, IF(ga.id IS NULL,'0','1') is_mentor")
                     ->join("mu_anggota ang","ang.id=p.id_anggota")
+                    ->join("mu_group_anggota ga","ga.id_anggota=ang.id AND ga.type='mentor'","left")
                     ->groupStart()
                       ->where('ang.no_hp', $no_hp)
                       ->orWhere('ang.email', $email)
@@ -44,6 +45,15 @@ class PenggunaModel extends Model
                     ->groupBy('p.id')
                     ->get()
                     ->getRow();
+        
+        if (!empty($data)) {
+          $allowed_roles = ['user'];
+          if ($data->role == 'admin')
+            $allowed_roles[] = 'admin';
+          if ($data->is_mentor == '1')
+            $allowed_roles[] = 'mentor';
+          $data->allowed_roles = $allowed_roles;
+        }
       // var_dump($this->db->getLastQuery(), $data);        
         return $data;
     }

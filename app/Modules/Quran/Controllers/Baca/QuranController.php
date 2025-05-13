@@ -73,7 +73,9 @@ class QuranController extends BaseData
 
     public function get_last()
     {
-        return $this->respondCreated($this->model->get_last(userdata()->id_anggota));
+        $postData = $this->request->getGetPost();
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        return $this->respondCreated($this->model->get_last($id_anggota));
     }
 
     public function dashboard()
@@ -82,11 +84,12 @@ class QuranController extends BaseData
         $type = $postData['tipe'] ?? 'week';
         $end = $postData['end'] ?? date('Y-m-d');
         $start = $postData['start'] ?? date('Y-m-d');
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
 
         $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
             [
-                'id_anggota' => userdata()->id_anggota,
+                'id_anggota' => $id_anggota,
                 "tanggal >= '$start'" => NULL,
                 "tanggal <= '$end'" => NULL,
             ]

@@ -35,15 +35,6 @@ let routes = [
             pageTitle: '<b>Pengaturan Pengguna</b>',
           }
         },
-        {
-          path: 'unauthorized',
-          alias: '',
-          name: 'unauthorized', 
-          component: () => import('@/pages/auths/Unauthorized.vue'),
-          meta: {
-            pageTitle: '<b>Pengaturan Pengguna</b>',
-          }
-        },
       ]
   },
   {
@@ -83,6 +74,14 @@ let routes = [
             meta: {
               requiresAuth: true,
               pageTitle: '<b>Pengaturan Account</b>',
+            }
+          },
+          {
+            path: 'unauthorized',
+            alias: '',
+            name: 'unauthorized', 
+            component: () => import('@/pages/auths/Unauthorized.vue'),
+            meta: {
             }
           },
         ]

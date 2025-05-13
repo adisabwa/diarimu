@@ -32,7 +32,7 @@ class ValidationFilter implements FilterInterface
 
         $validationRule = $this->setValidation('', $datas, $postData, $files_data, $model, $id, $validationRule);
 
-        // var_dump($validationRule, $postData);
+        // var_dump($validationRule);
             // return failValidationErrors([]);
         if (empty($validationRule))
             return TRUE;
@@ -86,15 +86,16 @@ class ValidationFilter implements FilterInterface
             if (isset($postData[$nama])) {
                  if (is_array($postData[$nama])) {
                      $kolom_child = $model->getAll($nama);
-                     $prev = "$nama.*.";
-                     $validationRule = [...$validationRule, ...$this->setValidation($prev, $kolom_child, $postData[$nama][0], $files_data[$nama][0] ?? [], $model, $id)];
+                     foreach($postData[$nama] as $ind => $element) {
+                        $prev = "$nama".".$ind.";
+                        $validationRule = [...$validationRule, ...$this->setValidation($prev, $kolom_child, $postData[$nama][$ind], $files_data[$nama][$ind] ?? [], $model, $id)];
+                     }
                  } else {
                      $validationRule[$nama_rule] = [
                          'label' => $label,
                          // 'rules' => 'even'
                          'rules' => ($data->required == '1' ? 'required' : 'permit_empty').(empty($data->rules) ? '' : '|'.$data->rules),
                      ]; 
-                     $validationRule[$nama_rule]['rules'] = str_replace("{id}",$id,$validationRule[$nama_rule]['rules']);
                      // var_dump("{id}",$id,$validationRule[$nama]['rules']);
                      // $koloms[] = $data;
                  }
@@ -109,6 +110,11 @@ class ValidationFilter implements FilterInterface
                      ],
                  ];
             }
+            if (!is_array($postData[$nama])) {
+                $validationRule[$nama_rule]['rules'] = str_replace("{id}", $id,$validationRule[$nama_rule]['rules']);
+                $validationRule[$nama_rule]['rules'] = str_replace("{field}", $nama_rule,$validationRule[$nama_rule]['rules']);
+            }
+
         }
         return $validationRule;
     }

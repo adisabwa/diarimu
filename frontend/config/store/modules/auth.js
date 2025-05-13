@@ -33,6 +33,26 @@ const actions = {
       });
     }); 
   },
+  changeRole: (context, payload, save = true) => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: siteUrl + "/auth/change_role",
+        data: window.jsonToFormData(payload),
+      }).then(response => {
+        deleteCookie(COOKIE_NAME)
+        const loggedUser = JSON.stringify(response.data);
+        if (save)
+          setCookie(COOKIE_NAME, payload, 30)
+        localStorage.setItem(AUTH_USER, loggedUser);
+        context.commit("LOGGED_USER_UPDATE", loggedUser);
+        resolve(response);
+      }).catch(error => {
+        localStorage.removeItem(AUTH_USER);
+        reject(error);
+      });
+    }); 
+  },
   logout: (context, payload) => {
     return new Promise((resolve, reject) => {
       axios({

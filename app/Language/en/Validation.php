@@ -15,4 +15,6 @@ return [
 	'is_unique' 	=> '{field} sudah digunakan.',
 	'greater_than'	=> '{field} harus lebih besar dari {param}.',
 	'double_greater_and_equal_to' => '{field} harus lebih besar atau sama dengan dari {param}.',
+	'unique_combination' => 'Data sudah ada di database, tidak bisa dimasukkan lagi',
+	'unique_input' => 'Data hanya boleh dimasukkan sekali saja',
 ];

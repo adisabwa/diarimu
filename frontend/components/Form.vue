@@ -10,7 +10,7 @@
           <template #label v-if="showLabel">
             <span :class="[field.required == '1' ? 'required' : '','leading-[1.5] mt-2', labelClass]"> {{ field.label }} </span>
           </template>
-          <div class="flex space-x-3 w-full">
+          <div class="flex gap-x-3 w-full">
             <el-select v-if="showOriginal" v-model="original[field.nama_kolom]" class="w-[130px] grow-0 shrink-0" size="large" @change="changedValue(field.nama_kolom)">
               <el-option :value="true" label="Nilai Asli"></el-option>
               <el-option :value="false" label="Berubah"></el-option>
@@ -75,7 +75,7 @@
                   </el-option>
                 </template>
                 <template v-if="field.allow_add" #footer>
-                  <el-button v-if="!field.isAdding" type="primary" text size="small" @click="field.isAdding = !field.isAdding">
+                  <el-button v-if="!field.isAdding" text size="small" @click="field.isAdding = !field.isAdding">
                     Tambah Pilihan
                   </el-button>
                   <el-dialog v-model="field.isAdding"
@@ -138,7 +138,7 @@
                   </el-option>
                 </template>
                 <template v-if="field.allow_add" #footer>
-                  <el-button v-if="!field.isAdding" type="primary" text size="small" @click="field.isAdding = !field.isAdding">
+                  <el-button v-if="!field.isAdding" text  size="small" @click="field.isAdding = !field.isAdding">
                     Tambah Pilihan
                   </el-button>
                 </template>
@@ -213,21 +213,45 @@
               </div>
             </template>
             <template v-else-if="field.input == 'array'">
-              <Form ref="formItem"
-                class=""
-                :key="'form-item-'+ ind"
-                :fields="field.fields"
-                v-model:form-value="form[field.nama_kolom][0]" 
-                v-model:error-value="errors[field.nama_kolom][0]"
-                size="large"
-                :show-submit="false"
-                :show-label="false"
-                :inline="true"
-                form-class="flex gap-2"
-                form-item-class="w-full m-0"
-                input-class="[&_*]:rounded-[15px]"
-                :show-required-text="false">
-            </Form>  
+              <div>
+                <div v-for="(recData, ind) in form[field.nama_kolom]"
+                  class="flex flex-col gap-y-0">
+                  <Form ref="formItem"
+                    class="mb-0"
+                    :key="'form-item-'+ ind"
+                    :fields="field.fields"
+                    v-model:form-value="form[field.nama_kolom][ind]" 
+                    v-model:error-value="errors[field.nama_kolom][ind]"
+                    size="large"
+                    :show-submit="false"
+                    :show-label="false"
+                    :inline="true"
+                    form-class="flex gap-2 mb-0 items-start"
+                    form-item-class="w-full m-0"
+                    input-class="[&_*]:rounded-[15px]"
+                    :show-required-text="false">
+                  </Form>  
+                  <div class="ml-3 mt-1 mb-2 flex items-baseline">
+                    <el-button text class="text-sky-500
+                      p-0 h-auto text-[12px]"
+                      @click="() => {
+                        let array = form[field.nama_kolom]
+                        console.log(array, ind)
+                        form[field.nama_kolom].splice(ind, 0, 
+                          JSON.parse(JSON.stringify(array[ind]))
+                        )
+                      }">
+                      Tambah</el-button>
+                    <template v-if="form[field.nama_kolom].length > 1">
+                      <el-divider direction="vertical" class="translate-y-[3px]"/>
+                      <el-button text class="text-red-500
+                        p-0 h-auto text-[12px]"
+                        @click="form[field.nama_kolom].splice(ind, 1)">
+                        Hapus</el-button>
+                    </template>
+                  </div>
+                </div>
+              </div>
             </template> 
           </div>
         </el-form-item>
@@ -379,6 +403,12 @@ export default {
       },
       deep: true, // Watch nested properties
     },
+    formValue: {
+      handler(newVal, oldVal) {
+        console.log(newVal)
+      },
+      deep: false, // Watch nested properties
+    },
     errors: {
       handler(newVal, oldVal) {
         this.$emit('update:errorValue', newVal)
@@ -435,6 +465,7 @@ export default {
               this.dataId = psb.id
               this.$emit('changeId', this.dataId);
             }
+            console.log(psb, this.form)
             let fieldsData = Object.values(this.fields)
             fieldsData.forEach(d => {
               if (d.input == 'select-double') {
@@ -530,8 +561,8 @@ export default {
       fieldsData.forEach(d => {
         if (d.from_user == '1' || d.from_user == undefined) {
           vm.fieldsData[d.nama_kolom] = d
-          vm.form[d.nama_kolom] = d.input == 'array' ? [''] : vm.coalesce([d.default,''])
-          vm.errors[d.nama_kolom] = d.input == 'array' ? [''] : ''
+          vm.form[d.nama_kolom] = d.input == 'array' ? [['']] : vm.coalesce([d.default,''])
+          vm.errors[d.nama_kolom] = d.input == 'array' ? [['']] : ''
           vm.original[d.nama_kolom] = false
           if (d.input == 'file') {
             // delete vm.form[d.nama_kolom]
@@ -539,10 +570,15 @@ export default {
           }
         }
       })
-      // console.log('form isi', vm.form, vm.errors)
+      console.log('form isi', vm.form, vm.errors)
+      vm.fillObjectValue(vm.form, vm.formValue)
+      setTimeout(() => {
+        vm.fillObjectValue(vm.form, vm.formValue)
+      },500)
     }
   },
   mounted(){
+    console.log('mounted')
     this.settingFields();
     this.getData({id:this.dataId});
   }

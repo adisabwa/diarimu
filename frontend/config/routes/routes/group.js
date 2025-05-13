@@ -31,6 +31,8 @@ let routes = [
                 component: () => import('@/pages/group/admin/Index.vue'),
                 meta: {
                     pageTitle: "<b>Daftar Group</b>",
+                    allowedRoles:['admin'],
+                    // redirect:'dashboard',
                 }
               },
             ]

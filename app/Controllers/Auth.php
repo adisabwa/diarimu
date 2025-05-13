@@ -65,6 +65,20 @@ class Auth extends BaseController
     }
 
     
+    public function change_role()
+    {
+        $role = $this->request->getGetPost('role');
+        
+        $userdata = userdata();
+        $userdata->role = $role;
+
+        set_userdata($userdata);
+
+        return $this->respondCreated($userdata);
+    }
+
+
+    
     public function reset()
     {
         $user = userdata();

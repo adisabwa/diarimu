@@ -9,12 +9,78 @@ use CodeIgniter\Files\File;
 
 class GroupController extends BaseData
 {
+    private $modelAnggota;
 
     public function __construct()
     {
         parent::__construct();
         
         $this->model = model('GroupModel');
+        $this->modelAnggota = model('GroupAnggotaModel');
+    }
+
+    public function index()
+    {
+        $where = $this->request->getGetPost('where') ?? [];
+        $or = $this->request->getGetPost('or') ?? [];
+        $order = $this->request->getGetPost('order') ?? [];
+        $limit = $this->request->getGetPost('limit') ?? 5;
+        $offset = $this->request->getGetPost('offset') ?? 0;
+
+        $order = implode(",", $order);
+
+        $data = $this->model->getAll($where, $or, 'type desc, nama asc', $limit, $offset);
+        // var_dump($this->model->getLastQuery());
+
+        return $this->respondCreated($this->grouping_data($data));
+    }
+    
+    public function get()
+    {
+        $id = $this->request->getGet('id');
+        $data = $this->model->find($id);
+        if (!empty($data))
+        $data->mu_group_anggota = $this->modelAnggota->getAll(['id_group' => $id]);
+
+        return $this->respondCreated(($data));
+    }
+
+    public function grouping_data($data)
+    {
+        $results = [];
+        foreach ($data as $key => $d) {
+            $ind = md5($d->id);
+            $d->checked = false;
+            if (empty($results[$ind])) {
+                $results[$ind] = (object) [
+                    'id' => $d->id,
+                    'nama_group' => $d->nama_group,
+                    'anggota' => [],
+                    'show'  => false,
+                ];
+            }
+            $results[$ind]->anggota[] = (object) [
+                'id_group' => $d->id_group,
+                'id_anggota' => $d->id_anggota,
+                'type' => $d->type,
+                'nama' => $d->nama,
+            ];
+        }
+        return array_values($results);
+    }
+
+    public function get_anggota()
+    {
+        $id = $this->request->getGetPost('id') ?? userdata()->id_anggota;
+        $data = $this->modelAnggota->where(['id_anggota' => $id,'type' => 'mentor'])->find()[0] ?? [];
+        $datas = [];
+        if (!empty($data)) {
+            $datas = $this->modelAnggota->getAll([
+                'id_group' => $data->id_group
+            ]);
+        }
+
+        return $this->respondCreated($datas);
     }
 
     public function template()
