@@ -82,7 +82,8 @@
 				bg-brand text-emerald-50
 				px-4 py-5
 				active:scale-95
-				[&>*]:w-full">
+				[&>*]:w-full"
+				@click="$router.push({name:'activity'})">
 				<div class="flex justify-between w-full">
 					<div class="flex items-center">
 						<icons icon="uil:notes"></icons>Aktivitas Hari Ini

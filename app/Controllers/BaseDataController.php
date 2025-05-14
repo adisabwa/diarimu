@@ -21,7 +21,7 @@ class BaseDataController extends BaseController
     public function index()
     {
         $where = $this->request->getGetPost('where') ?? [];
-        $or = $this->request->getGet('or') ?? ['1=1' => NULL];
+        $or = $this->request->getGetPost('or') ?? ['1=1' => NULL];
         $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
@@ -48,26 +48,31 @@ class BaseDataController extends BaseController
     {
         $id = $this->request->getGet('id');
 
-        return $this->respondCreated(function_exists($this->model->getData) ? $this->model->getData($id) : $this->model->find($id));
+        return $this->respondCreated(method_exists($this->model, 'getData') ? $this->model->getData($id) : $this->model->find($id));
     }
 
     
     public function get_where()
     {
-        $where = $this->request->getGet('where') ?? [];
-        $or = $this->request->getGet('or') ?? ['1=1' => NULL];
-        $order = $this->request->getGet('order') ?? [];
+        $where = $this->request->getGetPost('where') ?? [];
+        $or = $this->request->getGetPost('or') ?? ['1=1' => NULL];
+        $order = $this->request->getGetPost('order') ?? [];
         $order = implode(",", $order);
 
-        $data = $this->model->builder()
-                            ->where($where)
-                            ->groupStart()
-                                ->orWhere($or)
-                            ->groupEnd()
-                            ->orderBy($order)
-                            ->get()
-                            ->getRowObject();
-        // var_dump($data, $this->model->getLastQuery());   
+        // var_dump(method_exists($this->model, 'getWhere'));
+        if ( method_exists($this->model, 'getWhere') ) {
+            $data = $this->model->getWhere($where, $or, $order);
+        } else {
+            $data = $this->model->builder()
+                                ->where($where)
+                                ->groupStart()
+                                    ->orWhere($or)
+                                ->groupEnd()
+                                ->orderBy($order)
+                                ->get()
+                                ->getRowObject();
+        }
+        // var_dump($this->model->getLastQuery());   
         return $this->respondCreated($data);
     }
 

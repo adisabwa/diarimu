@@ -1,18 +1,23 @@
 
 export function setStatusColor(number){
-    if (typeof number == 'number') {
+    console.log(number)
+    number = parseInt(number)
+    console.log(number, typeof number, )
+    let res = ''
       if (number == 100)
-        return '[&_*]:bg-green-100 [&_*]:text-green-900 bg-green-100 text-green-900'
+        res = '[&_*]:bg-green-100 [&_*]:text-green-900 bg-green-100 text-green-900'
       else if (number >= 75)
-        return '[&_*]:bg-sky-100 [&_*]:text-sky-900 bg-sky-100 text-sky-900'
+        res = '[&_*]:bg-sky-100 [&_*]:text-sky-900 bg-sky-100 text-sky-900'
       else if (number >= 50)
-        return '[&_*]:bg-purple-100 [&_*]:text-purple-900 bg-purple-100  text-purple-900'
+        res = '[&_*]:bg-purple-100 [&_*]:text-purple-900 bg-purple-100  text-purple-900'
       else if (number >= 25)
-        return '[&_*]:bg-orange-100 [&_*]:text-orange-900 bg-orange-100 text-orange-900'
+        res = '[&_*]:bg-orange-100 [&_*]:text-orange-900 bg-orange-100 text-orange-900'
       else if (number >= 0)
-        return '[&_*]:bg-red-500 [&_*]:text-white bg-red-500 text-white'
-    }
-    return '[&_*]:bg-slate-50 [&_*]:text-slate-400 bg-slate-50 text-slate-400'
+        res = '[&_*]:bg-red-500 [&_*]:text-white bg-red-500 text-white'
+      else
+        res = '[&_*]:bg-slate-50 [&_*]:text-slate-400 bg-slate-50 text-slate-400'
+    console.log(res)
+    return res
   }
   
 let options  = [
@@ -45,7 +50,7 @@ export function getLabel(value){
   if (op)
     return op.label
   else
-    return '-';
+    return 'No Data';
 }
 export function setStatusText(status){
     if (status == '0') return 'Terdaftar'
