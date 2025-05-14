@@ -2,7 +2,7 @@
 
 namespace Modules\Quran\Controllers\Tarjamah;
 
-use Modules\Data\Controllers\BaseData;
+use App\Controllers\BasePageController;
 use App\Libraries\PdfBuilder;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -12,29 +12,16 @@ use PhpParser\Node\Expr\AssignOp\Coalesce;
 use Config\Upload;
 use stdClass;
 
-class QuranController extends BaseData
+class QuranController extends BasePageController
 {
     protected $quran;
 
     public function __construct()
     {
+        parent::__construct();
+        
         $this->model = model('QuranTarjamahModel');
         $this->quran = model('DataSuratQuranModel');
-    }
-    
-    
-    public function index()
-    {
-        $where = $this->request->getGetPost('where') ?? [];
-        $or = $this->request->getGetPost('or') ?? [];
-        $limit = $this->request->getGetPost('limit') ?? 5;
-        $offset = $this->request->getGetPost('offset') ?? 0;
-
-        $data = $this->model->getAll($where,$or,'tanggal desc, id',
-        $limit, $offset);
-
-        return $this->respondCreated($data);
-
     }
     
     public function get()
@@ -50,18 +37,6 @@ class QuranController extends BaseData
             $data->{'surat_selesai-ayat_selesai'} = "$data->surat_selesai-$data->ayat_selesai";
         }
         return $this->respondCreated($data);
-    }
-
-    public function get_before()
-    {
-        $postData = $this->request->getGetPost();
-        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
-        $data = $this->model->where('id_anggota', $id_anggota)->orderBy('tanggal desc')->find();
-        $now = date('Y-m-d');
-        $tanggal = $data[0]->tanggal ?? $now;
-
-        // var_dump($tanggal, $now);
-        return $this->respondCreated(get_date_interval($tanggal ?? $now, $now));
     }
     
     public function save()
@@ -79,141 +54,15 @@ class QuranController extends BaseData
         $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
         return $this->respondCreated($this->model->get_last($id_anggota));
     }
-
+    
     public function dashboard()
     {
-        $postData = $this->request->getGetPost();
-        $type = $postData['tipe'] ?? 'week';
-        $end = $postData['end'] ?? date('Y-m-d');
-        $start = $postData['start'] ?? date('Y-m-d');
-        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
-
-        $date_range = getDateRange($start, $end);
-        $data = $this->model->getAll(
-            [
-                'id_anggota' => $id_anggota,
-                "tanggal >= '$start'" => NULL,
-                "tanggal <= '$end'" => NULL,
-            ]
-        );
-        $_data = [];
-        // var_dump($data);
-        foreach ($data as $key => $d) {
-            if (empty($_data[$d->tanggal])) {
-                $_data[$d->tanggal] = $d->total_ayat ?? 0;
-            } else {
-                $_data[$d->tanggal] += $d->total_ayat ?? 0;
-            }
-        }
-        // var_dump($_data);
-        $total = $labels = [];
-        $max = $min = 0;
-
-        foreach ($date_range as $key => $tgl) {
-            // var_dump($tgl);
-            $labels[$tgl] = date("d M", strtotime($tgl));
-            $total[$tgl] = $_data[$tgl] ?? 0;
-        }
-        
-        $color =  setRandomColor();
-        $datasets[] = (object)[
-            'label' => 'Jumlah Tarjamahan Ayat',
-            'data' => array_values($total),
-            'tension' => 0.1,
-            'borderColor' => $color,
-            'backgroundColor' => $color,
-            'pointRadius' => 5,
-        ];
-        $max = empty($total) ? 1 : max($total);
-        $min = empty($total) ? -1 : min($total);
-        
-        // $datasets = array_values($datasets);
-        $labels = array_values($labels);
-        return $this->respondCreated(compact('labels','datasets','max','min'));
+        return $this->createChart('Jml Ayat');
     }
 
-    // public function status($id, $status)
-    // {
-    //     $data = ['status' => $status];
-    //     if ($status == '2')
-    //         $data['no_pendaftaran'] = getNomorPendaftaran();
-    //     // var_dump($data);exit;
-    //     $save = $this->model->update($id,$data);
-
-    //     if ($save)
-    //         return $this->respondCreated();
-    //     else
-    //         return $this->failServerError();
-    // }
-
-    // public function status_many()
-    // {
-    //     ini_set('max_input_vars', -1);
-
-    //     $ids = $this->request->getPost('id') ?? -1;
-    //     $status = $this->request->getPost('status') ?? 1;
-    //     // var_dump($ids);exit;
-    //     $save = $this->model->update($ids,['status' => $status]);
-
-    //     if ($save)
-    //         return $this->respondCreated();
-    //     else
-    //         return $this->failServerError();
-    // }
-
-    // public function delete($id)
-    // {
-    //     $save = $this->model->delete($id);
-
-    //     if ($save)
-    //         return $this->respondCreated();
-    //     else
-    //         return $this->failServerError();
-    // }
-
-    // public function delete_many()
-    // {
-    //     ini_set('max_input_vars', -1);
-
-    //     $ids = $this->request->getPost('id') ?? -1;
-    //     // var_dump($ids);exit;
-    //     $save = $this->model->delete($ids);
-
-    //     if ($save)
-    //         return $this->respondCreated();
-    //     else
-    //         return $this->failServerError();
-    // }
-
-    
-    // public function download($id)
-    // {
-    //     $PdfBuilder = new PdfBuilder();
-
-    //     $data  = $this->model->getData(['p.id' => $id]);
-    //     if ($data->status != '2')
-    //         exit('Data belum diverifikasi');
-        
-    //     $html = view('dokumens/kartu-pendaftaran', ['content' => $data]);
-    //     // echo $html;exit;
-    //     $PdfBuilder->generatePdf($html, TRUE, [0, 0, 500, 842]);
-    // }
-
-    // public function download_many()
-    // {
-    //     ini_set('max_input_vars', -1);
-
-    //     $ids = $this->request->getPost('id') ?? -1;
-
-    //     $PdfBuilder = new PdfBuilder();
-
-    //     $data  = $this->model->getAll(['p.id IN ('.implode(',',$ids).')' => NULL, 'status' => '2']);
-    //     $html = '';
-    //     foreach($data as $d) {
-    //         $html .= view('dokumens/kartu-pendaftaran', ['content' => $d]);
-    //     }
-
-    //     $PdfBuilder->generatePdf($html, TRUE, [0, 0, 500, 500]);
-    // }
+    public function get_before()
+    {
+        return parent::get_before();
+    }
 
 }

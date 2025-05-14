@@ -13,12 +13,14 @@
 }
 </style>
 <template>
-  <div id="sholat" class="pt-0">
+  <div id="sholat" class="pt-[50px]">
     <div v-if="user.role == 'mentor'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
+      <div class="text-sm mb-2">Nama Anggota :</div>
       <el-select v-model="idAnggota" placeholder="Pilih Anggota"
         @change="reloadData">
+        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
         <el-option v-for="a in anggotas"
           :key="a.id"
           :value="a.id_anggota"
@@ -257,10 +259,12 @@
             :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
       </template>
-      <chart ref="sunnahChartData"
+      <chart ref="sunnahChartData" 
+        href="sholat/sunnah/dashboard"
          :id-anggota="idAnggota"
-          :key="'sunnahChartData'+formKey"
-           v-if="showData == 'chart'" />
+           v-if="showData == 'chart'" 
+        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
+        class="px-4"/>
       <list-data ref="sunnahListData"
         :id-anggota="idAnggota"
           :key="'sunnahListData'+formKey"
@@ -279,7 +283,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import Form from '@/components/Form.vue'
-import Chart from './components/Chart.vue'
+import Chart from '@/components/statistics/DataChart.vue'
 import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 

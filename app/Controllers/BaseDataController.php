@@ -1,86 +1,168 @@
 <?php
 
-namespace Modules\Data\Controllers;
+namespace App\Controllers;
 
-use App\Controllers\BaseDataController;
+use App\Controllers\BaseController;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use CodeIgniter\Files\File;
+use App\Controllers\Kolom;
 
-class GroupController extends BaseDataController
+class BaseDataController extends BaseController
 {
-    private $modelAnggota;
+    public $model;
+    public $kolomClass;
 
     public function __construct()
     {
-        parent::__construct();
-        
-        $this->model = model('GroupModel');
-        $this->modelAnggota = model('GroupAnggotaModel');
+        $this->kolomClass = new Kolom;
     }
 
     public function index()
     {
         $where = $this->request->getGetPost('where') ?? [];
-        $or = $this->request->getGetPost('or') ?? [];
+        $or = $this->request->getGet('or') ?? ['1=1' => NULL];
         $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
 
         $order = implode(",", $order);
 
-        $data = $this->model->getAll($where, $or, 'type desc, nama asc', $limit, $offset);
+        $data = $this->model->builder()
+                            ->where($where)
+                            ->groupStart()
+                                ->orWhere($or)
+                            ->groupEnd()
+                            ->orderBy($order)
+                            ->limit($limit, $offset)
+                            ->get()
+                            ->getResult();
         // var_dump($this->model->getLastQuery());
-
-        return $this->respondCreated($this->grouping_data($data));
+        foreach ($data as $key => $d) {
+            $d->checked = false;
+        }
+        return $this->respondCreated($data);
     }
-    
+
     public function get()
     {
         $id = $this->request->getGet('id');
-        $data = $this->model->find($id);
-        if (!empty($data))
-        $data->mu_group_anggota = $this->modelAnggota->getAll(['id_group' => $id]);
 
-        return $this->respondCreated(($data));
+        return $this->respondCreated(function_exists($this->model->getData) ? $this->model->getData($id) : $this->model->find($id));
     }
 
-    public function grouping_data($data)
+    
+    public function get_where()
     {
-        $results = [];
-        foreach ($data as $key => $d) {
-            $ind = md5($d->id);
-            $d->checked = false;
-            if (empty($results[$ind])) {
-                $results[$ind] = (object) [
-                    'id' => $d->id,
-                    'nama_group' => $d->nama_group,
-                    'anggota' => [],
-                    'show'  => false,
-                ];
+        $where = $this->request->getGet('where') ?? [];
+        $or = $this->request->getGet('or') ?? ['1=1' => NULL];
+        $order = $this->request->getGet('order') ?? [];
+        $order = implode(",", $order);
+
+        $data = $this->model->builder()
+                            ->where($where)
+                            ->groupStart()
+                                ->orWhere($or)
+                            ->groupEnd()
+                            ->orderBy($order)
+                            ->get()
+                            ->getRowObject();
+        // var_dump($data, $this->model->getLastQuery());   
+        return $this->respondCreated($data);
+    }
+
+    public function options()
+    {
+        $where = $this->request->getGet('where') ?? [];
+        return $this->respondCreated($this->model->getOptions($where));
+    }
+
+    public function store()
+    {
+        $posted_data = $this->request->getPost();
+        // var_dump($posted_data);
+        // return $this->failServerError();
+        $data = $posted_data;
+        unset($data['id']);
+        $data["created_by"] = userdata()->id ?? 0;
+        $child_key = $data['nama_fk'] ?? [];
+        $child_table = $data['tables'] ?? [];
+        unset($data['nama_fk']);
+        unset($data['tables']);
+
+        // Start the transaction
+
+        $this->model->transBegin();
+        if ($posted_data['id'] > 0) {
+            $save = $this->model->update($posted_data['id'], $data);
+        } else {
+            $save = $this->model->insert($data, TRUE);
+            $posted_data['id'] = $this->model->insertID();
+        }
+        // var_dump($posted_data);
+        // var_dump( $this->model->error());
+        // Append ID to data
+        foreach ($child_table as $table => $values) {
+            $fk = $child_key[$table];
+            $id = $posted_data['id'];
+            $model = $this->kolomClass->getModelFromTable($table);
+            if ($model) {
+                $model->where([$fk => $posted_data['id']])->delete();
+                array_walk($values, function(&$value) use ($fk, $id) {
+                    $value[$fk] = $id;
+                });
+                $model->insertBatch($values);
             }
-            $results[$ind]->anggota[] = (object) [
-                'id_group' => $d->id_group,
-                'id_anggota' => $d->id_anggota,
-                'type' => $d->type,
-                'nama' => $d->nama,
-            ];
         }
-        return array_values($results);
+
+        $newRequest = $this->request->setGlobal('post', $posted_data);
+
+        if ($this->model->transStatus() === false) {
+            $this->model->transRollback();
+            return $this->failServerError();
+        } else {
+            $this->model->transCommit();
+            return $this->respondCreated($posted_data);
+        }
     }
 
-    public function get_anggota()
+    public function resetOptions()
     {
-        $id = $this->request->getGetPost('id') ?? userdata()->id_anggota;
-        $data = $this->modelAnggota->where(['id_anggota' => $id,'type' => 'mentor'])->find()[0] ?? [];
-        $datas = [];
-        if (!empty($data)) {
-            $datas = $this->modelAnggota->getAll([
-                'id_group' => $data->id_group
-            ]);
-        }
+        return $this->respondCreated($this->model->getOptions());
+    }
 
-        return $this->respondCreated($datas);
+    public function delete($id)
+    {
+        // Start the transaction
+        $this->model->transBegin();
+
+        $save = $this->model->delete($id);
+
+        if ($this->model->transStatus() === false) {
+            $this->model->transRollback();
+            return $this->failServerError();
+        } else {
+            $this->model->transCommit();
+            return $this->respondCreated();
+        }
+    }
+
+    public function delete_many()
+    {
+        // Start the transaction
+        $this->model->transBegin();
+        
+        $ids = $this->request->getPost('id') ?? -1;
+        // var_dump($ids);exit;
+        $save = $this->model->delete($ids);
+
+        if ($this->model->transStatus() === false) {
+            $this->model->transRollback();
+            return $this->failServerError();
+        } else {
+            $this->model->transCommit();
+            return $this->respondCreated();
+        }
     }
 
     public function template()
@@ -93,7 +175,7 @@ class GroupController extends BaseDataController
                     ->setTitle('Finance App');
         $activeWorksheet = $spreadsheet->getActiveSheet();
         $spreadsheet->getActiveSheet()->setCellValue('A1', 'No');
-        $spreadsheet->getActiveSheet()->setCellValue('B1', 'Label Prm');
+        $spreadsheet->getActiveSheet()->setCellValue('B1', 'Label Iqab');
         $spreadsheet->getActiveSheet()->setCellValue('C1', 'Rentang Awal');
         $spreadsheet->getActiveSheet()->setCellValue('D1', 'Rentang Akhir');
         $spreadsheet->getActiveSheet()->setCellValue('A2', 'Cth');
@@ -176,16 +258,16 @@ class GroupController extends BaseDataController
             // var_dump($data);
             // var_dump(in_array($data['no_id'],['-','','+',NULL]));
             if ($this->validation->run($data)) {
-                $check = $this->pelanggaranModel->where($data)->first();
+                $check = $this->model->where($data)->first();
 
                 if (!empty($check)) {
                     $data["created_by"] =  userdata()->id;
-                    $save = $this->pelanggaranModel->update($check['id'], $data);
+                    $save = $this->model->update($check['id'], $data);
                     $data['id'] = $check['id'];
 
                 } else {
-                    $save = $this->pelanggaranModel->insert($data);
-                    $data['id'] = $this->pelanggaranModel->insertID();
+                    $save = $this->model->insert($data);
+                    $data['id'] = $this->model->insertID();
                 }
                 $data_pegnghasilan[] = $data;
             } else {

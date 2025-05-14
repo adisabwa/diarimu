@@ -76,7 +76,7 @@ function get_manifest()
 {
     $content = is_development() ?
         file_get_contents(APPPATH . '../public/assets/vue/manifest.json') :
-        file_get_contents(APPPATH . '../../../httpdocs/simak/assets/vue/manifest.json') ;
+        file_get_contents(APPPATH . '../../../httpdocs/ppmda/assets/vue/.vite/manifest.json') ;
 
     return json_decode($content, true);
 }

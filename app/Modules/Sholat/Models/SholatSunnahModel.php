@@ -31,7 +31,8 @@ class SholatSunnahModel extends Model
         return $this->db->table('mu_sholat_sunnah f')
                     ->select("f.*, s.nama, s.nbm,
                         su.nama_sholat,
-                        SUM(f.rakaat) total_rakaat,
+                        SUM(f.rakaat) total_rakaat, 
+                        SUM(f.rakaat) data_chart,
                         GROUP_CONCAT(CONCAT(su.nama_sholat,'-',f.rakaat) SEPARATOR '/') daftar_sholat")
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->join('mu__sholat_sunnah su','su.id=f.id_sholat')

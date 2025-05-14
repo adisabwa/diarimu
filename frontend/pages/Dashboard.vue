@@ -4,9 +4,12 @@
   }
 </style>
 <template>
-	<div>
-		<img :src="`${$baseUrl}/assets/images/dashboard.png`"
-			class="absolute w-screen left-0 top-[-150px] z-[0]"/>
+	<div class="mt-[50px]">
+		<div class="absolute w-screen h-[190px] left-0 top-[0px] z-[0]
+			bg-[length:345px] bg-repeat bg-bottom"
+			:style="{
+				backgroundImage:`url('${$baseUrl}/assets/images/dashboard.png')`,
+			}"/>
 		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto">
 			<div class="w-full h-[40px] px-2 mt-0 z-[1]
 				text-white leading-[1.3]">
@@ -88,15 +91,17 @@
 						class="grow-0 text-xl text-emerald-50"/>
 				</div>
 			</el-button>
-			<div class="relative h-auto w-full
+			<el-card class="relative h-auto w-full
 				bg-white/[0.8] shadow-md
-					pt-4 pb-5 mb-20">
-					<div class="px-4 pb-2
-					font-montserrat font-bold text-xl text-emerald-900">Catatan Ibadah</div>
-					<el-divider class="mt-0 mb-3 mx-4"/>
+				rounded-[20px]
+				mb-20"
+				header-class="pt-4 pb-3">
+					<template #header>
+						<div class="font-montserrat font-bold text-xl text-emerald-900">Catatan Ibadah Pribadi</div>
+					</template>
 					<div class="grid grid-cols-[repeat(auto-fit,_65px)] gap-[25px] gap-y-[15px]
 						justify-center
-						px-1 md:max-w-[80%] mx-auto">
+						px-1 md:max-w-[80%] mx-auto pb-5">
 						<template v-for="(menu, ind) in topMenu">
 							<div class="grid-item h-[110px] cursor-pointer"
 								@click="$router.push({name:menu.route})">
@@ -125,7 +130,7 @@
 						</template>
 						
 					</div>
-			</div>
+			</el-card>
 		</div>
 		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat

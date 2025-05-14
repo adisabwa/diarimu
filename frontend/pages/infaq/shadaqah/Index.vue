@@ -1,10 +1,12 @@
 <template>
-    <div id="infaq" class="pt-0 translate-y-[-10px]">
+    <div id="infaq" class="pt-[50px] translate-y-[-10px]">
       <div v-if="user.role == 'mentor'" 
         class="bg-white/[0.9] rounded-[10px] shadow-md
         mb-3 p-4">
+      <div class="text-sm mb-2">Nama Anggota :</div>
         <el-select v-model="idAnggota" placeholder="Pilih Anggota"
           @change="submittedData">
+          <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
           <el-option v-for="a in anggotas"
             :key="a.id"
             :value="a.id_anggota"
@@ -58,7 +60,9 @@
                 <div class="font-bold text-[20px]">{{ toIDR(s.jumlah) }}</div>
                 <div class="font-semibold text-[13px] opacity-70">{{ s.keterangan }}</div>
               </div>
-              <el-button class="rounded-full h-[40px] w-[40px]
+              <el-button 
+                v-if="user.role == 'user'"
+                class="rounded-full h-[40px] w-[40px]
                 bg-cyan-100/[0.4]"
                 @click="() => {
                   dataId = s.id
@@ -111,7 +115,43 @@
         body-class="py-3 px-5"
         header="Statistik Sadaqah"
         header-class="py-3 font-bold text-[18px] text-center" >
-      <chart ref="infaqChartData"
+      <chart ref="infaqChartData" 
+        href="infaq/shadaqah/dashboard"
+        :add-options="{
+          scales: {
+            y: {
+              title:{display:true, text:'Nominal Infaq'},
+              ticks: {
+                font: {
+                  size: 10
+                },
+                stepSize:100000,
+                callback: function(value) {
+                  // Custom formatting: add a dollar sign
+                  let val = ''
+                  if (value > 1000000)
+                    val = (value / 1000000) + ' Juta' 
+                  else if (value > 1000)
+                    val = (value / 1000) + ' Ribu' 
+                  else
+                    val = value
+                  return val;
+                }
+              }
+            }
+          },
+          plugins:{
+            tooltip: {
+              callbacks: {
+                label: (tooltipItem) => {
+                  const label = tooltipItem.dataset.label || '';
+                  const value = tooltipItem.raw || 0;
+                  return `${label}: ${toIDR(value)}`;
+                },
+              },
+            }
+          }
+        }"
         :id-anggota="idAnggota"
           :key="'infaqChartData'+formKey"/>
       </el-card>
@@ -121,7 +161,7 @@
   <script>
   import { mapGetters } from 'vuex';
   import Form from '@/components/Form.vue'
-  import Chart from './components/Chart.vue'
+  import Chart from '@/components/statistics/DataChart.vue'
   import { topMenu } from '@/helpers/menus.js'
   
   export default {

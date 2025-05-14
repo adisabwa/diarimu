@@ -22,11 +22,11 @@ export default {
 			}
 		},
 		max:{
-			type:Number,
+			type:[Number, String],
 			default:5,
 		},
 		min:{
-			type:Number,
+			type:[Number, String],
 			default:-1,
 		},
     addOptions:{
@@ -54,10 +54,10 @@ export default {
 				maintainAspectRatio: false,
 				layout: {
 					padding: {
-						left: 10,
-						right: 10,
-						top: 10,
-						bottom: 10,
+						left: 0,
+						right: 0,
+						top: 0,
+						bottom: 0,
 					},
 				},
 				scales: {
@@ -69,6 +69,19 @@ export default {
 							font: {
 								size: 11
 							}
+						},
+						title: {
+							display: false,
+							text: 'Judul X',
+							color: '#11716d',
+							font: {
+								size: 11,
+								weight: 'bold'
+							},
+							padding: {
+								top: 0,
+								bottom: 5
+							},
 						}
 					},
 					x: {
@@ -82,6 +95,19 @@ export default {
 								const label = this.getLabelForValue(value);
 								return label.split(' ')
 							}
+						},
+						title: {
+							display: false,
+							text: 'Judul Y',
+							color: '#11716d',
+							font: {
+								size: 11,
+								weight: 'bold'
+							},
+							padding: {
+								top: 5,
+								bottom: 0
+							},
 						}
 					},
 				},

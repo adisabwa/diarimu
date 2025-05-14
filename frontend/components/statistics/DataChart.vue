@@ -1,6 +1,6 @@
 <template>
-  <div class="px-4">
-    <div class="flex gap-x-3">
+  <div class="">
+    <div class="flex gap-x-3 mb-3">
       <el-select size="small" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
         <el-option value="week" label="7 Hari" />
@@ -24,6 +24,7 @@
     <div class="mb-4">
       <div v-if="!isEmpty(statistic.datasets)">
         <line-chart class="h-[300px]"
+          :add-options="addOptions"
           :statistic="statistic" :max="max" :min="min" />
       </div>
     </div>
@@ -40,7 +41,15 @@ export default {
     idAnggota:{
       type:[String, Number],
       default:null,
-    }
+    },
+    addOptions:{
+      type:[Object],
+      default:{},
+    },
+    href:{
+      type:[String],
+      default:null,
+    },
   },
   components: {
     LineChart,
@@ -61,13 +70,24 @@ export default {
 	},
   watch:{
     async tipe(val){
-      this.dateOptions = []
-      this.dateFunction(this.dateNow(), 4)
-      this.dates = this.getValue(this.dateOptions[0]);
-      this.selectKey = this.selectKey + 1
-      // console.log(this.selectKey)
-      this.getChart()
-    }
+      let vm = this
+      vm.dateOptions = []
+      vm.dateFunction(vm.dateNow(), 4)
+      vm.dates = vm.getValue(vm.dateOptions[0]);
+      vm.selectKey = vm.selectKey + 1
+      setTimeout(() => {
+        vm.getChart()
+      },300)
+    },
+    idAnggota(val){
+      let vm = this
+      setTimeout(() => {
+        vm.getChart()
+      },300)
+    },
+  },
+  computed:{
+    
   },
 	methods:{
     getValue(obj){
@@ -93,7 +113,7 @@ export default {
     async getChart(){
       // return;
       let dates = this.dates.split('/')
-      await this.$http.get('quran/tarjamah/dashboard', {
+      await this.$http.get(this.href, {
           params: {
             start:dates[0],
             end:dates[1],

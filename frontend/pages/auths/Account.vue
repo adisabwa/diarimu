@@ -1,6 +1,6 @@
 <template>
 	<div id="account-page">
-		<el-card class="mx-2 bg-white pt-4 pb-10">
+		<el-card class="mx-2 bg-white pt-[50px] pb-10">
 			<div class="center-text flex flex-col items-center">
 				<div class="h-[120px] w-[120px] rounded-full
 					flex items-center justify-center

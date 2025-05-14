@@ -2,12 +2,13 @@
 
 namespace Modules\Data\Controllers;
 
-use Modules\Data\Controllers\BaseData;
+
+use App\Controllers\BaseDataController;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use CodeIgniter\Files\File;
 
-class SholatSunnahController extends BaseData
+class SholatSunnahController extends BaseDataController
 {
 
     public function __construct()

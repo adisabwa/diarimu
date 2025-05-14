@@ -1,23 +1,26 @@
 <template>
-  <div id="quran" class="pt-0">
+  <div id="quran" class="pt-[50px]">
     <div v-if="user.role == 'mentor'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
+      <div class="text-sm mb-2">Nama Anggota :</div>
       <el-select v-model="idAnggota" placeholder="Pilih Anggota"
         @change="submittedData">
+        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
         <el-option v-for="a in anggotas"
           :key="a.id"
           :value="a.id_anggota"
           :label="a.nama"/>
       </el-select>
     </div>
-    <el-card class="relative overflow-hidden
+    <el-card v-if="user.role == 'user'"
+      class="relative overflow-hidden
        bg-gradient-to-tr from-white/[0.8] from-50% to-sky-200/[0.7] rounded-[10px]
       z-[0] font-montserrat text-[14px] leading-[1.3]
       mb-3 p-0" 
       body-class="py-4 px-6">
       <div class="z-[10] text-gray-500">Terakhir Membaca : </div>
-      <template v-if="!isEmpty(lastData.tanggal)">
+      <template v-if="!isEmpty(lastData?.tanggal)">
         <div class="z-[10] text-[24px] font-bold">{{ lastData.nama_surat_selesai }} ({{ lastData.surat_selesai }}) : {{ lastData.ayat_selesai }}
         </div>
         <div class="z-[10] text-gray-500 mt-1"><b>{{ dateDayIndo(lastData.tanggal) }}</b></div>
@@ -103,13 +106,15 @@
         </div>
       </template>
       <chart ref="quranChartData" 
-        :key="'quranChart'+formKey"
+        href="quran/tarjamah/dashboard"
         :id-anggota="idAnggota"
-        v-if="showData == 'chart'" />
+        v-show="showData == 'chart'" 
+        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
+        class="px-4"/>
       <list-data ref="quranListData" 
         :id-anggota="idAnggota"
           :key="'quranData'+formKey"
-        v-if="showData =='list'"
+        v-show="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id
           showCreate = true
@@ -122,7 +127,7 @@
 import { mapGetters } from 'vuex';
 import { setStatusText, setStatusType } from '@/helpers/quran'
 import Form from '@/components/Form.vue'
-import Chart from './components/Chart.vue'
+import Chart from '@/components/statistics/DataChart.vue'
 import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 
@@ -182,6 +187,7 @@ export default {
     getInitial: async function() {
         this.loading = true;
         this.resetObjectValue(this.lastData)
+        console.log(this.lastData)
         await this.$http.get('/quran/tarjamah/get_last',{
           params:{
             id_anggota: this.idAnggota
@@ -189,7 +195,7 @@ export default {
         })
           .then(result => {
             var res = result.data;
-            this.lastData = this.fillAndAddObjectValue(this.lastData, res)
+            this.fillAndAddObjectValue(this.lastData, res)
           });
 
         await this.$http.get('/kolom/preparation?table=mu_quran_tarjamah&grouping=0&input=0')
@@ -199,10 +205,9 @@ export default {
             this.fields = this.fillAndAddObjectValue(this.fields, res)
             this.fields.tanggal.default = this.dateNow()
             this.fields.id_anggota.default = this.idAnggota
-            this.formKey++
             this.loading = false
           });
-        await this.getChart();
+        this.formKey++
       },
     changedValue({ field, parent, value}){
       console.log(field, parent, value)
@@ -217,8 +222,8 @@ export default {
       this.saving = false;
       this.showCreate = false
       this.success = true
-      if (this.showData == 'chart') this.$refs.quranChartData.getChart();
-      if (this.showData == 'list') this.$refs.quranListData.getData(true);
+      if (this.showData == 'chart') this.$refs.quranChartData?.getChart();
+      if (this.showData == 'list') this.$refs.quranListData?.getData(true);
       this.getInitial();
     },
   },
@@ -226,9 +231,9 @@ export default {
     // let filter = this.$store.getters.filter
     // this.filter.nama = this.isEmpty(filter.nama) ? '' : filter.nama
     // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
-    this.getInitial()
     this.$store.dispatch('data/getAllAnggotaInGroup')
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
+    this.submittedData()
     // console.log(this.$router);
   },
   mounted: function() {

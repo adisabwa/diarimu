@@ -27,6 +27,7 @@ let listFunction = {
       if (data === null || data == undefined)
         return;
       let adds = []
+      // console.log(src)
       Object.keys(data).forEach(key => {
         let res = this.setObjectValueByPath(src, key, data[key])
       });
@@ -48,7 +49,7 @@ let listFunction = {
             src[key] = null; 
         }
       });
-      console.log(src)
+      // console.log(src)
       return src;
     },
     traverse(obj, callback, path = '') {
@@ -72,6 +73,7 @@ let listFunction = {
     
       // Iterate over the keys to find the target location
       keys.forEach((key, index) => {
+        // console.log(current, keys, key)
         if (index === keys.length - 1) {
           // If we're at the last key, set the value
           current[key] = value;

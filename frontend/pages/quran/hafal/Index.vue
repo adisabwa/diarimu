@@ -1,17 +1,20 @@
 <template>
-  <div id="quran" class="pt-0">
+  <div id="quran" class="pt-[50px]">
     <div v-if="user.role == 'mentor'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
+      <div class="text-sm mb-2">Nama Anggota :</div>
       <el-select v-model="idAnggota" placeholder="Pilih Anggota"
         @change="submittedData">
+        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
         <el-option v-for="a in anggotas"
           :key="a.id"
           :value="a.id_anggota"
           :label="a.nama"/>
       </el-select>
     </div>
-    <el-card class="relative overflow-hidden
+    <el-card v-if="user.role == 'user'"
+      class="relative overflow-hidden
        bg-gradient-to-tr from-white/[0.8] from-50% to-yellow-200/[0.7] rounded-[10px]
       z-[0] font-montserrat
       mb-3 p-0" 
@@ -119,9 +122,11 @@
         </div>
       </template>
       <chart ref="quranChartData" 
-        :key="'quranChart'+formKey"
+        href="quran/hafal/dashboard"
         :id-anggota="idAnggota"
-        v-if="showData == 'chart'" />
+        v-if="showData == 'chart'" 
+        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
+        class="px-4"/>
       <list-data ref="quranListData" 
         :id-anggota="idAnggota"
           :key="'quranData'+formKey"
@@ -138,7 +143,7 @@
 import { mapGetters } from 'vuex';
 import { setStatusText, setStatusType } from '@/helpers/quran'
 import Form from '@/components/Form.vue'
-import Chart from './components/Chart.vue'
+import Chart from '@/components/statistics/DataChart.vue'
 import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 
@@ -206,7 +211,7 @@ export default {
         })
           .then(result => {
             var res = result.data;
-            this.lastData = this.fillAndAddObjectValue(this.lastData, res.last)
+            this.fillAndAddObjectValue(this.lastData, res.last)
             this.juz = res.juz
           });
 

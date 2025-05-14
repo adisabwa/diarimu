@@ -29,7 +29,7 @@ class SholatWajibModel extends Model
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
         return $this->db->table('mu_sholat_wajib f')
-                    ->select('f.*, s.nama, s.nbm')
+                    ->select('f.*, f.total_score data_chart, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where($whereAnd)
                     ->groupStart()
@@ -45,7 +45,7 @@ class SholatWajibModel extends Model
     public function get_last($id_anggota)
     {
         return $this->db->table('mu_sholat_wajib f')
-                    ->select('f.*, s.nama, s.nbm')
+                    ->select('f.*, f.total_score data_chart, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where('f.id_anggota', $id_anggota)
                     ->orderBy('tanggal desc')
@@ -56,7 +56,7 @@ class SholatWajibModel extends Model
     public function get_best($id_anggota)
     {
         return $this->db->table('mu_sholat_wajib f')
-                    ->select('f.*, s.nama, s.nbm')
+                    ->select('f.*, f.total_score data_chart, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where('f.id_anggota', $id_anggota)
                     ->orderBy('total_score desc')

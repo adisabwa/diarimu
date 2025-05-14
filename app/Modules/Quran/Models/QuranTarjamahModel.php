@@ -27,7 +27,7 @@ class QuranTarjamahModel extends Model
     public function get_last($id_anggota)
     {
         $data = $this->db->table('mu_quran_tarjamah qb')
-                    ->select("qb.*, s.nama, 
+                    ->select("qb.*, qb.total_ayat data_chart, s.nama, 
                         sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
                     ->join('mu_anggota s','qb.id_anggota=s.id')
                     ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
@@ -48,7 +48,7 @@ class QuranTarjamahModel extends Model
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
         $data = $this->db->table('mu_quran_tarjamah qb')
-                    ->select("qb.*, s.nama, 
+                    ->select("qb.*, qb.total_ayat data_chart, s.nama, 
                         sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
                     ->join('mu_anggota s','qb.id_anggota=s.id')
                     ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')

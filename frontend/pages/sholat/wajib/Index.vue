@@ -1,18 +1,21 @@
 
 <template>
-  <div id="sholat relative" class="pt-0">
+  <div id="sholat relative" class="pt-[50px]">
     <div v-if="user.role == 'mentor'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
+      <div class="text-sm mb-2">Nama Anggota :</div>
       <el-select v-model="idAnggota" placeholder="Pilih Anggota"
         @change="reloadData">
+        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
         <el-option v-for="a in anggotas"
           :key="a.id"
           :value="a.id_anggota"
           :label="a.nama"/>
       </el-select>
     </div>
-    <el-card class="rounded-[10px]
+    <el-card v-show="user.role == 'user'"
+      class="rounded-[10px]
       bg-gradient-to-tr from-white/[0.8] from-30% to-purple-200/[0.7] 
       mb-3 p-0"
       body-class="relative p-0"
@@ -127,7 +130,7 @@
             bg-sky-100/[0.4]
             rounded-[20px]">
             <div class="text-gray-500 font-bold w-[100px] text-[14px]
-              mb-4">Nilai Terbaik</div>
+              mb-4">Nilai {{ ind == 'best' ? 'Terbaik' : 'Terakhir' }}</div>
             <template v-if="!isEmpty(data.tanggal)">
               <div class="mb-2  text-gray-500  text-[13px]"><b>( {{ dateShortIndo(data.tanggal) }} )</b></div>
               <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ data.total_score }}</div>
@@ -161,13 +164,15 @@
             :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
       </template>
-      <chart ref="wajibChartData"
+      <chart ref="wajibChartData" 
+        href="sholat/wajib/dashboard"
          :id-anggota="idAnggota"
-          :key="'wajibChartData'+formKey"
-           v-if="showData == 'chart'" />
+           v-if="showData == 'chart'" 
+        class="px-4"/>
       <list-data ref="wajibListData"
         :id-anggota="idAnggota"
           :key="'wajibListData'+formKey"
+        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
         v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id
@@ -184,7 +189,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import Form from '@/components/Form.vue'
-import Chart from './components/Chart.vue'
+import Chart from '@/components/statistics/DataChart.vue'
 import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 import Star from '../components/Star.vue'
@@ -344,7 +349,7 @@ export default {
     },
     toggleStarClass(id, value){
       let vm = this
-      if (value >= 50) {
+      if (value >= 25) {
         vm.removeClass('#1' + id,'scale-0')
         vm.removeClass('#2' + id,'scale-0')
         vm.removeClass('#3' + id,'scale-0')
@@ -367,6 +372,10 @@ export default {
         vm.addClass('#1' + id,'grayscale')
         vm.addClass('#2' + id,'grayscale')
         vm.removeClass('#3' + id,'grayscale')
+      } else if (value >= 25) {
+        vm.addClass('#1' + id,'grayscale')
+        vm.addClass('#2' + id,'grayscale')
+        vm.addClass('#3' + id,'grayscale')
       } 
     },
     saveData(ind, kolom){

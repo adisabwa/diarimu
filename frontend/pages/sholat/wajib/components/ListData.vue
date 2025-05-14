@@ -30,20 +30,14 @@
 						</div>
 						<ol v-show="s.show_detail"
 							class="pl-[30px] italic mt-0 mb-1">
-							<li class="pl-1">
-								Sholat Shubuh ( {{ getLabel(s.shubuh) }} )
-							</li>
-							<li class="pl-1">
-								Sholat Dhuhur ( {{ getLabel(s.dhuhur) }} )
-							</li>
-							<li class="pl-1">
-								Sholat Asar ( {{ getLabel(s.asar) }} )
-							</li>
-							<li class="pl-1">
-								Sholat Maghrib ( {{ getLabel(s.maghrib) }} )
-							</li>
-							<li class="pl-1">
-								Sholat Isya ( {{ getLabel(s.isya) }} )
+							<li v-for="ind in ['shubuh','dhuhur','asar','maghrib','isya']"
+                class="pl-1">
+								Sholat {{ ucFirst(ind) }} ( {{ getLabel(s[ind]) }} ) 
+                <template v-if="s[ind] >= 25">
+                  <star :id="'3star'+ind+'data'" :class="['scale-100', s[ind] == 100 ? '' : 'grayscale']" width="10px"/>
+                  <star :id="'3star'+ind+'data'" :class="['scale-100', s[ind] >= 75 ? '' : 'grayscale']" width="10px"/>
+                  <star :id="'3star'+ind+'data'" :class="['scale-100', s[ind] >= 50 ? '' : 'grayscale']" width="10px"/>
+                </template>
 							</li>
 						</ol>
 					</div>
@@ -61,6 +55,8 @@
 
 <script>
 
+import Star from '../../components/Star.vue'
+
 export default {
   name: "data",
 	emits:['editData'],
@@ -71,6 +67,7 @@ export default {
     }
   },
   components: {
+    Star,
   },
   data: function() {
     return {

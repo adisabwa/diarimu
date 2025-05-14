@@ -29,7 +29,7 @@ class InfaqShadaqahModel extends Model
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
         return $this->db->table('mu_infaq_shadaqah f')
-                    ->select('f.*, s.nama, s.nbm')
+                    ->select('f.*, f.jumlah data_chart, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where($whereAnd)
                     ->groupStart()
@@ -44,7 +44,7 @@ class InfaqShadaqahModel extends Model
     public function get_last($id_anggota)
     {
         return $this->db->table('mu_infaq_shadaqah f')
-                    ->select('f.*, s.nama, s.nbm')
+                    ->select('f.*, f.jumlah data_chart, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where('f.id_anggota', $id_anggota)
                     ->orderBy('tanggal desc')
@@ -55,7 +55,7 @@ class InfaqShadaqahModel extends Model
     public function get_best($id_anggota)
     {
         return $this->db->table('mu_infaq_shadaqah f')
-                    ->select('f.*, s.nama, s.nbm')
+                    ->select('f.*, f.jumlah data_chart, s.nama, s.nbm')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where('f.id_anggota', $id_anggota)
                     ->orderBy('total_score desc')
