@@ -21,7 +21,7 @@ class BaseData extends BaseController
     public function index()
     {
         $where = $this->request->getGetPost('where') ?? [];
-        $or = $this->request->getGetPost('or') ?? [];
+        $or = $this->request->getGet('or') ?? ['1=1' => NULL];
         $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
@@ -55,15 +55,19 @@ class BaseData extends BaseController
     public function get_where()
     {
         $where = $this->request->getGet('where') ?? [];
-        $or = $this->request->getGet('or') ?? [];
+        $or = $this->request->getGet('or') ?? ['1=1' => NULL];
         $order = $this->request->getGet('order') ?? [];
         $order = implode(",", $order);
 
-        $data = $this->model->where($where)
+        $data = $this->model->builder()
+                            ->where($where)
                             ->groupStart()
                                 ->orWhere($or)
                             ->groupEnd()
-                            ->orderBy($order)->find()[0] ?? [];
+                            ->orderBy($order)
+                            ->get()
+                            ->getRowObject();
+        // var_dump($data, $this->model->getLastQuery());   
         return $this->respondCreated($data);
     }
 

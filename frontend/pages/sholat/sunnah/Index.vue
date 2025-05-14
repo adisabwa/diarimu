@@ -14,7 +14,19 @@
 </style>
 <template>
   <div id="sholat" class="pt-0">
-    <el-card class="rounded-[10px]
+    <div v-if="user.role == 'mentor'" 
+      class="bg-white/[0.9] rounded-[10px] shadow-md
+      mb-3 p-4">
+      <el-select v-model="idAnggota" placeholder="Pilih Anggota"
+        @change="reloadData">
+        <el-option v-for="a in anggotas"
+          :key="a.id"
+          :value="a.id_anggota"
+          :label="a.nama"/>
+      </el-select>
+    </div>
+    <el-card v-show="user.role == 'user'"
+      class="rounded-[10px]
       bg-gradient-to-tl from-white/[0.8] from-50% to-rose-200/[0.5] 
       mb-3 p-0"
       body-class="relative p-0"
@@ -245,8 +257,14 @@
             :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
       </template>
-      <chart ref="sunnahChartData" v-if="showData == 'chart'" />
-      <list-data ref="sunnahListData" v-if="showData =='list'"
+      <chart ref="sunnahChartData"
+         :id-anggota="idAnggota"
+          :key="'sunnahChartData'+formKey"
+           v-if="showData == 'chart'" />
+      <list-data ref="sunnahListData"
+        :id-anggota="idAnggota"
+          :key="'sunnahListData'+formKey"
+        v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id
           showCreate = true
@@ -278,7 +296,8 @@ export default {
       editTanggal:false,
       showAdd:false,
       dataId:-1,
-      idAnggota:-1,
+      idAnggota:null,
+      formKey:1,
       tanggals:[],
       tanggal:'',
       datas:[],
@@ -307,6 +326,7 @@ export default {
   computed: {
     ...mapGetters({
       user: 'loggedUser',
+      anggotas:'data/anggotas'
     }),
     labelPosition(){
       return this.sizeWindow < 800 ? 'top' : 'left'
@@ -513,12 +533,21 @@ export default {
       // setTimeout(() => {
         vm.loadings[0] = vm.loadings[1] = vm.loadings[2] = false
       // }, 500);
-    },  
+    },    
+    reloadData(){
+      this.setTanggalInitial()
+      this.setDataInitiall()
+      this.getAllSunnah()
+      // if (this.showData == 'chart') this.$refs.wajibChartData.getChart();
+      // if (this.showData == 'list') this.$refs.wajibListData.getData(true);
+      this.formKey++
+    }
   },
   created: function() {
     this.tanggal = this.dateNow()
     // this.tanggal = '2025-05-01'
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
+    this.$store.dispatch('data/getAllAnggotaInGroup')
     this.setTanggalInitial()
     this.setDataInitiall()
     this.getAllSunnah()

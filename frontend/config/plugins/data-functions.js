@@ -3,6 +3,10 @@ import { isArray } from "lodash";
 
 let listFunction = {
     fillObjectValue(src, data) {
+      if (!this.isArrayOrObject(data))
+        return;
+      if (data === null || data == undefined)
+        return;
       // console.log('source', src)
       // console.log('data', data)
       Object.keys(data).forEach(key => {
@@ -18,6 +22,10 @@ let listFunction = {
       return src;
     },
     fillAndAddObjectValue(src, data) {
+      if (!this.isArrayOrObject(data))
+        return;
+      if (data === null || data == undefined)
+        return;
       let adds = []
       Object.keys(data).forEach(key => {
         let res = this.setObjectValueByPath(src, key, data[key])

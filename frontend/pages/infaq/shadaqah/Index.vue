@@ -1,5 +1,16 @@
 <template>
     <div id="infaq" class="pt-0 translate-y-[-10px]">
+      <div v-if="user.role == 'mentor'" 
+        class="bg-white/[0.9] rounded-[10px] shadow-md
+        mb-3 p-4">
+        <el-select v-model="idAnggota" placeholder="Pilih Anggota"
+          @change="submittedData">
+          <el-option v-for="a in anggotas"
+            :key="a.id"
+            :value="a.id_anggota"
+            :label="a.nama"/>
+        </el-select>
+      </div>
       <el-card class="relative overflow-hidden
          bg-gradient-to-tr from-white/[0.8] from-40% to-teal-200/[0.7] rounded-[10px]
         z-[0]
@@ -13,7 +24,8 @@
                 class="absolute z-[-1] top-[-10px] right-[-15px]
                   opacity-[0.5]"/>
         </template>
-        <div class="px-8">
+        <div class="px-8"
+          v-if="user.role == 'user'">
           <el-button class="rounded-full w-full
             font-montserrat
             mb-4
@@ -79,7 +91,6 @@
           href-get="infaq/shadaqah/get"
           :show-columns="['tanggal','jumlah','keterangan']"
           @saved="submittedData" 
-          @changed-value="changedValue"
           @error="saving=false"
           size="large"
           :show-submit="false"
@@ -100,7 +111,9 @@
         body-class="py-3 px-5"
         header="Statistik Sadaqah"
         header-class="py-3 font-bold text-[18px] text-center" >
-        <chart />
+      <chart ref="infaqChartData"
+        :id-anggota="idAnggota"
+          :key="'infaqChartData'+formKey"/>
       </el-card>
     </div>
 </template>
@@ -122,6 +135,7 @@
         loading: false,
         showAdd: false,
         tipe:'',
+        idAnggota:'',
         formKey:1,
         dataId:-1,
         datas:[],
@@ -157,6 +171,7 @@
     computed: {
       ...mapGetters({
         user: 'loggedUser',
+        anggotas:'data/anggotas'
       }),
       labelPosition(){
         return this.sizeWindow < 800 ? 'top' : 'left'
@@ -190,6 +205,10 @@
         this.loading = true
         await this.$http.get('infaq/shadaqah/', {
             params: {
+              where:{
+                id_anggota:this.idAnggota,
+              },
+              order:['tanggal desc'],
               limit:this.limit,
               offset:this.offset,
             }
@@ -205,15 +224,6 @@
             }
           });
       },
-      changedValue({ field, parent, value}){
-        console.log(field, parent, value)
-        if (field == 'surat_mulai-ayat_mulai') {
-        console.log(field)
-          let changedField = 'surat_selesai-ayat_selesai'
-          this.$refs.formInfaq.changeData(changedField, parent, 'parent')
-          this.$refs.formInfaq.changeData(changedField, value)
-        }
-      },
       submittedData(){
         this.saving = false;
         this.showCreate = false
@@ -222,37 +232,19 @@
         this.limit = this.offset
         this.offset = 0
         this.getData();
+        this.$refs.infaqChartData.getChart()
       },
       async loadingData(){
         this.loadingScroll = true
         await this.getData(false)
       },
-      async getChart(){
-        // return;
-        await this.$http.get('infaq/shadaqah/dashboard', {
-            params: {}
-          })
-            .then(res => {
-              let data = res.data
-              this.statistic = data
-              this.min = data.min
-              this.max = data.max
-              this.loaded = true
-            })
-            .catch(err => {
-              this.$notify({
-                type:'error',
-                title: 'Gagal',
-                message: 'Tidak dapat mengambil data',
-                position: 'bottom-right',
-              });
-            })
-      }
     },
     created: function() {
       // let filter = this.$store.getters.filter
       // this.filter.nama = this.isEmpty(filter.nama) ? '' : filter.nama
       // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
+      this.idAnggota = this.$store.getters.loggedUser.id_anggota
+      this.$store.dispatch('data/getAllAnggotaInGroup')
       this.getInitial()
       // console.log(this.$router);
     },

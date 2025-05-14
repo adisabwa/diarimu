@@ -1,6 +1,6 @@
 <template>
   <div class="px-4">
-    <div class="flex gap-x-3">
+    <div class="flex gap-x-3 mb-3">
       <el-select size="small" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
         <el-option value="week" label="7 Hari" />

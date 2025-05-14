@@ -21,12 +21,11 @@ class SholatController extends BaseData
     public function index()
     {
         $where = $this->request->getGetPost('where') ?? [];
-        $whereOr = $this->request->getGetPost('or') ?? [];
-        $order = $this->request->getGetPost('order') ?? [];
+        $or = $this->request->getGetPost('or') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
 
-        $data = $this->model->getAll($where,$order,'tanggal desc, id',
+        $data = $this->model->getAll($where,$or,'tanggal desc, id',
         $limit, $offset,'tanggal');
 
         array_walk($data, function(&$value, $key) {
@@ -106,16 +105,20 @@ class SholatController extends BaseData
 
     public function get_before()
     {
-        $data = $this->model->orderBy('tanggal desc')->find()[0];
+        $postData = $this->request->getGetPost();
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        $data = $this->model->where('id_anggota', $id_anggota)->orderBy('tanggal desc')->find();
         $now = date('Y-m-d');
+        $tanggal = $data[0]->tanggal ?? $now;
 
         // var_dump($data->tanggal, $now);
-        return $this->respondCreated(get_date_interval($data->tanggal ?? $now, $now));
+        return $this->respondCreated(get_date_interval($tanggal ?? $now, $now));
     }
 
     public function dashboard()
     {
         $postData = $this->request->getGetPost();
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
         $type = $postData['tipe'] ?? 'week';
         $end = $postData['end'] ?? date('Y-m-d');
         $start = $postData['start'] ?? date('Y-m-d');
@@ -123,7 +126,7 @@ class SholatController extends BaseData
         $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
             [
-                'id_anggota' => userdata()->id_anggota,
+                'id_anggota' => $id_anggota,
                 "tanggal >= '$start'" => NULL,
                 "tanggal <= '$end'" => NULL,
             ]

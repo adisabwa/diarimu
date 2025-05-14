@@ -1,5 +1,16 @@
 <template>
   <div id="quran" class="pt-0">
+    <div v-if="user.role == 'mentor'" 
+      class="bg-white/[0.9] rounded-[10px] shadow-md
+      mb-3 p-4">
+      <el-select v-model="idAnggota" placeholder="Pilih Anggota"
+        @change="submittedData">
+        <el-option v-for="a in anggotas"
+          :key="a.id"
+          :value="a.id_anggota"
+          :label="a.nama"/>
+      </el-select>
+    </div>
     <el-card class="relative overflow-hidden
        bg-gradient-to-tr from-white/[0.8] from-50% to-sky-200/[0.7] rounded-[10px]
       z-[0] font-montserrat text-[14px] leading-[1.3]
@@ -21,7 +32,8 @@
           class="absolute z-[0] top-[-10px] right-[-15px]
             opacity-[0.5]"/>
     </el-card>
-    <el-card class="bg-white/[0.9] rounded-[10px]
+    <el-card v-if="user.role == 'user'"
+    class="bg-white/[0.9] rounded-[10px]
       mb-3 p-0"
       body-class="py-3 px-5 text-[14px]"
       header-class="py-3 font-bold text-[16px]">
@@ -90,8 +102,14 @@
             :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
       </template>
-      <chart ref="quranChartData" v-if="showData == 'chart'" />
-      <list-data ref="quranListData" v-if="showData =='list'"
+      <chart ref="quranChartData" 
+        :key="'quranChart'+formKey"
+        :id-anggota="idAnggota"
+        v-if="showData == 'chart'" />
+      <list-data ref="quranListData" 
+        :id-anggota="idAnggota"
+          :key="'quranData'+formKey"
+        v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id
           showCreate = true
@@ -144,6 +162,7 @@ export default {
       success:false,
       quran: topMenu.quranTarjamah,
       showData:'list',
+      idAnggota:null,
     };
   },
   watch: {
@@ -152,6 +171,7 @@ export default {
   computed: {
     ...mapGetters({
       user: 'loggedUser',
+      anggotas:'data/anggotas'
     }),
     labelPosition(){
       return this.sizeWindow < 800 ? 'top' : 'left'
@@ -161,7 +181,12 @@ export default {
   methods: {
     getInitial: async function() {
         this.loading = true;
-        await this.$http.get('/quran/tarjamah/get_last')
+        this.resetObjectValue(this.lastData)
+        await this.$http.get('/quran/tarjamah/get_last',{
+          params:{
+            id_anggota: this.idAnggota
+          }
+        })
           .then(result => {
             var res = result.data;
             this.lastData = this.fillAndAddObjectValue(this.lastData, res)
@@ -173,7 +198,7 @@ export default {
             this.dataId = -1
             this.fields = this.fillAndAddObjectValue(this.fields, res)
             this.fields.tanggal.default = this.dateNow()
-            this.fields.id_anggota.default = this.$store.getters.loggedUser.id_anggota
+            this.fields.id_anggota.default = this.idAnggota
             this.formKey++
             this.loading = false
           });
@@ -202,6 +227,8 @@ export default {
     // this.filter.nama = this.isEmpty(filter.nama) ? '' : filter.nama
     // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
     this.getInitial()
+    this.$store.dispatch('data/getAllAnggotaInGroup')
+    this.idAnggota = this.$store.getters.loggedUser.id_anggota
     // console.log(this.$router);
   },
   mounted: function() {

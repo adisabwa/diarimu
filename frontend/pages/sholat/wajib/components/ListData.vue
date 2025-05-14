@@ -64,6 +64,12 @@
 export default {
   name: "data",
 	emits:['editData'],
+  props:{
+    idAnggota:{
+      type:[String, Number],
+      default:null,
+    }
+  },
   components: {
   },
   data: function() {
@@ -91,7 +97,7 @@ export default {
         await this.$http.get('sholat/wajib', {
             params: {
 							where:{
-								id_anggota: this.$store.getters.loggedUser?.id_anggota,
+								id_anggota: this.idAnggota,
 							},
 							order:['tanggal desc'],
               limit:this.limit,

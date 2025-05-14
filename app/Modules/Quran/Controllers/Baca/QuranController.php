@@ -27,11 +27,10 @@ class QuranController extends BaseData
     {
         $where = $this->request->getGetPost('where') ?? [];
         $whereOr = $this->request->getGetPost('or') ?? [];
-        $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
 
-        $data = $this->model->getAll($where,$order,'tanggal desc, id',
+        $data = $this->model->getAll($where,$whereOr,'tanggal desc, id',
         $limit, $offset);
 
         return $this->respondCreated($data);
@@ -55,11 +54,14 @@ class QuranController extends BaseData
 
     public function get_before()
     {
-        $data = $this->model->orderBy('tanggal desc')->find()[0];
+        $postData = $this->request->getGetPost();
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        $data = $this->model->where('id_anggota', $id_anggota)->orderBy('tanggal desc')->find();
         $now = date('Y-m-d');
+        $tanggal = $data[0]->tanggal ?? $now;
 
-        // var_dump($data->tanggal, $now);
-        return $this->respondCreated(get_date_interval($data->tanggal ?? $now, $now));
+        // var_dump($tanggal, $now);
+        return $this->respondCreated(get_date_interval($tanggal ?? $now, $now));
     }
 
     public function save()

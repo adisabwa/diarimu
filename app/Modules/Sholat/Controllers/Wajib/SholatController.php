@@ -19,12 +19,11 @@ class SholatController extends BaseData
     public function index()
     {
         $where = $this->request->getGetPost('where') ?? [];
-        $whereOr = $this->request->getGetPost('or') ?? [];
-        $order = $this->request->getGetPost('order') ?? [];
+        $or = $this->request->getGetPost('or') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
 
-        $data = $this->model->getAll($where,$order,'tanggal desc, id',
+        $data = $this->model->getAll($where,$or,'tanggal desc, id',
         $limit, $offset,'tanggal');
 
         array_walk($data, function(&$value, $key) {
@@ -37,8 +36,10 @@ class SholatController extends BaseData
 
     public function get_last_and_best()
     {
-        $last = $this->model->get_last(userdata()->id_anggota);
-        $best = $this->model->get_best(userdata()->id_anggota);
+        $postData = $this->request->getGetPost();
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        $last = $this->model->get_last($id_anggota);
+        $best = $this->model->get_best($id_anggota);
 
         return $this->respondCreated(compact('last','best'));
 
@@ -58,33 +59,35 @@ class SholatController extends BaseData
     public function dashboard()
     {
         $postData = $this->request->getGetPost();
-
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        $type = $postData['tipe'] ?? 'week';
+        $end = $postData['end'] ?? date('Y-m-d');
+        $start = $postData['start'] ?? date('Y-m-d');
+        
+        $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
-            ['id_anggota' => userdata()->id_anggota],
-            [],
-            'tanggal asc'
+            [
+                'id_anggota' => $id_anggota,
+                "tanggal >= '$start'" => NULL,
+                "tanggal <= '$end'" => NULL,
+            ]
         );
         $_data = [];
         foreach ($data as $key => $d) {
             if (empty($_data[$d->tanggal])) {
-                $tmp = (object)[
-                    'label' => date('d M', strtotime($d->tanggal)),
-                    'total' => $d->total_score
-                ];
-                $_data[$d->tanggal] = $tmp;
+                $_data[$d->tanggal] = $d->total_score;
             } else {
-                $_data[$d->tanggal]->total += $d->total_score;
+                $_data[$d->tanggal] += $d->total_score;
             }
         }
         // var_dump($_data);
         $total = $labels = [];
         $max = $min = 0;
 
-        foreach ($_data as $key => $value) {
-            if (empty($labels[$value->label])) {
-                $labels[$value->label] = $value->label;
-                $total[$value->label] = $value->total;
-            }
+        foreach ($date_range as $key => $tgl) {
+            // var_dump($tgl);
+            $labels[$tgl] = date("d M", strtotime($tgl));
+            $total[$tgl] = $_data[$tgl] ?? 0;
         }
         
         $color =  setRandomColor();
@@ -106,10 +109,13 @@ class SholatController extends BaseData
 
     public function get_before()
     {
-        $data = $this->model->orderBy('tanggal desc')->find()[0];
+        $postData = $this->request->getGetPost();
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        $data = $this->model->where('id_anggota', $id_anggota)->orderBy('tanggal desc')->find();
         $now = date('Y-m-d');
+        $tanggal = $data[0]->tanggal ?? $now;
 
         // var_dump($data->tanggal, $now);
-        return $this->respondCreated(get_date_interval($data->tanggal ?? $now, $now));
+        return $this->respondCreated(get_date_interval($tanggal ?? $now, $now));
     }
 }

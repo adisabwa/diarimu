@@ -36,6 +36,12 @@ import LineChart from '@/components/charts/Line.vue'
 
 export default {
   name: "quran",
+  props:{
+    idAnggota:{
+      type:[String, Number],
+      default:null,
+    }
+  },
   components: {
     LineChart,
   },
@@ -91,7 +97,8 @@ export default {
           params: {
             start:dates[0],
             end:dates[1],
-            tipe:this.tipe
+            tipe:this.tipe,
+            id_anggota:this.idAnggota
           }
         })
           .then(res => {

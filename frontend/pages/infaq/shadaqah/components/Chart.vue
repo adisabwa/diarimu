@@ -1,6 +1,6 @@
 <template>
     <div class="px-0">
-      <div class="flex gap-x-3">
+      <div class="flex gap-x-3 mb-3">
         <el-select size="small" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
           @change="getChart">
           <el-option value="week" label="7 Hari" />
@@ -69,6 +69,12 @@
   
   export default {
     name: "quran",
+    props:{
+      idAnggota:{
+        type:[String, Number],
+        default:null,
+      }
+    },
     components: {
       LineChart,
     },
@@ -122,6 +128,7 @@
         let dates = this.dates.split('/')
         await this.$http.get('infaq/shadaqah/dashboard', {
             params: {
+              id_anggota:this.idAnggota,
               start:dates[0],
               end:dates[1],
               tipe:this.tipe

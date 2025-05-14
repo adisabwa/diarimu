@@ -15,22 +15,24 @@ class InfaqController extends BaseData
         $this->model = model('InfaqShadaqahModel');
     }
     
-    public function index()
-    {
-        $postData = $this->request->getGetPost();
+    // public function index()
+    // {
+    //     $postData = $this->request->getGetPost();
 
-        $data = $this->model->getAll([
-            'id_anggota'    => $postData['id_anggota'] ?? userdata()->id_anggota
-        ],[],'tanggal desc, id',
-        $postData['limit'] ?? 5, $postData['offset'] ?? 0);
+    //     $data = $this->model->getAll([
+    //         'id_anggota'    => $postData['id_anggota'] ?? userdata()->id_anggota
+    //     ],[],'tanggal desc, id',
+    //     $postData['limit'] ?? 5, $postData['offset'] ?? 0);
 
-        return $this->respondCreated($data);
+    //     return $this->respondCreated($data);
 
-    }
+    // }
     
     public function get_last()
     {
-        return $this->respondCreated($this->model->get_last(userdata()->id_anggota));
+        $postData = $this->request->getGetPost();
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        return $this->respondCreated($this->model->get_last($id_anggota));
     }
 
     public function dashboard()
@@ -39,11 +41,12 @@ class InfaqController extends BaseData
         $type = $postData['tipe'] ?? 'week';
         $end = $postData['end'] ?? date('Y-m-d');
         $start = $postData['start'] ?? date('Y-m-d');
+        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
 
         $date_range = getDateRange($start, $end);
         $data = $this->model->getAll(
             [
-                'id_anggota' => userdata()->id_anggota,
+                'id_anggota' => $id_anggota,
                 "tanggal >= '$start'" => NULL,
                 "tanggal <= '$end'" => NULL,
             ]

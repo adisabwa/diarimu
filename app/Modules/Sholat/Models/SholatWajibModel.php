@@ -41,7 +41,7 @@ class SholatWajibModel extends Model
                     ->get()
                     ->getResult();
     }
-
+    
     public function get_last($id_anggota)
     {
         return $this->db->table('mu_sholat_wajib f')

@@ -1,6 +1,17 @@
 
 <template>
-  <div id="sholat" class="pt-0">
+  <div id="sholat relative" class="pt-0">
+    <div v-if="user.role == 'mentor'" 
+      class="bg-white/[0.9] rounded-[10px] shadow-md
+      mb-3 p-4">
+      <el-select v-model="idAnggota" placeholder="Pilih Anggota"
+        @change="reloadData">
+        <el-option v-for="a in anggotas"
+          :key="a.id"
+          :value="a.id_anggota"
+          :label="a.nama"/>
+      </el-select>
+    </div>
     <el-card class="rounded-[10px]
       bg-gradient-to-tr from-white/[0.8] from-30% to-purple-200/[0.7] 
       mb-3 p-0"
@@ -23,7 +34,7 @@
               @blur="editTanggal = false"
               @change="editTanggal = false;
                 setTanggalInitial();
-                setDataInitiall();"
+                setDataInitial();"
             />
           </div>
           <div v-else class="w-[300%] flex">
@@ -38,11 +49,11 @@
           </div>
         </div>
         <icons @click="scrollHeader(-1)"
-          class="m-0 text-[35px] pointer
+          class="m-0 text-[35px] pointer z-[999]
             absolute top-1/2 -translate-y-1/2 left-5"
           icon="iconamoon:arrow-left-2-bold"/>
         <icons @click="scrollHeader(1)"
-          class="m-0 text-[35px] pointer
+          class="m-0 text-[35px] pointer z-[999]
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
@@ -51,8 +62,10 @@
         overflow-x-scroll
         snap-x snap-mandatory">
         <template v-for="(_data, ind) in datas">
-          <el-container :id="'body'+ind" class="shrink-0 w-full snap-center font-montserrat px-auto
-            flex-col items-center"
+          <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
+            px-5 w-full
+            relative
+            grid grid-cols-1"
             v-loading="loadings[ind]">
             <template v-for="sholat in _data.sholats">
               <div :class="`${setStatusColor(sholat.value)}
@@ -71,21 +84,8 @@
                   <star :id="'2star'+ind+tanggals[ind]+sholat.nama_kolom" />
                   <star :id="'3star'+ind+tanggals[ind]+sholat.nama_kolom" />
                 </div>
-                <!-- <el-select v-model="sholat.value"
-                  placeholder="Pilih" clearable
-                  @change="showStar();
-                    saveData(ind, sholat.nama_kolom)"
-                  class="w-[50px] rounded-full h-[50px]">
-                  <template #prefix>
-                    <icons icon="mdi:edit" />
-                  </template>
-                  <template v-for="o in options">
-                    <el-option :value="o.value" :label="o.label">
-                      {{ o.label }} ( {{ o.value }} )
-                    </el-option>
-                  </template>
-                </el-select> -->
-                <el-dropdown trigger="click"
+                <el-dropdown v-if="user.role == 'user'"
+                  trigger="click"
                   @command="(res) => {
                     sholat.value = res
                     showStar()
@@ -113,41 +113,35 @@
         </template>
       </div>
     </el-card>
-    <el-card class="relative overflow-hidden
+    <el-card class="relative w-full
+      overflow-hidden
     bg-white/[0.9] 
       rounded-[10px]
       z-[0] font-montserrat
       mb-3 p-0" 
       body-class="relative p-0 leading-[1]">
       <div class="relative flex px-3 py-5 gap-3 justify-center">
-        <div class="relative w-fit text-center py-4 px-6
-          border-2 border-solid border-indigo-200
-          bg-sky-100/[0.4]
-          rounded-[20px]">
-          <div class="text-gray-500 font-bold w-[100px] text-[14px]
-            mb-4">Nilai Terbaru</div>
-          <div class="mb-2 text-gray-500  text-[13px]"><b>( {{ dateShortIndo(lastData.tanggal) }} )</b></div>
-          <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ lastData.total_score }}</div>
-          <div class="flex items-start justify-center">
-            <star :id="'1starlastdata'" width="28px"/>
-            <star :id="'2starlastdata'" width="33px"/>
-            <star :id="'3starlastdata'" width="28px"/>
+        <template v-for="(data, ind) in {last:lastData, best:bestData}">
+          <div class="shrink-1 text-center py-4 px-4
+            border-2 border-solid border-indigo-200
+            bg-sky-100/[0.4]
+            rounded-[20px]">
+            <div class="text-gray-500 font-bold w-[100px] text-[14px]
+              mb-4">Nilai Terbaik</div>
+            <template v-if="!isEmpty(data.tanggal)">
+              <div class="mb-2  text-gray-500  text-[13px]"><b>( {{ dateShortIndo(data.tanggal) }} )</b></div>
+              <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ data.total_score }}</div>
+              <div class="flex items-start justify-center">
+                <star :id="'1star'+ind+'data'" width="28px"/>
+                <star :id="'2star'+ind+'data'" width="33px"/>
+                <star :id="'3star'+ind+'data'" width="28px"/>
+              </div>
+            </template>
+            <template v-else>
+              <div class="mb-2  text-gray-500  text-[13px]"><b>Belum ada Data</b></div>
+            </template>
           </div>
-        </div>
-        <div class="relative w-fit text-center py-4 px-6
-          border-2 border-solid border-indigo-200
-          bg-sky-100/[0.4]
-          rounded-[20px]">
-          <div class="text-gray-500 font-bold w-[100px] text-[14px]
-            mb-4">Nilai Terbaik</div>
-          <div class="mb-2  text-gray-500  text-[13px]"><b>( {{ dateShortIndo(bestData.tanggal) }} )</b></div>
-          <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ bestData.total_score }}</div>
-          <div class="flex items-start justify-center">
-            <star :id="'1starbestdata'" width="28px"/>
-            <star :id="'2starbestdata'" width="33px"/>
-            <star :id="'3starbestdata'" width="28px"/>
-          </div>
-        </div>
+        </template>
       </div>
     </el-card>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
@@ -167,8 +161,14 @@
             :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
       </template>
-      <chart ref="sunnahChartData" v-if="showData == 'chart'" />
-      <list-data ref="sunnahListData" v-if="showData =='list'"
+      <chart ref="wajibChartData"
+         :id-anggota="idAnggota"
+          :key="'wajibChartData'+formKey"
+           v-if="showData == 'chart'" />
+      <list-data ref="wajibListData"
+        :id-anggota="idAnggota"
+          :key="'wajibListData'+formKey"
+        v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id
           showCreate = true
@@ -203,7 +203,8 @@ export default {
       loading: false,
       editTanggal:false,
       dataId:-1,
-      idAnggota:-1,
+      idAnggota:null,
+      formKey:1,
       tanggals:[],
       tanggal:'',
       datas:[],
@@ -259,6 +260,7 @@ export default {
   computed: {
     ...mapGetters({
       user: 'loggedUser',
+      anggotas:'data/anggotas'
     }),
     labelPosition(){
       return this.sizeWindow < 800 ? 'top' : 'left'
@@ -267,14 +269,19 @@ export default {
   },
   methods: {
     getLast(){
-       this.$http.get('sholat/wajib/get_last_and_best')
+      this.resetObjectValue(this.lastData)
+      this.resetObjectValue(this.bestData)
+       this.$http.get('sholat/wajib/get_last_and_best', {
+            params: {
+              id_anggota:this.idAnggota,
+            }
+          })
         .then( res => {
           let data = res.data
           this.fillObjectValue(this.lastData, data?.last)
           this.fillObjectValue(this.bestData, data?.best)
-          console.log(data?.last.total_score, data?.best.total_score)
-          this.toggleStarClass('starlastdata',data?.last.total_score / 5)
-          this.toggleStarClass('starbestdata',data?.best.total_score / 5)
+          this.toggleStarClass('starlastdata',data?.last?.total_score / 5)
+          this.toggleStarClass('starbestdata',data?.best?.total_score / 5)
         })
     },
     getData: async function(index) {
@@ -429,7 +436,7 @@ export default {
         this.addDay(this.tanggal, 1),
       ]
     },
-    setDataInitiall(){
+    setDataInitial(){
       this.datas = [];
       for (let index = 0; index < this.tanggals.length; index++) {
         this.datas[index] = JSON.parse(JSON.stringify(this.dataSholat))
@@ -476,13 +483,22 @@ export default {
         vm.loadings[0] = vm.loadings[1] = vm.loadings[2] = false
       // }, 500);
     },  
+    reloadData(){
+      this.setTanggalInitial()
+      this.setDataInitial()
+      this.getLast()
+      // if (this.showData == 'chart') this.$refs.wajibChartData.getChart();
+      // if (this.showData == 'list') this.$refs.wajibListData.getData(true);
+      this.formKey++
+    }
   },
   created: function() {
     this.tanggal = this.dateNow()
     // this.tanggal = '2025-05-01'
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
+    this.$store.dispatch('data/getAllAnggotaInGroup')
     this.setTanggalInitial()
-    this.setDataInitiall()
+    this.setDataInitial()
     this.getLast()
   },
   mounted: function() {
