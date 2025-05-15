@@ -32,32 +32,33 @@ let routes = [
                 meta: {
                     pageTitle: "<b>Daftar Group</b>",
                     allowedRoles:['admin'],
+                    redirect:'group-user',
+                }
+              },
+            ]
+          },
+          {
+            path:'',
+            component: MainLayout,
+            meta: {
+                requiresAuth: true,
+                enterFromClass : "-translate-x-100 opacity-50",
+                enterToClass : "opacity-100",
+                leaveFromClass : "opacity-100",
+                leaveToClass : "translate-x-100 opacity-50",
+            },
+            children: [ 
+              {
+                path: '',
+                name: 'group-user', 
+                component: () => import('@/pages/group/Index.vue'),
+                meta: {
+                    pageTitle: "<b>Daftar Group</b>",
                     // redirect:'dashboard',
                 }
               },
             ]
           },
-          // {
-          //   path: 'wajib',
-          //   component: MainLayout,
-          //   meta: {
-          //       requiresAuth: true,
-          //       enterFromClass : "scale-0 opacity-50",
-          //       enterToClass : "opacity-100",
-          //       leaveFromClass : "opacity-100",
-          //       leaveToClass : "scale-0 opacity-50",
-          //   },
-          //   children: [ 
-          //     {
-          //       path: '',
-          //       name: 'group-wajib', 
-          //       component: () => import('@/pages/group/wajib/Index.vue'),
-          //       meta: {
-          //           pageTitle: "<b>Daftar Sholat Wajib</b>",
-          //       }
-          //     },
-          //   ]
-          // },
         ],
       },
     ],

@@ -4,6 +4,8 @@ import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { VitePWA } from 'vite-plugin-pwa';
+// import ViteWorkboxPlugin from 'vite-plugin-workbox';
 // import strip from '@rollup/plugin-strip'
 // import cleanup from 'rollup-plugin-cleanup'
 
@@ -15,18 +17,19 @@ export default ({ command, mode }) => {
   //                   ? env.VITE_BASE_URL_PROD
   //                   : env.VITE_BASE_URL
 
+  const folder = 'assets/vue'
+  const outDir = `./public/${folder}/`
+
   const baseUrl = mode == 'production' 
                     ? env.VITE_BASE_URL_PROD
                     : env.VITE_BASE_URL
-  const folder = 'assets/vue'
-  const outDir = `./public/${folder}/`
 
   const base = mode === 'production' 
                 ? `${baseUrl}${folder}/`
                 : './'
 
-  console.log(resolve(__dirname, outDir))
-  console.log(baseUrl, __dirname, base)
+  // console.log(resolve(__dirname, outDir))
+  // console.log(baseUrl, __dirname, base)
 
   return defineConfig({
     optimizeDeps: {
@@ -45,7 +48,62 @@ export default ({ command, mode }) => {
         resolvers: [ElementPlusResolver()],
       }),
       splitVendorChunkPlugin(),
-
+      VitePWA({
+        registerType: 'autoUpdate',
+        devOptions: {
+          enabled: true
+        },
+        manifest: {
+          "name": "Sistem Catatan Ibadah Muhammadiyah Kendal",
+          "short_name": "Diari-Mu",
+          "start_url": "/diarimu",
+          "display": "standalone",
+          "background_color": "#ffffff",
+          "theme_color": "#11716d",
+          "icons": [
+            {
+              "src": "assets/images/icons/android-chrome-192x192.png",
+              "sizes": "192x192",
+              "type": "image/png"
+            },
+            {
+              "src": "assets/images/icons/android-chrome-512x512.png",
+              "sizes": "512x512",
+              "type": "image/png"
+            },
+          ],
+        },
+        workbox: {
+          // This configuration will inject Workbox into the generated service worker
+          clientsClaim: true,
+          skipWaiting: true,
+          swDest: 'public/sw.js',                   // Your custom SW template
+          globPatterns: ['**/*'],             // Precache from Vite output only
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/api\.example\.com\//, // Cache API calls
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-cache',
+                expiration: {
+                  maxEntries: 10, // Limit the cache to 10 entries
+                },
+              },
+            },
+            {
+              urlPattern: /\.(?:png|jpg|jpeg|svg)$/, // Cache images
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'image-cache',
+                expiration: {
+                  maxEntries: 20,
+                },
+              },
+            },
+          ],
+        },
+      }),
+   
     ],
     resolve: {
       alias: {

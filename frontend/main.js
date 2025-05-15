@@ -42,12 +42,27 @@ window.jsonToFormData = jsonToFormData
 import JQuery from 'jquery'
 window.jquery = JQuery
 //Variables
-import config from '@/config/url';
-app.config.globalProperties.$baseUrl = config.baseUrl; 
-app.config.globalProperties.$siteUrl = config.siteUrl; 
-app.config.globalProperties.defaultRoute = config.defaultRoute; 
+import { baseUrl, siteUrl, defaultRoute} from '@/config/url';
+app.config.globalProperties.$baseUrl = baseUrl; 
+app.config.globalProperties.$siteUrl = siteUrl; 
+app.config.globalProperties.defaultRoute = defaultRoute; 
 
 import API from '@/config/api'
 app.config.globalProperties.$http = API
+
+if ('serviceWorker' in navigator) {
+// Wait until the page is loaded
+    window.addEventListener('load', () => {
+        // Register the service worker
+        navigator.serviceWorker
+        .register(baseUrl + '/sw.js')  // This path should point to your service worker
+        .then((registration) => {
+            console.log('Service Worker registered with scope: ', registration.scope);
+        })
+        .catch((error) => {
+            console.log('Service Worker registration failed: ', error);
+        });
+    });
+}
 
 app.mount('#app')

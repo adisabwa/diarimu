@@ -261,6 +261,26 @@ INSERT INTO `mu_group` (`id`, `nama_group`, `created_at`, `updated_at`, `created
 (14,	'CC',	'2025-05-13 13:20:54',	'2025-05-13 06:20:54',	1,	NULL),
 (15,	'Kel 3',	'2025-05-13 06:40:49',	'2025-05-13 06:40:49',	1,	NULL);
 
+DROP TABLE IF EXISTS `mu_group_activity`;
+CREATE TABLE `mu_group_activity` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_group` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `kegiatan` varchar(200) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_group` (`id_group`),
+  CONSTRAINT `mu_group_activity_ibfk_1` FOREIGN KEY (`id_group`) REFERENCES `mu_group` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `mu_group_activity` (`id`, `id_group`, `tanggal`, `kegiatan`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(1,	4,	'2025-05-15',	'Percoban Kegiatan Kegiatna',	'2025-05-15 07:39:11',	'2025-05-15 07:39:11',	1,	NULL),
+(2,	4,	'2025-05-15',	'SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg ',	'2025-05-15 07:49:35',	'2025-05-15 07:49:35',	1,	NULL),
+(3,	4,	'2025-05-16',	'SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg SF asdg ',	'2025-05-15 07:49:55',	'2025-05-15 07:49:55',	1,	NULL);
+
 DROP TABLE IF EXISTS `mu_group_anggota`;
 CREATE TABLE `mu_group_anggota` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -454,7 +474,10 @@ INSERT INTO `mu_nama_kolom` (`id`, `id_group`, `id_kolom`, `order`, `nama_kolom`
 (141,	12,	NULL,	1,	'nama_group',	'0',	'',	'',	'string',	'Nama Group',	'input',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	''),
 (142,	12,	NULL,	2,	'mu_group_anggota',	'0',	'id_group',	'',	'table',	'Anggota Group',	'array',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	''),
 (143,	13,	142,	1,	'id_anggota',	'0',	'',	'',	'string',	'Nama Anggota',	'select',	'',	'',	'1',	'0',	'1',	'unique_input[id_anggota,type,{field}]|unique_combination[mu_group_anggota.id_anggota-type,id_group,{id},{field}]',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'AnggotaModel'),
-(144,	13,	142,	2,	'type',	'0',	'',	'',	'string',	'Tipe',	'select',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'150px',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'mentor,anggota');
+(144,	13,	142,	2,	'type',	'0',	'',	'',	'string',	'Tipe',	'select',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'150px',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'mentor,anggota'),
+(146,	14,	NULL,	1,	'id_group',	'0',	'',	'',	'string',	'Nama Group',	'select',	'',	'',	'1',	'0',	'1',	'',	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	'2024-11-08 09:19:28',	'GroupModel'),
+(147,	14,	NULL,	2,	'tanggal',	'0',	'',	'',	'date',	'Tanggal Kegiatan',	'date',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	''),
+(148,	14,	NULL,	3,	'kegiatan',	'0',	'',	'',	'string',	'Keterangan Kegiatan',	'textarea',	'',	'',	'1',	'0',	'1',	NULL,	'',	'0',	'',	'',	'',	'1',	'',	'',	'',	'',	'1',	'0',	'',	'',	NULL,	'');
 
 DROP TABLE IF EXISTS `mu_nama_tabel`;
 CREATE TABLE `mu_nama_tabel` (
@@ -478,7 +501,8 @@ INSERT INTO `mu_nama_tabel` (`id`, `nama_tabel`, `group`, `group_icon`) VALUES
 (10,	'mu_sholat_sunnah',	'Sholat Sunnah',	''),
 (11,	'mu_infaq_shadaqah',	'Infaq / Shadaqah',	''),
 (12,	'mu_group',	'Group Mentoring',	''),
-(13,	'mu_group_anggota',	'Anggota Group',	'');
+(13,	'mu_group_anggota',	'Anggota Group',	''),
+(14,	'mu_group_activity',	'Aktifitas Grup',	'');
 
 DROP TABLE IF EXISTS `mu_pengguna`;
 CREATE TABLE `mu_pengguna` (
@@ -543,7 +567,31 @@ INSERT INTO `mu_quran_baca` (`id`, `id_anggota`, `tanggal`, `tingkat`, `jenis_bu
 (14,	2,	'2025-05-05',	'lanjut',	'al-qur\'an',	1,	1,	2,	8,	15,	'2025-05-05 10:20:01',	20,	'2025-05-05 10:20:01',	NULL),
 (15,	2,	'2025-05-06',	'lanjut',	'al-qur\'an',	2,	8,	3,	9,	288,	'2025-05-05 10:20:23',	20,	'2025-05-05 10:20:23',	NULL),
 (16,	24,	'2025-05-08',	'lanjut',	'al-qur\'an',	4,	1,	4,	9,	9,	'2025-05-08 15:03:31',	14,	'2025-05-08 15:03:31',	NULL),
-(17,	24,	'2025-05-08',	'lanjut',	'al-qur\'an',	3,	1,	3,	200,	200,	'2025-05-08 15:21:57',	14,	'2025-05-08 15:21:57',	NULL);
+(17,	24,	'2025-05-08',	'lanjut',	'al-qur\'an',	3,	1,	3,	200,	200,	'2025-05-08 15:21:57',	14,	'2025-05-08 15:21:57',	NULL),
+(18,	1,	'2025-05-02',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:10',	14,	'2025-05-04 14:14:10',	NULL),
+(19,	1,	'2025-05-01',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:34',	14,	'2025-05-04 14:14:34',	NULL),
+(20,	1,	'2025-05-02',	'lanjut',	'al-qur\'an',	1,	1,	1,	7,	7,	'2025-05-04 14:23:14',	14,	'2025-05-04 14:24:32',	NULL),
+(21,	1,	'2025-05-02',	'lanjut',	'al-qur\'an',	1,	1,	2,	9,	16,	'2025-05-04 14:32:54',	14,	'2025-05-04 14:32:54',	NULL),
+(22,	1,	'2025-05-03',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:42',	14,	'2025-05-04 14:33:42',	NULL),
+(23,	1,	'2025-05-03',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:59',	14,	'2025-05-04 14:33:59',	NULL),
+(24,	1,	'2025-05-02',	'lanjut',	'al-qur\'an',	5,	8,	6,	8,	121,	'2025-05-04 14:35:15',	14,	'2025-05-04 14:35:15',	NULL),
+(25,	1,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	2,	6,	9,	15,	'2025-05-04 14:40:20',	14,	'2025-05-04 14:40:20',	NULL),
+(26,	1,	'2025-05-05',	'lanjut',	'al-qur\'an',	1,	1,	6,	9,	16,	'2025-05-04 14:46:47',	14,	'2025-05-04 14:46:47',	NULL),
+(27,	1,	'2025-05-03',	'lanjut',	'al-qur\'an',	6,	1,	6,	110,	110,	'2025-05-05 02:01:38',	14,	'2025-05-05 02:01:38',	NULL),
+(28,	1,	'2025-05-08',	'lanjut',	'al-qur\'an',	4,	1,	4,	9,	9,	'2025-05-08 15:03:31',	14,	'2025-05-08 15:03:31',	NULL),
+(29,	1,	'2025-05-03',	'lanjut',	'al-qur\'an',	3,	1,	3,	200,	200,	'2025-05-08 15:21:57',	14,	'2025-05-08 15:21:57',	NULL),
+(33,	18,	'2025-05-01',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:10',	14,	'2025-05-04 14:14:10',	NULL),
+(34,	18,	'2025-05-01',	'lanjut',	'al-qur\'an',	1,	1,	1,	1,	NULL,	'2025-05-04 14:14:34',	14,	'2025-05-04 14:14:34',	NULL),
+(35,	18,	'2025-05-02',	'lanjut',	'al-qur\'an',	1,	1,	1,	7,	7,	'2025-05-04 14:23:14',	14,	'2025-05-04 14:24:32',	NULL),
+(36,	18,	'2025-05-05',	'lanjut',	'al-qur\'an',	1,	1,	2,	9,	16,	'2025-05-04 14:32:54',	14,	'2025-05-04 14:32:54',	NULL),
+(37,	18,	'2025-05-03',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:42',	14,	'2025-05-04 14:33:42',	NULL),
+(38,	18,	'2025-05-03',	'lanjut',	'al-qur\'an',	2,	7,	5,	9,	289,	'2025-05-04 14:33:59',	14,	'2025-05-04 14:33:59',	NULL),
+(39,	18,	'2025-05-03',	'lanjut',	'al-qur\'an',	5,	8,	6,	8,	121,	'2025-05-04 14:35:15',	14,	'2025-05-04 14:35:15',	NULL),
+(40,	18,	'2025-05-04',	'lanjut',	'al-qur\'an',	1,	2,	6,	9,	15,	'2025-05-04 14:40:20',	14,	'2025-05-04 14:40:20',	NULL),
+(41,	18,	'2025-05-05',	'lanjut',	'al-qur\'an',	1,	1,	6,	9,	16,	'2025-05-04 14:46:47',	14,	'2025-05-04 14:46:47',	NULL),
+(42,	18,	'2025-05-06',	'lanjut',	'al-qur\'an',	6,	1,	6,	110,	110,	'2025-05-05 02:01:38',	14,	'2025-05-05 02:01:38',	NULL),
+(43,	18,	'2025-05-06',	'lanjut',	'al-qur\'an',	4,	1,	4,	9,	9,	'2025-05-08 15:03:31',	14,	'2025-05-08 15:03:31',	NULL),
+(44,	18,	'2025-05-08',	'lanjut',	'al-qur\'an',	3,	1,	3,	200,	200,	'2025-05-08 15:21:57',	14,	'2025-05-08 15:21:57',	NULL);
 
 DROP TABLE IF EXISTS `mu_quran_hafal`;
 CREATE TABLE `mu_quran_hafal` (
@@ -742,4 +790,4 @@ INSERT INTO `mu_sholat_wajib` (`id`, `id_anggota`, `tanggal`, `shubuh`, `dhuhur`
 (15,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:32',	'2025-05-10 20:39:32',	14,	0),
 (16,	24,	'2025-05-11',	75,	NULL,	NULL,	NULL,	NULL,	75,	'2025-05-10 20:39:35',	'2025-05-10 20:39:35',	14,	0);
 
--- 2025-05-13 07:56:58
+-- 2025-05-15 08:01:37

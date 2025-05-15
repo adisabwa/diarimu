@@ -1,5 +1,5 @@
 <template>
-  <div id="group-admin" class="pt-0 translate-y-[-20px]">
+  <div id="group-admin" class="pt-16 translate-y-[-20px]">
     <el-card class="relative overflow-hidden
         bg-gradient-to-tr from-white/[0.8] from-40% to-teal-200/[0.7] rounded-[10px]
       z-[0]
@@ -8,56 +8,69 @@
       header-class="relative px-4 pt-6 pb-2 text-[15px] font-montserrat font-bold text-left"
       body-class="py-2 px-0">
       <template #header>
-        <div class="relative">
-          <el-button class="absolute right-2 top-1/2 -translate-y-1/2
-            rounded-full p-0
-            h-[25px] w-[25px]
-            flex items-center justify-center
-            font-montserrat
-            bg-teal-700
-            text-white
-            active:scale-90"
-            @click="showAdd = true;
-              getInitial()">
-            <icons icon="mdi:plus" class="m-0"/>
-          </el-button>
-          Data Group
+        <div class="relative text-center">
+          Kel. {{ data.nama_group }}
         </div>
       </template>
-      <div class="px-4">
-        <div v-for="data in datas"
-          class="relative py-3 px-5 pb-3 bg-white/[0.9] rounded-[15px] mb-3
+      <table class="w-full
+        [&_td]:align-top text-[13px] px-6">
+        <tbody>
+          <tr class="font-bold">
+            <td >Mentor</td>
+            <td width="20" class="text-center">:</td>
+            <td v-if="!isEmpty(data.anggota)">{{ data.anggota[0].nama }}</td>
+          </tr>
+          <tr class="font-bold">
+            <td >Anggota</td>
+            <td width="20" class="text-center">:</td>
+            <td class="font-normal">
+              <ol class="text-[13px] pl-4 m-0">
+                <template v-for="(i, key) in data.anggota">
+                  <li class="pl-1"
+                    v-if="key > 0">{{ i.nama }}</li>
+                </template>
+              </ol>
+            </td>
+          </tr>
+          <tr class="font-bold">
+            <td >Aktivitas</td>
+            <td width="20" class="text-center">:</td>
+            <td class="text-right">
+              <el-button class="[&_*]:text-[11px] h-fit py-1 active:scale-90
+                bg-teal-700 text-white"
+                @click="showAdd = true"
+                >
+                <icons icon="mdi:plus"/>Tambah Data
+              </el-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div 
+          v-infinite-scroll="loadingData"
+          :infinite-scroll-disabled="noMoreScrolling"
+          infinite-scroll-delay="1000"
+          infinite-scroll-distance="10"
+          class="min-h-[200px] max-h-[50vh] overflow-auto px-6 mt-3">
+        <div v-for="data in listActivity"
+          class="relative py-3 px-4 pb-3 bg-white/[0.9] rounded-[15px] mb-3
           border border-solid border-teal-700/[0.5]
-          flex gap-x-2
-          text-[15px]">
-          <div class="w-full">
-            <div class="font-bold">Kel. {{ data.nama_group }}</div>
-            <el-divider class="my-1
+          flex gap-x-2">
+          <div class="w-full text-[13px]">
+            <div class="font-bold italic">{{ dateDayIndo(data.tanggal) }}</div>
+            <el-divider class="my-1 
               border-0 border-b border-solid border-teal-700/[0.5]"/>
-            <div class="text-[13px] font-semibold
-              flex items-center"
-              @click="data.show = !data.show">
-              <icons :icon="data.show ? 'fe:arrow-down' : 'fe:arrow-up'" 
-                class="text-[13px]"/>
-              Mentor : {{ data.anggota[0].nama }}</div>
-            <ol v-if="data.show" class="text-[12px] pl-8 m-0">
-              <template v-for="(i, key) in data.anggota">
-                <li class="pl-1"
-                  v-if="key > 0">{{ i.nama }}</li>
-              </template>
-            </ol>
+            <div :class="[`text-[12px] 
+              inline-block overflow-hidden`,
+              data.show ? '' : 'max-h-[35px]']">{{ data.kegiatan }}</div>
+            <div class="text-teal-700 text-[10px] float-right"
+              @click="data.show = !data.show">Show All</div>
           </div>
-          <icons icon="mdi:edit-circle"
-            class="m-0 text-[40px] mt-[5px]
-              active:scale-75 cursor-pointer
-              text-teal-700/[0.8]"
-            @click="showAdd = true;
-              dataId = data.id;
-              formKey = formKey + 1"/>
         </div>
+        <p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
+        <p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p>
       </div>
     </el-card>
-    
     <el-dialog v-model="showAdd" draggable
       :append-to-body="true"
       class="w-fit max-w-[80%] py-3
@@ -65,15 +78,17 @@
       header-class="font-bold text-[16px]"
       body-class="text-[14px]">
       <template #header>
-        <div>Data Shadaqah</div>
+        <div>Data Aktifitas</div>
       </template>
-      <form-comp ref="formGroup"
+      <form-comp ref="formActiviity"
         class="[&_*]:rounded-[15px]"
-        :key="'form-group-'+formKey"
+        :key="'form-activity-'+formKey"
         :fields="fields" 
         v-model:id="dataId"
-        href="data/group/store"
-        href-get="data/group/get"
+        v-model:form-value="formValue" 
+        href="data/group/activity/store"
+        href-get="data/group/activity/get"
+        :show-columns="['tanggal','kegiatan']"
         @saved="submittedData" 
         @error="saving=false"
         size="large"
@@ -84,7 +99,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="showAdd = false">Batal</el-button>
-          <el-button type="primary" @click="$refs.formGroup.submitForm()"
+          <el-button type="primary" @click="$refs.formActiviity.submitForm()"
             class="bg-teal-700">
             Simpan
           </el-button>
@@ -95,53 +110,109 @@
 </template>
 
 <script>
-import Form from '@/components/Form.vue'
+  import Form from '@/components/Form.vue'
 
 export default {
-  name:'group-admin',
+  name:'group-user',
   components:{
-    'form-comp': Form,
+    'form-comp' : Form,
   },
   data: () => {
     return {
-      show:true,
+      loading:true,
       showAdd: false,
-      formKey:0,
-      fields:{},
-      datas:{},
+      formKey:1,
       dataId:-1,
+      fields:{
+        tanggal:'',
+        kegiatan:'',
+      },
+      data:{},
+      listActivity:[],
+      formValue:{},
+      loadingScroll:true,
+      noMoreScrolling:false,
+      limit:5,
+      offset:null,
+    }
+  },
+  watch:{
+    showAdd(){
+      this.formKey = this.formKey + 1
     }
   },
   methods: {
-    getData() {
-      this.loading = true;
-      this.$http.get('/data/group')
-          .then(result => {
-            var res = result.data;
-            this.datas = res
-            this.loading = false
-          });
-    },
-    getInitial: async function() {
+      getInitial: async function() {
         this.loading = true;
+        // await this.$http.get('/infaq/shadaqah/get_last')
+        //   .then(result => {
+        //     var res = result.data;
+        //     this.lastData = this.fillAndAddObjectValue(this.lastData, res)
+        //   });
         
-        await this.$http.get('/kolom/preparation?table=mu_group&grouping=0&input=0')
+        await this.getData();
+        await this.$http.get('/kolom/preparation?table=mu_group_activity&grouping=0&input=0')
           .then(result => {
             var res = result.data;
             this.dataId = -1
             this.fields = this.fillAndAddObjectValue(this.fields, res)
-            // console.log(this.fields)
-            this.formKey++
+            this.fields.tanggal.default = this.dateNow()
+            this.fields.id_group.default = this.data.id
             this.loading = false
           });
+        // this.datas = [];
+        // await this.getData();
       },
-    submittedData(){
-      this.saving = false
-      this.showAdd = false
+    async getData() {
+      this.loading = true;
+      this.$http.get('/data/group')
+          .then(result => {
+            var res = result.data;
+            // console.log(res)
+            this.data = res[0] ?? {}
+            this.loading = false
+          });
+    },
+      submittedData(){
+        this.loading = false;
+        this.showAdd = false;
+        this.limit = this.offset
+        this.offset = 0
+        this.getDataActivity();
+      },
+    async getDataActivity(reset = true) {
+      this.loading = true;
+      this.$http.get('/data/group/activity', {
+        params:{
+          where:{ id_group : this.data?.id_group, },
+          order:['tanggal desc'],
+          limit:this.limit,
+          offset:this.offset,
+        }
+      })
+          .then(result => {
+            var res = result.data;
+            res = res.map(d => {
+              d.show = false
+              return d
+            })
+            // console.log(res)
+            this.listActivity = reset ? res : [...this.listActivity, ...res]
+            this.loading = false
+            this.loadingScroll = false
+            if (this.isEmpty(res)) {
+              this.noMoreScrolling = true
+            } else {
+              this.offset += 5
+            }
+          });
+    },
+    async loadingData(){
+      this.loadingScroll = true
+      await this.getDataActivity(false)
     },
   },
   created: function() {
-    this.getData()
     this.getInitial()
   },
 }

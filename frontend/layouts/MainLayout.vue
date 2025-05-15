@@ -75,16 +75,19 @@
       v-if="[...Object.keys(mainMenus), ...['unauthorized']].includes($route.name)">
 			<div class="h-full px-6 pb-1
 				flex items-center justify-between">
-				<div v-for="m in mainMenus"
-          :class="['flex flex-col items-center cursor-pointer p-2 active:scale-[0.8]',
-            ($route.name == m.route ? '[&_*]:text-teal-600' : '[&_*]:text-teal-800'),]"
-					@click="isEmpty(m.route) ?
-            m.function() :
-            $router.push({name:m.route})">
-					<icons class="text-3xl m-0" :icon="m.icon"/>
-					<span class="text-[12px] leading-[1]">{{ m.label }}</span>
-				</div>
-			</div>
+        <template  v-for="m in mainMenus">
+          <div
+            v-if="isEmpty(m?.role) ? true : (m.role.includes(user.role))"
+            :class="['flex flex-col items-center cursor-pointer p-2 active:scale-[0.8]',
+              ($route.name == m.route ? '[&_*]:text-teal-600' : '[&_*]:text-teal-800'),]"
+            @click="isEmpty(m.route) ?
+              m.function() :
+              $router.push({name:m.route})">
+            <icons class="text-3xl m-0" :icon="m.icon"/>
+            <span class="text-[12px] leading-[1]">{{ m.label }}</span>
+          </div>
+        </template>
+      </div>
 		</div>
   </div>
 </template>
@@ -119,6 +122,14 @@ export default {
           function:'',
           icon:'mingcute:group-3-fill',
           label:'Group',
+          role:['admin'],
+        },
+        'group-user':{
+          route:'group-user',
+          function:'',
+          icon:'mingcute:group-3-fill',
+          label:'Group',
+          role:['mentor','user']
         },
         account:{
           route:'account',

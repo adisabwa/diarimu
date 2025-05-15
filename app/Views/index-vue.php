@@ -7,7 +7,7 @@
 	<meta name="author" content="Adi Sabwa">
 	<meta name="website" content="adisabwa.github.io">
 	<!-- Site title -->
-	<title>Sistem Informasi Muhammadiyah Kendal</title>
+	<title>Catatan Ibadah Muhammadiyah Kendal</title>
 	<link rel="icon" href="<?= base_url('assets/images/favicon.ico') ?>">
 </head>
 <body>

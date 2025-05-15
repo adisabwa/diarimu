@@ -3,23 +3,22 @@
 		<div id="management" class="max-w-[1100px] mx-6 md:mx-auto bg-white bg-opacity-[0.9] 
 			border-solid border border-gray-300">
 			<div class="flex flex-col items-center align-middle
-			h-fit pt-40 pb-6 flex-1 px-5 md:px-0
+			h-fit pt-32 pb-6 flex-1 px-5 md:px-0
 			text-center text-[20px]">
 				<div class="font-montserrat
-					text-5xl md:text-7xl font-[500] text-emerald-800 leading-[1.3]">
-					DIARIMU
+					text-[40px] md:text-7xl font-[500] text-emerald-800 leading-[1.3]">
+					DIARI-MU
 				</div>
 				<div class="font-montserrat
-					
-					text-[17px] md:text-2xl font-[500] text-emerald-800 leading-[1.5]
+					text-[16px] md:text-2xl font-[500] text-emerald-800 leading-[1.3]
 					">
 					Sistem Pencacatan Ibadah Muhammadiyah Kendal
 				</div>
-				<img id="logo" :src="$baseUrl + 'assets/images/vector.png'" height="250px" 
+				<img id="logo" :src="$baseUrl + 'assets/images/vector.png'" height="230px" 
 					class="mt-6
 						"/>
 			</div>
-			<div class="w-auto [&_*]:text-lg py-5 px-7 pb-12">
+			<div class="w-auto [&_*]:text-[16px] py-3 px-7 pb-12">
 				<el-button class="bg-emerald-900/[0.5] w-full
 					shadow-[inset_3px_3px_rgba(#fff,#fff,#fff,0.3)]
 					py-5

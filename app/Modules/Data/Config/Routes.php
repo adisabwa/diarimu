@@ -1,10 +1,10 @@
 <?php
 
 use Modules\Data\Controllers\GroupController as Group;
+use Modules\Data\Controllers\GroupActivityController as GroupActivity;
 use Modules\Data\Controllers\Prm;
 use Modules\Data\Controllers\Anggota;
 use Modules\Data\Controllers\Iqab;
-use Modules\Data\Controllers\Jabatan;
 use Modules\Data\Controllers\SholatSunnahController as SholatSunnah;
 
 //----------------------------------Section Data-------------------------------------
@@ -59,18 +59,16 @@ $routes->group('data', [
         $routes->add('search', [Anggota::class, 'search']);
     });
 
-//----------------------------------Data Jabatan-------------------------------------
-$routes->group('jabatan', static function ($routes) {
-    $routes->add('/', [Jabatan::class, 'index']);
-    $routes->add('prodi', [Jabatan::class, 'prodi']);
-    $routes->add('get', [Jabatan::class, 'get']);
-    $routes->add('reset_options', [Jabatan::class, 'resetOptions']);
-    $routes->add('store', [Jabatan::class, 'store'], [ 'filter' => 'api-validation:mu_jabatan']);
-    $routes->add('delete/(:any)', [Jabatan::class, 'delete/$1']);
-    $routes->add('delete_many', [Jabatan::class, 'delete_many']);
-    $routes->add('template', [Jabatan::class, 'template']);
-    $routes->add('upload', [Jabatan::class, 'upload']);
-    $routes->add('options', [Jabatan::class, 'options']);
+//----------------------------------Data Group Activity-------------------------------------
+$routes->group('group/activity', static function ($routes) {
+    $routes->add('/', [GroupActivity::class, 'index']);
+    $routes->add('prodi', [GroupActivity::class, 'prodi']);
+    $routes->add('get', [GroupActivity::class, 'get']);
+    $routes->add('reset_options', [GroupActivity::class, 'resetOptions']);
+    $routes->add('store', [GroupActivity::class, 'store'], [ 'filter' => 'api-validation:mu_group_activity']);
+    $routes->add('delete/(:any)', [GroupActivity::class, 'delete/$1']);
+    $routes->add('delete_many', [GroupActivity::class, 'delete_many']);
+    $routes->add('options', [GroupActivity::class, 'options']);
 });
 
 

@@ -1,5 +1,5 @@
 <template>
-  <div id="group-admin" class="pt-0 translate-y-[-20px]">
+  <div id="group-admin" class="pt-12 translate-y-[-20px]">
     <el-card class="relative overflow-hidden
         bg-gradient-to-tr from-white/[0.8] from-40% to-teal-200/[0.7] rounded-[10px]
       z-[0]

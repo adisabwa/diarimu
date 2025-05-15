@@ -5,14 +5,14 @@
       <div class="flex flex-col items-center align-middle">
         <div class="p-5 pt-36 
           text-center">
-          <img id="logo" :src="$baseUrl + 'assets/images/vector.png'" height="250px" 
-            class="my-4 mt-8
+          <img id="logo" :src="$baseUrl + 'assets/images/vector.png'" height="220px" 
+            class="my-2 mt-0
               "/>
           <!-- Error message -->
-          <h2 class="mt-0 mb-0 text-center text-2xl
+          <h2 class="mt-0 mb-0 text-center text-[22px]
             font-[600] font-montserrat ">Masuk Sekarang</h2>
           <div class="mt-0 mb-0 text-center text-[12px]
-          font-montserrat ">Masuk untuk memulai menggunakan aplikasi</div>
+          font-montserrat ">Masuk untuk memulai  aplikasi</div>
           <template v-if="errorLogin" >
             <el-divider class="m-0 mt-3"/>
             <p class="text-danger error-message my-1" v-html="errorMessage"></p>
@@ -50,7 +50,8 @@
               size="large" 
               @click="doLogin()"
               :loading="loading" 
-              class="mt-2 w-full bg-teal-700">Masuk</el-button>
+              class="mt-1 w-full bg-teal-700 h-fit
+                py-2 text-[14px] font-bold">Masuk</el-button>
           </div>
         </div>
       </div>
