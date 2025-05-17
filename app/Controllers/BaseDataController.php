@@ -84,6 +84,7 @@ class BaseDataController extends BaseController
 
     public function store()
     {
+        // exit;
         $posted_data = $this->request->getPost();
         // var_dump($posted_data);
         // return $this->failServerError();

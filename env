@@ -21,8 +21,8 @@ CI_ENVIRONMENT = development
 #--------------------------------------------------------------------
 
 VITE_MODE = 'development'
-VITE_BASE_URL = '/'
-VITE_BASE_URL_PROD = '/simak/'
+VITE_BASE_URL = '/ashoimu/public/'
+VITE_BASE_URL_PROD = '/ashoimu/'
 VITE_PORT = 5140
 
 #--------------------------------------------------------------------
@@ -31,8 +31,8 @@ VITE_PORT = 5140
 
 # app.baseURL = ''
 # If you have trouble with `.`, you could also use `_`.
-app_baseURL = 'http://simak.test/'
-# app_baseURL = 'https://codev-app.my.id/simak/'
+app_baseURL = 'http://localhost/ashoimu/public/'
+# app_baseURL = 'https://codev-app.my.id/ashoimu/'
 # app.forceGlobalSecureRequests = false
 # app.CSPEnabled = false
 
@@ -41,7 +41,7 @@ app_baseURL = 'http://simak.test/'
 #--------------------------------------------------------------------
 
 # database.default.hostname = localhost
-# database.default.database = simak
+# database.default.database = ashoimu
 # database.default.username = codevapp
 # database.default.password = DAULAHislam2014
 # database.default.DBDriver = MySQLi
@@ -49,7 +49,7 @@ app_baseURL = 'http://simak.test/'
 # database.default.port = 3306
 
 database.default.hostname = localhost
-database.default.database = simak
+database.default.database = ashoimu
 database.default.username = admin
 database.default.password = lihatdilayar
 database.default.DBDriver = MySQLi

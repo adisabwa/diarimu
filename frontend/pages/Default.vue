@@ -7,7 +7,7 @@
 			text-center text-[20px]">
 				<div class="font-montserrat
 					text-[40px] md:text-7xl font-[500] text-emerald-800 leading-[1.3]">
-					DIARI-MU
+					ASHOI-MU
 				</div>
 				<div class="font-montserrat
 					text-[16px] md:text-2xl font-[500] text-emerald-800 leading-[1.3]

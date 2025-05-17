@@ -21,7 +21,13 @@ let listFunction = {
     }
     document.body.removeChild(textArea);
   },
-  
+  getFileType(url) {
+      // Remove query parameters and hash
+    const cleanUrl = url.split('#')[0];
+    // Get the last part after the last dot
+    const extension = cleanUrl.split('.').pop().toLowerCase();
+    return extension
+  }
 }
 
 export { listFunction };

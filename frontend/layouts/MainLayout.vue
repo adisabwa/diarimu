@@ -122,7 +122,7 @@ export default {
           function:'',
           icon:'mingcute:group-3-fill',
           label:'Group',
-          role:['admin'],
+          role:['admin','super-admin'],
         },
         'group-user':{
           route:'group-user',

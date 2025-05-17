@@ -71,12 +71,21 @@ class GroupController extends BaseDataController
 
     public function get_anggota()
     {
+        $user = userdata();
         $id = $this->request->getGetPost('id') ?? userdata()->id_anggota;
         $data = $this->modelAnggota->where(['id_anggota' => $id,'type' => 'mentor'])->find()[0] ?? [];
         $datas = [];
+
+        if ($user->role == 'super-admin')
+            $where_group = "1=1";
+        else if ($user->role == 'admin')
+            $where_group = "id_unit='$user->id_unit'" ; 
+        else
+            $where_group = "id_group='$user->id_group'";
+        
         if (!empty($data)) {
             $datas = $this->modelAnggota->getAll([
-                'id_group' => $data->id_group
+                $where_group => NULL
             ]);
         }
 

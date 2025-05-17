@@ -4,15 +4,15 @@ namespace Modules\Data\Models;
 
 use CodeIgniter\Model;
 
-class JabatanModel extends Model
+class DataUnitModel extends Model
 {
-    protected $table         = 'mu_jabatan';
+    protected $table      = 'mu__unit_kerja';
     protected $primaryKey = 'id';
 
+    protected $protectFields = false;
     protected $useAutoIncrement = true;
     protected $returnType    = 'object';
 
-    protected $protectFields = false;
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
@@ -22,16 +22,35 @@ class JabatanModel extends Model
     {
 
     }
-
+    
     public function getTableName()
     {
         return $this->table;
     }
     
+    
+    public function getAll($whereAnd = [], $whereOr = [], $order = '')
+    {
+        $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
+        $whereOr = empty($whereOr) ? '1=1' : $whereOr;
+
+        $data = $this->db->table('mu__unit_kerja i')
+                    ->select("i.*")
+                    ->where($whereAnd)
+                    ->groupStart()
+                        ->orWhere($whereOr)
+                    ->groupEnd()
+                    ->orderBy($order)
+                    ->get()
+                    ->getResultObject();
+
+        return $data;
+    }
+
     public function getOptions($where = [])
     {
       $options = [];
-      $data = $this->db->table('mu_jabatan p')
+      $data = $this->db->table($this->table)
                     ->select('*')
                     ->where($where)
                     ->get()
@@ -39,7 +58,7 @@ class JabatanModel extends Model
       foreach ($data as $key => $d) {
         $options[] = (object)[
           'value' => "$d->id",
-          'label' => "$d->jabatan"
+          'label' => "$d->unit_kerja",
         ];
       }
       return $options;

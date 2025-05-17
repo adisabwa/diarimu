@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-use Modules\Data\Controllers\BaseData;
+use App\Controllers\BaseDataController;
 
-class Pengguna extends BaseData
+class PenggunaController extends BaseDataController
 {
     public function __construct()
     {

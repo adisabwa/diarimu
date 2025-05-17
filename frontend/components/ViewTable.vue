@@ -100,9 +100,13 @@ export default {
     setStatusType:{
       type:Function,
       default: () => {return ''}
-    }
+    },
+    formValue: {
+      type:[Array, Object],
+      default:[],
+    },
   },
-  emits:['update:empty','update:id','update:loading'],
+  emits:['update:empty','update:id','update:loading','update:formValue'],
   data: function() {
     return {
       form:{},
@@ -114,7 +118,19 @@ export default {
       this.getData(val);
     },
     loading(val){
-    }
+    },
+    form: {
+      handler(newVal, oldVal) {
+        this.$emit('update:formValue', newVal)
+      },
+      deep: true, // Watch nested properties
+    },
+    formValue: {
+      handler(newVal, oldVal) {
+        
+      },
+      deep: false, // Watch nested properties
+    },
   },
   computed: {
     
