@@ -37,7 +37,7 @@ class SholatController extends BasePageController
     
     public function dashboard()
     {
-        return $this->createChart('Total Score');
+        return $this->createChart();
     }
 
     public function get_before()

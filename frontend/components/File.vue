@@ -1,7 +1,12 @@
 <template>
   <div class="file flex align-middle items-center space-x-3" @click="openLink(href)" >
-    <img class="icon" height="15px" :src="$baseUrl + 'assets/images/pdf.png'"/>
-    <span type="text" size="mini" class="text text-success" target="_blank">{{title}}</span>
+    <div v-if="['jpg','png','jpeg'].includes(getFileType(href))">
+      <img :src="href" class="h-[200px]" />
+    </div>
+    <div v-else>
+      <img class="icon" height="15px" :src="$baseUrl + 'assets/images/pdf.png'"/>
+      <span type="text" size="mini" class="text text-success" target="_blank">{{title}}</span>
+    </div>
   </div>
 </template>
 

@@ -1,12 +1,13 @@
 <template>
   <div class="">
     <div class="flex gap-x-3 mb-3">
-      <el-select size="small" v-model="tipe" placeholder="Pilih Tipe Rekapitulasi"
+      <slot name="filter" :filter="filter"/>
+      <el-select size="small" v-model="filter.tipe" placeholder="Pilih Tipe Rekapitulasi"
         @change="getChart">
         <el-option value="week" label="7 Hari" />
         <el-option value="month" label="1 Bulan" />
       </el-select>
-      <el-select size="small" v-model="dates" placeholder="Pilih Tanggal"
+      <el-select size="small" v-model="filter.dates" placeholder="Pilih Tanggal"
         ref="dateSelect"
         @change="getChart">
         <el-option :value="getValue(o)"
@@ -56,24 +57,26 @@ export default {
   },
   data: function() {
     return {
-      tipe:'',
+      filter: {
+        tipe:'',
+        dates:'',
+      },
       statistic:{
 				labels:[],
 				datasets:[],
       },
       max:5,
       min:-1,
-      dates:'',
 			dateOptions:[],
       selectKey:0,
 		}
 	},
   watch:{
-    async tipe(val){
+    async 'filter.tipe'(val){
       let vm = this
       vm.dateOptions = []
       vm.dateFunction(vm.dateNow(), 4)
-      vm.dates = vm.getValue(vm.dateOptions[0]);
+      vm.filter.dates = vm.getValue(vm.dateOptions[0]);
       vm.selectKey = vm.selectKey + 1
       setTimeout(() => {
         vm.getChart()
@@ -96,9 +99,9 @@ export default {
     async dateFunction(last, number = 1){
       // console.log(last)
       let newData = [];
-      if (this.tipe == 'week')
+      if (this.filter.tipe == 'week')
         newData = this.getWeeklyRanges(last, number); 
-      else if (this.tipe == 'month')
+      else if (this.filter.tipe == 'month')
         newData = this.getMonthlyRanges(last, number); 
       
       // console.log(newData)
@@ -112,12 +115,12 @@ export default {
     },
     async getChart(){
       // return;
-      let dates = this.dates.split('/')
+      let dates = this.filter.dates.split('/')
       await this.$http.get(this.href, {
           params: {
             start:dates[0],
             end:dates[1],
-            tipe:this.tipe,
+            tipe:this.filter.tipe,
             id_anggota:this.idAnggota
           }
         })
@@ -139,7 +142,7 @@ export default {
     }
 	},
 	mounted(){
-    this.tipe = 'week'
+    this.filter.tipe = 'week'
 	}
 }
 </script>

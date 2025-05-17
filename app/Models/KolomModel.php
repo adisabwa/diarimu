@@ -30,7 +30,7 @@ class KolomModel extends Model
                     ->join('mu_nama_tabel gk','gk.id=n.id_group')
                     ->where('nama_tabel',$nama_tabel)
                     ->where($input ? "from_user='1'" : "1=1")
-                    ->orderBy('gk.id, n.order')
+                    ->orderBy('n.order')
                     ->get()
                     ->getResult();
     }

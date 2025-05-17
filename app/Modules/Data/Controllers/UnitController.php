@@ -2,17 +2,19 @@
 
 namespace Modules\Data\Controllers;
 
+
+use App\Controllers\BaseDataController;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use CodeIgniter\Files\File;
-use Modules\Data\Controllers\BaseData;
 
-class Anggota extends BaseData
+class UnitController extends BaseDataController
 {
+
     public function __construct()
     {
         parent::__construct();
         
-        $this->model = model('AnggotaModel');
+        $this->model = model('DataUnitModel');
     }
 }

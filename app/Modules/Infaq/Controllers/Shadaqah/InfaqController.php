@@ -23,7 +23,12 @@ class InfaqController extends BasePageController
     
     public function dashboard()
     {
-        return $this->createChart('Nominal Infaq');
+        return $this->createChart();
+    }
+    
+    public function dashboard_count()
+    {
+        return $this->createChart('count');
     }
 
     public function get_before()

@@ -52,6 +52,13 @@
               :loading="loading" 
               class="mt-1 w-full bg-teal-700 h-fit
                 py-2 text-[14px] font-bold">Masuk</el-button>
+            <div class="w-full text-center mt-2">
+              Belum punya akun?
+              <a @click="$router.push({name:'register'})" 
+                class="p-0 w-auto pointer
+                text-emerald-800 font-bold
+                active:text-emerald-600">Buat Akun Baru</a>
+            </div>
           </div>
         </div>
       </div>

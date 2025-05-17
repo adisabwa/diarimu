@@ -84,7 +84,7 @@ class SholatController extends BasePageController
     
     public function dashboard()
     {
-        return $this->createChart("Jml Raka'at");
+        return $this->createChart();
     }
 
     public function get_before()

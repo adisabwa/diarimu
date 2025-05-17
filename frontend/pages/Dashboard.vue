@@ -59,7 +59,7 @@
 					flex flex-col items-center
 					bg-emerald-100/[0.3]">
 					<div>Selamat Datang di</div>
-					<div class="font-bold">Aplikasi DiariMu</div>
+					<div class="font-bold">Aplikasi Ashoi-Mu</div>
 				</div>
 				<div class="w-full h-full font-montserrat">
 					<div class="px-3 py-2 flex">
@@ -95,7 +95,7 @@
 			<el-card class="relative h-auto w-full
 				bg-white/[0.8] shadow-md
 				rounded-[20px]
-				mb-20"
+				mb-4"
 				header-class="pt-4 pb-3">
 					<template #header>
 						<div class="font-montserrat font-bold text-xl text-emerald-900">Catatan Ibadah Pribadi</div>
@@ -132,6 +132,15 @@
 						
 					</div>
 			</el-card>
+      <div class="
+				bg-white/[0.8] shadow-md
+				rounded-[20px]
+        
+        py-5 px-7 mb-20
+        text-center text-[13px] italic">
+        Sesungguhnya orang yang selalu <b>membaca kitab Allah</b> dan <b>mendirikan shalat</b> dan <b>menafkahkan sebahagian dari rezeki yang Kami anugerahkan kepada mereka</b> dengan diam-diam dan terang-terangan, mereka itu mengharapkan perniagaan yang tidak akan merugi, <br/>
+        <b>- &nbsp; Fatir: 29 &nbsp; -</b>
+      </div>
 		</div>
 		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat
