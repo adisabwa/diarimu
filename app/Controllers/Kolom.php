@@ -46,6 +46,7 @@ class Kolom extends BaseController
             }
             $data->options = $options;
             $data->allow_add = $data->allow_add == '1';
+            $data->customInput = false;
             if ($data->allow_add){
                 // echo json_encode($data);exit;
                 $data->isAdding = false;

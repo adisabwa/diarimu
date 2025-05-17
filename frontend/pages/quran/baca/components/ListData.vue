@@ -15,7 +15,9 @@
 				rounded-[15px]
 				bg-lime-50/[0.5] border border-solid border-lime-400
 				text-lime-900
-				flex items-center justify-between">
+				flex items-center justify-between
+				cursor-grab"
+				draggable="true">
 				<div class="leading-[1.3]">
 					<div class="font-semibold text-[13px] opacity-70">
 					{{ dateDayIndo(s.tanggal)}}</div>

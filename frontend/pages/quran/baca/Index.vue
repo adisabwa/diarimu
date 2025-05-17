@@ -76,7 +76,7 @@
           :show-submit="false"
           label-position="top"
           form-item-class="mb-2"
-          input-class="[&_*]:rounded-[15px]"
+          input-class=""
           :show-required-text="false">
         </form-comp>  
         <el-button size="large" type="success"
@@ -167,7 +167,7 @@ export default {
       sizeWindow:window.innerWidth,
       setStatusText: setStatusText,
       setStatusType: setStatusType,
-      showCreate:false,
+      showCreate:true,
       success:false,
       saving:false,
       quran: topMenu.quranBaca,

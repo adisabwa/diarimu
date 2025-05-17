@@ -9,67 +9,75 @@
       body-class="py-2 px-0">
       <template #header>
         <div class="relative text-center">
-          Kel. {{ data.nama_group }}
+          {{ isEmpty(data.nama_group) ? 'Kelompok' : 'Kel.' }} {{ data.nama_group }}
         </div>
       </template>
-      <table class="w-full
-        [&_td]:align-top text-[13px] px-6">
-        <tbody>
-          <tr class="font-bold">
-            <td >Mentor</td>
-            <td width="20" class="text-center">:</td>
-            <td v-if="!isEmpty(data.anggota)">{{ data.anggota[0].nama }}</td>
-          </tr>
-          <tr class="font-bold">
-            <td >Anggota</td>
-            <td width="20" class="text-center">:</td>
-            <td class="font-normal">
-              <ol class="text-[13px] pl-4 m-0">
-                <template v-for="(i, key) in data.anggota">
-                  <li class="pl-1"
-                    v-if="key > 0">{{ i.nama }}</li>
-                </template>
-              </ol>
-            </td>
-          </tr>
-          <tr class="font-bold">
-            <td >Aktivitas</td>
-            <td width="20" class="text-center">:</td>
-            <td class="text-right">
-              <el-button class="[&_*]:text-[11px] h-fit py-1 active:scale-90
-                bg-teal-700 text-white"
-                @click="showAdd = true"
-                >
-                <icons icon="mdi:plus"/>Tambah Data
-              </el-button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div 
-          v-infinite-scroll="loadingData"
-          :infinite-scroll-disabled="noMoreScrolling"
-          infinite-scroll-delay="1000"
-          infinite-scroll-distance="10"
-          class="min-h-[200px] max-h-[50vh] overflow-auto px-6 mt-3">
-        <div v-for="data in listActivity"
-          class="relative py-3 px-4 pb-3 bg-white/[0.9] rounded-[15px] mb-3
-          border border-solid border-teal-700/[0.5]
-          flex gap-x-2">
-          <div class="w-full text-[13px]">
-            <div class="font-bold italic">{{ dateDayIndo(data.tanggal) }}</div>
-            <el-divider class="my-1 
-              border-0 border-b border-solid border-teal-700/[0.5]"/>
-            <div :class="[`text-[12px] 
-              inline-block overflow-hidden`,
-              data.show ? '' : 'max-h-[35px]']">{{ data.kegiatan }}</div>
-            <div class="text-teal-700 text-[10px] float-right"
-              @click="data.show = !data.show">Show All</div>
-          </div>
+      <template v-if="isEmpty(data.id)" >
+        <div class="text-center h-20 w-[200px]
+          flex items-center mx-auto">
+          Anda belum memiliki grup
         </div>
-        <p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
-        <p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p>
-      </div>
+      </template>
+      <template v-else>
+        <table class="w-full
+          [&_td]:align-top text-[13px] px-6">
+          <tbody>
+            <tr class="font-bold">
+              <td >Mentor</td>
+              <td width="20" class="text-center">:</td>
+              <td v-if="!isEmpty(data.anggota)">{{ data.anggota[0].nama }}</td>
+            </tr>
+            <tr class="font-bold">
+              <td >Anggota</td>
+              <td width="20" class="text-center">:</td>
+              <td class="font-normal">
+                <ol class="text-[13px] pl-4 m-0">
+                  <template v-for="(i, key) in data.anggota">
+                    <li class="pl-1"
+                      v-if="key > 0">{{ i.nama }}</li>
+                  </template>
+                </ol>
+              </td>
+            </tr>
+            <tr class="font-bold">
+              <td >Aktivitas</td>
+              <td width="20" class="text-center">:</td>
+              <td class="text-right">
+                <el-button class="[&_*]:text-[11px] h-fit py-1 active:scale-90
+                  bg-teal-700 text-white"
+                  @click="showAdd = true"
+                  >
+                  <icons icon="mdi:plus"/>Tambah Data
+                </el-button>
+              </td>
+            </tr>
+          </tbody>
+          </table>
+        <div 
+            v-infinite-scroll="loadingData"
+            :infinite-scroll-disabled="noMoreScrolling"
+            infinite-scroll-delay="1000"
+            infinite-scroll-distance="10"
+            class="min-h-[200px] max-h-[50vh] overflow-auto px-6 mt-3">
+          <div v-for="data in listActivity"
+            class="relative py-3 px-4 pb-3 bg-white/[0.9] rounded-[15px] mb-3
+            border border-solid border-teal-700/[0.5]
+            flex gap-x-2">
+            <div class="w-full text-[13px]">
+              <div class="font-bold italic">{{ dateDayIndo(data.tanggal) }}</div>
+              <el-divider class="my-1 
+                border-0 border-b border-solid border-teal-700/[0.5]"/>
+              <div :class="[`text-[12px] 
+                inline-block overflow-hidden`,
+                data.show ? '' : 'max-h-[35px]']">{{ data.kegiatan }}</div>
+              <div class="text-teal-700 text-[10px] float-right"
+                @click="data.show = !data.show">Show All</div>
+            </div>
+          </div>
+          <p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
+          <p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p>
+        </div>
+      </template>
     </el-card>
     <el-dialog v-model="showAdd" draggable
       :append-to-body="true"

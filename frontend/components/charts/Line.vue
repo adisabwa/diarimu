@@ -153,7 +153,7 @@ export default {
 	methods: {
     addingOptions(){
       this.traverse(this.addOptions, (path, value) => {
-        console.log(path, value)
+        // console.log(path, value)
         this.setObjectValueByPath(this.options, path, value)
       })
     },

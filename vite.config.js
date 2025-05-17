@@ -29,7 +29,7 @@ export default ({ command, mode }) => {
                 : './'
 
   // console.log(resolve(__dirname, outDir))
-  // console.log(baseUrl, __dirname, base)
+  console.log(baseUrl, __dirname, base)
 
   return defineConfig({
     optimizeDeps: {
@@ -49,6 +49,8 @@ export default ({ command, mode }) => {
       }),
       splitVendorChunkPlugin(),
       VitePWA({
+        // Enable manifest generation
+        includeAssets: ['index.html', 'index.php','favicon.svg', 'robots.txt'],
         registerType: 'autoUpdate',
         devOptions: {
           enabled: true
@@ -56,18 +58,19 @@ export default ({ command, mode }) => {
         manifest: {
           "name": "Sistem Catatan Ibadah Muhammadiyah Kendal",
           "short_name": "Diari-Mu",
-          "start_url": "/diarimu",
+          "start_url": baseUrl + "index.php",
+          "scope": baseUrl,
           "display": "standalone",
           "background_color": "#ffffff",
           "theme_color": "#11716d",
           "icons": [
             {
-              "src": "assets/images/icons/android-chrome-192x192.png",
+              "src": baseUrl + "/assets/images/icons/android-chrome-192x192.png",
               "sizes": "192x192",
               "type": "image/png"
             },
             {
-              "src": "assets/images/icons/android-chrome-512x512.png",
+              "src": baseUrl + "/assets/images/icons/android-chrome-512x512.png",
               "sizes": "512x512",
               "type": "image/png"
             },
@@ -76,9 +79,12 @@ export default ({ command, mode }) => {
         workbox: {
           // This configuration will inject Workbox into the generated service worker
           clientsClaim: true,
+          navigateFallback: baseUrl + "index.php",
           skipWaiting: true,
-          swDest: 'public/sw.js',                   // Your custom SW template
-          globPatterns: ['**/*'],             // Precache from Vite output only
+          // swDest: 'public/sw.js',                   // Your custom SW template
+          globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
+          globIgnores: ['sw.js', 'workbox-*.js'],  // Precache from Vite output only
+          globDirectory: "public/assets/vue",
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/api\.example\.com\//, // Cache API calls

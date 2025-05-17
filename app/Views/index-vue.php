@@ -9,6 +9,7 @@
 	<!-- Site title -->
 	<title>Catatan Ibadah Muhammadiyah Kendal</title>
 	<link rel="icon" href="<?= base_url('assets/images/favicon.ico') ?>">
+	<link rel="manifest" href="<?= base_url() ?>assets/vue/manifest.webmanifest">
 </head>
 <body>
 	<div id="app">

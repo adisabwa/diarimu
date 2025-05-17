@@ -55,7 +55,7 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         // Register the service worker
         navigator.serviceWorker
-        .register(baseUrl + '/sw.js')  // This path should point to your service worker
+        .register(baseUrl + 'assets/vue/sw.js')  // This path should point to your service worker
         .then((registration) => {
             console.log('Service Worker registered with scope: ', registration.scope);
         })
@@ -63,6 +63,8 @@ if ('serviceWorker' in navigator) {
             console.log('Service Worker registration failed: ', error);
         });
     });
-}
+} else {
+    console.warn('Service workers are not supported in this browser');
+  }
 
 app.mount('#app')

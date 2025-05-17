@@ -13,7 +13,7 @@
 		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto">
 			<div class="w-full h-[40px] px-2 mt-0 z-[1]
 				text-white leading-[1.3]">
-				Assalamu'aialkum,<br/>
+				Assalamu'alaikum,<br/>
 				<div class="text-xl font-semibold">{{ user.nama }}</div>
 				<div class="text-md leading-[1]"
           @click="showRole = true">

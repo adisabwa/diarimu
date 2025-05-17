@@ -8,6 +8,27 @@ let listFunction = {
     dateNow() {
       return moment().format('yyyy-MM-DD');
     },
+    dateData(string) {
+      const formats = [
+        'YYYY-MM-DD',
+        'DD-MM-YYYY',
+        'DD/MM/YYYY',
+        'MM/DD/YYYY',
+        'DD MMMM YYYY',
+        'dddd, DD MMMM YYYY',
+        'MMMM DD, YYYY',
+        'YYYY/MM/DD',
+        'DD.MM.YYYY'
+      ]
+    
+      const date = moment(string, formats, true)
+    
+      if (date.isValid()) {
+        return date.format('YYYY-MM-DD')
+      } else {
+        return 'Invalid date'
+      }    
+    },
     dayIndo(date) {
       return moment(date).format('dddd');
     },
@@ -39,6 +60,9 @@ let listFunction = {
     },
     timeIndo(datetime) {
       return moment(datetime).format('HH:mm');
+    },
+    monthOnly(date) {
+      return moment(date).format('MMMM');
     },
     monthIndo(date) {
       return moment(date).format('MMMM YYYY');

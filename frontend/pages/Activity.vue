@@ -163,7 +163,7 @@
         </template>
         <div class="">
           <div v-if="!isEmpty(sholatSunnah.daftar_sholat)"
-            class="w-full font-roboto">
+            class="w-full font-roboto ">
             <ul class="pl-[0px] italic mt-0 mb-1
               grid grid-flow-row grid-cols-2 auto-rows-[minmax(40px,_auto)]
               gap-x-2 gap-y-3">
@@ -174,14 +174,14 @@
                   w-fit h-fit rounded-lg py-4 px-5
                   mx-auto 
                   col-start-2 row-start-1 row-span-3">
-                <div class="text-4xl ">{{ sholatSunnah.total_rakaat }}</div>
+                <div class="text-4xl">{{ sholatSunnah.total_rakaat }}</div>
                 <div>Raka'at</div>
               </div>
 							<li v-for="(j) in (sholatSunnah.daftar_sholat ?? '').split('/').map(n => n.split('-'))"
 								class="ml-2 pl-2 [&::marker]:content-['-']">
-								<div class="text-[12px]">
+								<div class="text-[12px] leading-[1.3]">
                   Sholat {{ j[0] }}</div>
-                <div class="text-[10px]">{{ j[1] }} Raka'at</div>
+                <div class="text-[10px] mt-[2px]">{{ j[1] }} Raka'at</div>
 							</li>
 						</ul>
           </div>

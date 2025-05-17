@@ -37,8 +37,12 @@
 				</div>
 			</div>
 		</template>
-		<p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
-		<p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p>
+		<p class="my-0 text-center text-[13px]">
+			<template>
+				<template v-if="loadingScroll">Menggambil Data...</template>
+				<template v-if="noMoreScrolling && showLabel">Data Selesai</template>
+			</template>
+		</p>
 	</div>
 </template>
 
@@ -60,6 +64,7 @@ export default {
 			datas:[],
 			loadingScroll:true,
 			noMoreScrolling:false,
+			showLabel:true,
 			limit:5,
 			offset:null,
 		}
@@ -85,6 +90,7 @@ export default {
 							order:['tanggal desc'],
               limit:this.limit,
               offset:this.offset,
+							grouping:['tanggal']
             }
           }).then(result => {
             var res = result.data;
@@ -101,14 +107,19 @@ export default {
       },
 
       async loadingData(){
-        this.loadingScroll = true
-        await this.getData(false)
+				let vm = this
+        vm.loadingScroll = true
+				vm.showLabel = true 
+        await vm.getData(false)
+				setTimeout(() => {
+					vm.showLabel = false
+				},2000)
       },
 
 			getLabelSholat(sholat){
-				console.log(sholat)
+				// console.log(sholat)
 				let data = sholat.split('-')
-				return 'Sholat ' + data[0] + data[1] + ` Raka'at`
+				return `Sholat ${data[0]} - ${data[1]} Raka'at`
 			}
 	},
 	mounted(){

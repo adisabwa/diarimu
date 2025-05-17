@@ -88,7 +88,7 @@ export default {
           nama_kolom:'passwordconf',input:'password',label:'Konfirmasi Password'
         }
       },
-      dataId:2,
+      dataId:-1,
       dataIdAkun:-1,
       formValue:{},
       formAkun:{},

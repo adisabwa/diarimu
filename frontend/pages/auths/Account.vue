@@ -7,7 +7,6 @@
 					border border-solid border-teal-600/[0.4]">
 					<icons icon="mdi:user" class="mr-0 text-teal-700 text-[100px]"/>
 				</div>
-				<div class="text-xl my-3 font-bold">{{user.nama}}</div>
 				<el-divider class="w-full [&>*]:w-[max-content] my-3">
 					<div class="text-xl text-center font-bold">Profil Anggota</div>
 				</el-divider>
@@ -94,7 +93,6 @@ export default {
 	},
 	computed:{
 		...mapGetters({
-			user: 'pengguna/pengguna',
 			loggedUser: 'loggedUser',
 			// pegawai: 'data/employee',
 		}),
@@ -112,8 +110,8 @@ export default {
 		
 	},
 	created() {
-		this.$store.dispatch('pengguna/show', {id:this.loggedUser.id} );
-		this.dataId = this.loggedUser.id;
+		this.dataId = this.loggedUser.id_anggota;
+		console.log(this.dataId)
 		this.getInitial()
 		// this.$store.dispatch('data/getEmployee', {id:this.loggedUser.id_pegawai} );
 	},
