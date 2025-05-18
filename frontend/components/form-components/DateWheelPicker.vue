@@ -1,9 +1,36 @@
 <template>
-  <div :class="['flex justify-center items-center gap-4 p-4 rounded-xl h-[100px]',
-  ]" >
-    <ScrollPicker :options="days" v-model:modelValue="day" />
-    <ScrollPicker :options="months" v-model:modelValue="month" />
-    <ScrollPicker :options="years" v-model:modelValue="year" />
+  <div>
+    <el-input v-model="labelModel" :placeholder="placeholder" 
+      :clearable="clearable"
+      :size="size"
+      @clear="resetData"
+      @click="showModal = true">
+      <template #prepend v-if="prefix">
+        {{ prefix }}
+      </template>
+    </el-input>
+    <el-dialog v-model="showModal"
+        :class="['max-w-[80%] p-0 py-4 mt-40 w-fit']"
+        header-class="flex items-center"
+        body-class="relative px-0 text-[16px] ">
+      <div :class="['flex justify-center items-center gap-4 p-4 rounded-xl']" >
+        <div class="shrink-0 relative h-[200px] w-[60px]">
+          <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
+          <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
+          <ScrollPicker :options="days" v-model:modelValue="day" />
+        </div>
+        <div class="shrink-0 relative h-[200px] w-[60px]">
+            <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
+            <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
+          <ScrollPicker :options="months" v-model:modelValue="month" />
+        </div>
+        <div class="shrink-0 relative h-[200px] w-[80px]">
+          <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
+          <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
+          <ScrollPicker :options="years" v-model:modelValue="year" />
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -13,33 +40,39 @@ import  { VueScrollPicker } from 'vue-scroll-picker'
 export default {
   name: 'DateWheelPicker',
   components: { ScrollPicker:VueScrollPicker },
-  props: {
-    modelValue: {
-      type: String,
-      default: () => {
+  emits:['update:value','change'],
+  props:{
+    value:{type:[String, Number], default: () => {
         const today = new Date()
         return today.toISOString().slice(0, 10) // YYYY-MM-DD
-      }
-    }
+    },},
+    placeholder:{type:[String], default:'',},
+    size:{type:[String], default:'',},
+    clearable:{type:[Boolean], default:false,},
+    prefix:{type:[String], default:'',},
+    valueFormat:{type:[String], default:'YYYY-MM-DD',},
+    format:{type:[String], default:'DD MMMM YYYY',},
   },
   data() {
     const currentYear = new Date().getFullYear()
-    const [initYear, initMonth, initDay] = this.modelValue.split('-')
 
     return {
-      day: initDay,
-      month: initMonth,
-      year: initYear,
+      vModel:'',
+      showModal:false,
+      labelModel:'',
+      day: '',
+      month: '',
+      year: '',
       months: Array.from({ length: 12 }, (_, i) => {
         return {
           name:(i + 1).toString().padStart(2, '0'),
           value:(i + 1).toString().padStart(2, '0'),
         }
       }),
-      years: Array.from({ length: 100 }, (_, i) => {
+      years: Array.from({ length: 125 }, (_, i) => {
         return {
-          name: (currentYear - i).toString(),
-          value: (currentYear - i).toString(),
+          name: (currentYear - i + 25).toString(),
+          value: (currentYear - i + 25).toString(),
         }
       }),
     }
@@ -53,7 +86,18 @@ export default {
     }
   },
   watch: {
-    day: 'emitDate',
+    vModel(val){
+      console.log(val)
+      this.selectOption(val)
+      this.$emit('update:value', val)
+    },
+    value: {
+      immediate: true,
+      async handler(val) {
+        this.vModel = val;
+      },
+    },
+    day:'emitDate',
     month(newMonth, oldMonth) {
       this.adjustDayIfNeeded()
       this.emitDate()
@@ -61,19 +105,37 @@ export default {
     year(newYear, oldYear) {
       this.adjustDayIfNeeded()
       this.emitDate()
+    },
+    showModal(val){
+      console.log('show', val)
+      if (!val)
+        this.changedValue(this.vModel)
     }
   },
   methods: {
+    resetData(){
+      [this.year, this.month, this.day] = this.dateNow().split('-')
+      this.emitDate()
+    },
+    changedValue(val){
+      this.$emit('change',val)
+    },
     emitDate() {
       const fullDate = `${this.year}-${this.month}-${this.day}`
-      this.$emit('update:modelValue', fullDate)
+      this.vModel = fullDate
     },
     adjustDayIfNeeded() {
       const maxDay = this.days.length
       if (parseInt(this.day) > maxDay) {
         this.day = maxDay.toString().padStart(2, '0')
       }
+    },
+    selectOption(val){
+      this.labelModel = this.formatDate(val, this.format)
     }
+  },
+  created(){
+    this.resetData()
   }
 }
 </script>

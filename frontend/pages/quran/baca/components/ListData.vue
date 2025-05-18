@@ -12,12 +12,16 @@
 				text-slate-400
 				p-2 mb-3">{{ monthIndo(s.tanggal) }}</div>
 			<div class="h-fit px-4 py-3 mb-3
+				relative
 				rounded-[15px]
 				bg-lime-50/[0.5] border border-solid border-lime-400
 				text-lime-900
 				flex items-center justify-between
+				overflow-hidden
 				cursor-grab"
-				draggable="true">
+				draggable="true"
+				@click="removeClass('#quranBacaData'+key, 'translate-x-[120px]')"
+				v-click-outside="() => addClass('#quranBacaData'+key, 'translate-x-[120px]')">
 				<div class="leading-[1.3]">
 					<div class="font-semibold text-[13px] opacity-70">
 					{{ dateDayIndo(s.tanggal)}}</div>
@@ -33,12 +37,27 @@
 					</div>
 					<div class="font-semibold text-[13px] opacity-70">{{ s.keterangan }}</div>
 				</div>
-				<el-button v-if="$store.getters.loggedUser.role == 'user'"
-          class="rounded-full h-[40px] w-[40px]
-					bg-lime-100/[0.4]"
-					@click="$emit('editData',{id:s.id})">
-					<icons icon="mdi:edit" class="m-0 text-[20px]" />
-				</el-button>
+				<div :id="'quranBacaData'+key"
+					class="absolute bg-lime-200/[0.4] right-0 translate-x-[120px]
+					px-4
+					animate
+					h-full w-fit flex items-center" 
+					v-if="$store.getters.loggedUser.role == 'user'">
+					<el-button
+						class="rounded-full h-[40px] w-[40px]
+						border border-solid border-lime-600/[0.5]
+						bg-lime-200"
+						@click="$emit('editData',{id:s.id})">
+						<icons icon="mdi:edit" class="m-0 text-[20px] text-lime-500" />
+					</el-button>
+					<el-button
+						class="rounded-full h-[40px] w-[40px]
+						border border-solid border-lime-600/[0.5]
+						bg-red-200"
+						@click="deleteData(s.id)">
+						<icons icon="mdi:delete" class="m-0 text-[20px] text-red-500" />
+					</el-button>
+				</div>
 			</div>
 		</template>
 		<p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
@@ -83,7 +102,7 @@ export default {
 							where:{
 								id_anggota: this.idAnggota,
 							},
-							order:['tanggal desc'],
+							order:['tanggal desc','id desc'],
               limit:this.limit,
               offset:this.offset,
             }
@@ -97,10 +116,17 @@ export default {
             } else {
               this.offset += 5
             }
-						console.log(this.datas)
+						// console.log(this.datas)
           });
       },
-
+			deleteData(id){
+				this.$store.dispatch('data/deleteData',{
+					href:'quran/baca/delete',
+					id:id,
+				}).then(() => {
+					this.getData()
+				})
+			},
       async loadingData(){
         this.loadingScroll = true
         await this.getData(false)

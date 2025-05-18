@@ -167,11 +167,11 @@ export default {
       sizeWindow:window.innerWidth,
       setStatusText: setStatusText,
       setStatusType: setStatusType,
-      showCreate:true,
+      showCreate:false,
       success:false,
       saving:false,
       quran: topMenu.quranBaca,
-      showData:'chart',
+      showData:'list',
     };
   },
   watch: {
@@ -213,9 +213,9 @@ export default {
         });
     },
     changedValue({ field, parent, value}){
-      console.log(field, parent, value)
+      // console.log(field, parent, value)
       if (field == 'surat_mulai-ayat_mulai') {
-      console.log(field)
+      // console.log(field)
         let changedField = 'surat_selesai-ayat_selesai'
         this.$refs.formBaca.changeData(changedField, parent, 'parent')
         this.$refs.formBaca.changeData(changedField, value)

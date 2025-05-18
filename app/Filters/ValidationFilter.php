@@ -140,7 +140,7 @@ class ValidationFilter implements FilterInterface
                         $elements = $this->groupingData($kolom_child, $elements, $model, $folders);
                     }
                  } else {
-                     if ($data->input == 'select-double')
+                     if (str_contains($data->input,'select-double'))
                          $double_input[$nama] = $postData[$nama];
  
                      if ($data->input_only == '1')
@@ -178,7 +178,7 @@ class ValidationFilter implements FilterInterface
         foreach ($input_only as $nama_kolom => $data) {
             unset($postData[$nama_kolom]);
         }
-        
+        // var_dump($postData);
         return $postData;
     }
 }

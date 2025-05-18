@@ -10,7 +10,7 @@
 			:style="{
 				backgroundImage:`url('${$baseUrl}/assets/images/dashboard.png')`,
 			}"/>
-		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto">
+		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto pb-20">
 			<div class="w-full h-[40px] px-2 mt-0 z-[1]
 				text-white leading-[1.3]">
 				Assalamu'alaikum,<br/>
@@ -95,7 +95,7 @@
 			<el-card class="relative h-auto w-full
 				bg-white/[0.8] shadow-md
 				rounded-[20px]
-				mb-20"
+				mb-10"
 				header-class="pt-4 pb-3">
 					<template #header>
 						<div class="font-montserrat font-bold text-xl text-emerald-900">Catatan Ibadah Pribadi</div>
@@ -132,6 +132,18 @@
 						
 					</div>
 			</el-card>
+			<div v-if="!canInstall && !isStandalone()"
+				class="w-full text-center">
+				<el-button class="
+					font-montserrat
+					shadow-md shadow-emerald-900/[0.2]
+					bg-brand text-emerald-50
+					px-4 py-5
+					active:scale-95
+					[&>*]:w-full" @click="installApp">
+					Tambah ke Halaman Utama
+				</el-button>
+			</div>
 		</div>
 		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat
@@ -144,6 +156,21 @@
 	</div>
 </template>
 
+
+<script setup>
+import { useA2HS } from '@/composables/useA2HS';
+
+const { canInstall, promptInstall, isStandalone } = useA2HS();
+
+async function installApp() {
+  const result = await promptInstall();
+  if (result?.outcome === 'accepted') {
+    console.log('User accepted the install prompt');
+  } else {
+    console.log('User dismissed the install prompt');
+  }
+}
+</script>
 
 <script>
 import { mapGetters } from 'vuex';

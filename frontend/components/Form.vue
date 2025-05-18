@@ -113,42 +113,26 @@
                 </template>
               </el-select>
             </template>
-            <template v-else-if="field.input == 'select-double'">
+            <template v-else-if="field.input.includes('select-double')">
               <floating-select v-model:value="field.parentSelect" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label1}`" 
                 :class="['w-full',inputClass]" 
-                filterable clearable 
-                popper-class="h-auto max-w-[600px]
-                  [&_li]:h-auto [&_li]:py-1
-                  [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] [&_li_span]:py-2"
-                @change="form[field.nama_kolom] = ''; changedValue(field.nama_kolom)"
+                filterable clearable
+                @change="form[field.nama_kolom] = null; changedValue(field.nama_kolom)"
                 :size="size"
-                :style="{width:(field.width_input.split('-')[0] ?? '') + ' !important'}" >
-                <template #prefix v-if="!isEmpty(field.prepend1)"> {{ field.prepend1 }}</template>
-                <template #default="{ FloatOption }"
-                  v-for="item in field.options"
-                  :key="item">
-                  <float-option> {{  item.label }}
-                  </float-option>
-                </template>
+                :options="field.options"
+                :type="field.input.split('/')[1]?.split('-')[0]"
+                :style="{width:(field.width_input.split('-')[0] ?? '') + ' !important'}"
+                :prefix="field.prepend1">
               </floating-select>
               <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
-                filterable clearable
+                :filterable="false" clearable
                 :class="['w-full',inputClass]" 
-                popper-class="h-auto max-w-[600px]
-                  [&_li]:h-auto [&_li]:py-1
-                  [&_li_span]:whitespace-normal [&_li_span]:block [&_li_span]:leading-[1.6] "
-                :size="size"
                 @change="changedValue(field.nama_kolom)"
-                :style="{width:(field.width_input.split('-')[1] ?? '') + ' !important'}"  >
-                <template #prefix v-if="!isEmpty(field.prepend2)"> {{ field.prepend2 }}</template>
-                <template 
-                  v-for="subItem in field.options[field.parentSelect] === undefined ? [] : field.options[field.parentSelect].options"
-                  :key="subItem">
-                  <el-option
-                    :value="subItem.value"
-                    :label="subItem.label">
-                  </el-option>
-                </template>
+                :size="size"
+                :type="field.input.split('/')[1]?.split('-')[1]"
+                :style="{width:(field.width_input.split('-')[1] ?? '') + ' !important'}"  
+                :options="field.options[field.parentSelect]?.options"
+                :prefix="field.prepend2">
                 <template v-if="field.allow_add" #footer>
                   <el-button v-if="!field.isAdding" text  size="small" @click="field.isAdding = !field.isAdding">
                     Tambah Pilihan
@@ -189,22 +173,16 @@
               </el-radio-group>
             </template>
             <template v-if="field.input == 'date-wheel'">
-              <el-input :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`" :class="['w-full',inputClass]" 
-                v-model="form[field.nama_kolom]"
+              <date-wheel-picker
+                :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`" :class="['w-full',inputClass]" 
+                v-model:value="form[field.nama_kolom]"
+                value-format="YYYY-MM-DD"
+                format="DD MMMM YYYY"
+                clearable 
                 :size="size"
+                @change="changedValue(field.nama_kolom)"
                 :style="{width:field.width_input + ' !important'}"
-                :formatter="(value) => dateIndo(value)"
-                :parser="(value) => dateData(value)"
-                @click="field.customInput = true"/>
-              <el-dialog v-model="field.customInput"
-                class="min-w-[300px]"
-                :title="'Atur ' + field.label"
-                @click="field.customInput = false">
-                <date-wheel-picker
-                  class="h-[100px] [&_*]:text-[25px]"
-                  v-model="form[field.nama_kolom]"
-                />
-              </el-dialog>
+              />
             </template>
             <template v-else-if="field.input == 'date'">
               <el-date-picker
@@ -306,14 +284,12 @@
 </template>
 
 <script>
-import DateWheelPicker from '@/components/form-components/DateWheelPicker.vue'
-import FloatingSelect from '@/components/form-components/FloatingSelect.vue'
+import { defineAsyncComponent } from 'vue'
 
 export default {
   name: 'Form',
   components: {
-    DateWheelPicker,
-    FloatingSelect,
+    
   },
   props: {
     id: {
@@ -488,6 +464,7 @@ export default {
     },
     getData(where, changeId){
       if (this.hrefGet == '') return
+      this.saving = true
       this.$http.get(this.hrefGet,
         {
           params:where
@@ -495,6 +472,8 @@ export default {
       )
         .then(result => {
           this.saving = false;
+          // this.resetObjectValue(this.form)
+          // this.resetObjectValue(this.links)
           var psb = result.data;
           if (!this.isEmpty(psb)) {
             this.fillObjectValue(this.form, psb)
@@ -506,7 +485,7 @@ export default {
             // console.log(psb, this.form)
             let fieldsData = Object.values(this.fields)
             fieldsData.forEach(d => {
-              if (d.input == 'select-double') {
+              if (d.input.includes('select-double')) {
                 // delete vm.form[d.nama_kolom]
                 this.fields[d.nama_kolom].parentSelect = psb.parentSelect[d.nama_kolom]
               }
@@ -623,7 +602,16 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="postcss" scoped>
+:deep(.el-input__wrapper) {
+  @apply rounded-[15px];
+}
+:deep(.el-input-group__prepend) {
+  @apply rounded-l-[15px];
+}
+:deep(.el-input-group__prepend + .el-input__wrapper) {
+  @apply rounded-none rounded-r-[15px];
+}
 .el-form-item__error {
   margin-top: 6px;
 }

@@ -76,7 +76,6 @@
           :show-submit="false"
           label-position="top"
           form-item-class="mb-2"
-          input-class="[&_*]:rounded-[15px]"
           :show-required-text="false">
         </form-comp>  
         <el-button size="large" type="success"

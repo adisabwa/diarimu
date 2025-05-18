@@ -29,6 +29,9 @@ let listFunction = {
         return 'Invalid date'
       }    
     },
+    formatDate(date, format){
+      return moment(date).format(format);
+    },
     dayIndo(date) {
       return moment(date).format('dddd');
     },

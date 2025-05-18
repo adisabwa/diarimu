@@ -1,8 +1,8 @@
 
 export function setStatusColor(number){
-    console.log(number)
+    // console.log(number)
     number = parseInt(number)
-    console.log(number, typeof number, )
+    // console.log(number, typeof number, )
     let res = ''
       if (number == 100)
         res = '[&_*]:bg-green-100 [&_*]:text-green-900 bg-green-100 text-green-900'
@@ -16,7 +16,7 @@ export function setStatusColor(number){
         res = '[&_*]:bg-red-500 [&_*]:text-white bg-red-500 text-white'
       else
         res = '[&_*]:bg-slate-50 [&_*]:text-slate-400 bg-slate-50 text-slate-400'
-    console.log(res)
+    // console.log(res)
     return res
   }
   

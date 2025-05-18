@@ -4,9 +4,12 @@ const clickOutsideDirective = {
     el.__clickOutsideHandler__ = (event) => {
       // Check if element is visible in DOM
       const isVisible = el.offsetParent !== null;
-      console.log('v', el, el.offsetParent, isVisible)
-      console.log('isoutside', el === event.target || el.contains(event.target))
-      if (isVisible && !(el === event.target || el.contains(event.target))) {
+      // Only trigger if the element is visible AND the click was outside
+      const clickedOutside = !el.contains(event.target);
+
+      console.log(isVisible, clickedOutside)
+      if (isVisible && clickedOutside) {
+        // console.log(binding.value)
         binding.value(event);
       }
     };

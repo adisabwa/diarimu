@@ -27,14 +27,13 @@
         <div id="header-scroll" class="relative px-0 py-4 font-bold text-[18px] overflow-x-scroll
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
-            <el-date-picker
-              id="editTanggal"
-              class="w-[200px]"
-              v-model="tanggal"
+            <date-wheel-picker
+              class="w-fit mx-auto"
+              v-model:value="tanggal"
               value-format="YYYY-MM-DD"
               format="DD MMMM YYYY"
+              clearable 
               size="large"
-              @blur="editTanggal = false"
               @change="editTanggal = false;
                 setTanggalInitial();
                 setDataInitial();"
@@ -206,7 +205,7 @@ export default {
   data: function() {
     return {
       loading: false,
-      editTanggal:false,
+      editTanggal:true,
       dataId:-1,
       idAnggota:null,
       formKey:1,
@@ -402,12 +401,13 @@ export default {
     changeTanggal(){
       let vm = this
       vm.editTanggal = true;
-      setTimeout(() => {
-        vm.jquery('#editTanggal.el-input__inner')[0].focus();
-      }, 300);
+      console.log('change')
+      // setTimeout(() => {
+      //   vm.jquery('#editTanggal.el-input__inner')[0].focus();
+      // }, 5000);
     },
     setHeaderToCenter(){
-      console.log('center')
+      // console.log('center')
       let vm = this
       vm.afterScroll = false
       let body = vm.jquery('#body-scroll');
@@ -420,7 +420,7 @@ export default {
       header[0].scrollLeft = center[0].offsetLeft
 
       setTimeout(() => {
-        console.log('bypass-handle')
+        // console.log('bypass-handle')
         vm.afterScroll = true
       }, 700);
     },
@@ -453,7 +453,7 @@ export default {
       }
     },
     changeTanggalData(course = -1){
-      console.log(course)
+      // console.log(course)
       let vm = this
       vm.tanggal = vm.addDay(vm.tanggal, course)
       for (let i = 0; i < vm.tanggals.length; i++) {
@@ -474,7 +474,7 @@ export default {
     },
     handleAfterScroll(){
       if (!this.afterScroll) return
-      console.log('handle-after')
+      // console.log('handle-after')
       let vm = this
       if (vm.editTanggal == true)
         return
@@ -496,8 +496,8 @@ export default {
       this.setTanggalInitial()
       this.setDataInitial()
       this.getLast()
-      // if (this.showData == 'chart') this.$refs.wajibChartData.getChart();
-      // if (this.showData == 'list') this.$refs.wajibListData.getData(true);
+      if (this.showData == 'chart') this.$refs.wajibChartData.getChart();
+      if (this.showData == 'list') this.$refs.wajibListData.getData(true);
       this.formKey++
     }
   },
@@ -531,7 +531,7 @@ export default {
         vm.loadings[0] = vm.loadings[1] = vm.loadings[2] = true
       }
       scrollTimeout = setTimeout(() => {
-        console.log('header', 'Scrolling has finished');
+        // console.log('header', 'Scrolling has finished');
         setTimeout(() => {
           vm.addClass('#header-scroll','snap-x snap-mandatory')
           vm.addClass('#body-scroll','snap-x snap-mandatory')

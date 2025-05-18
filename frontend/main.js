@@ -12,12 +12,6 @@ app.use(store)
 //Styling
 import '@/config/styles/tailwind.css'
 import '@/config/styles/app.scss'
-import GetIcon from '@/components/Icon.vue'
-import Loading from '@/components/Loading.vue'
-import File from '@/components/File.vue'
-app.component('icons', GetIcon)
-app.component('loading', Loading)
-app.component('file', File)
 
 //Plugins
 import elementPlugin from '@/config/plugins/element-ui-global'
