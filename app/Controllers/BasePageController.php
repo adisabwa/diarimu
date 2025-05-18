@@ -24,9 +24,10 @@ class BasePageController extends BaseDataController
         $whereOr = $this->request->getGetPost('or') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
+        $grouping = $this->request->getGetPost('grouping') ?? ['id'];
 
         $data = $this->model->getAll($where,$whereOr,'tanggal desc, id',
-        $limit, $offset);
+        $limit, $offset, $grouping);
 
         return $this->respondCreated($data);
 

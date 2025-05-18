@@ -76,7 +76,6 @@
           :show-submit="false"
           label-position="top"
           form-item-class="mb-2"
-          input-class="[&_*]:rounded-[15px]"
           :show-required-text="false">
         </form-comp>  
         <el-button size="large" type="success"
@@ -222,10 +221,13 @@ export default {
       this.saving = false;
       this.showCreate = false
       this.success = true
-      if (this.showData == 'chart') this.$refs.quranChartData?.getChart();
-      if (this.showData == 'list') this.$refs.quranListData?.getData(true);
+      this.updateChart()
       this.getInitial();
     },
+    updateChart(){
+      if (this.showData == 'chart') this.$refs.quranChartData?.getChart();
+      if (this.showData == 'list') this.$refs.quranListData?.getData(true);
+    }
   },
   created: function() {
     // let filter = this.$store.getters.filter
@@ -233,8 +235,8 @@ export default {
     // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
     this.$store.dispatch('data/getAllAnggotaInGroup')
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
-    this.submittedData()
-    // console.log(this.$router);
+    this.updateChart()
+    this.getInitial();
   },
   mounted: function() {
     let vm = this

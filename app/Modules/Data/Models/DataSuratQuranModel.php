@@ -55,25 +55,15 @@ class DataSuratQuranModel extends Model
 
     public function countAyat($surat_mulai, $ayat_mulai, $surat_selesai, $ayat_selesai)
     {
-      $mulai = $this->db->table($this->table.' p')
-                    ->select('*')
-                    ->where('id', $surat_mulai)
+      $total_ayat = $this->db->table($this->table.' p')
+                    ->select('*, SUM(jumlah_ayat) total_ayat')
+                    ->where('id >=', $surat_mulai)
+                    ->where('id <', $surat_selesai)
                     ->get()
                     ->getRow();
 
-      $selesai = $this->db->table($this->table.' p')
-                    ->select('*')
-                    ->where('id', $surat_selesai)
-                    ->get()
-                    ->getRow();
-
-      if ($mulai->id < $selesai->id) {
-        $count = ($mulai->jumlah_ayat - $ayat_mulai) + $ayat_selesai + 1;
-      } else if ($mulai->id == $selesai->id) {
-        $count = $ayat_selesai - $ayat_mulai + 1;
-      } else {
-        $count = 0;
-      }
+      $total_ayat = $total_ayat->total_ayat ?? 0;
+      $count = $total_ayat - $ayat_mulai + $ayat_selesai + 1;
 
       return $count;
     }

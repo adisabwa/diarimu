@@ -10,10 +10,10 @@
 			:style="{
 				backgroundImage:`url('${$baseUrl}/assets/images/dashboard.png')`,
 			}"/>
-		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto">
+		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto pb-20">
 			<div class="w-full h-[40px] px-2 mt-0 z-[1]
 				text-white leading-[1.3]">
-				Assalamu'aialkum,<br/>
+				Assalamu'alaikum,<br/>
 				<div class="text-xl font-semibold">{{ user.nama }}</div>
 				<div class="text-md leading-[1]"
           @click="showRole = true">
@@ -132,6 +132,20 @@
 						
 					</div>
 			</el-card>
+<<<<<<< HEAD
+			<div v-if="!canInstall && !isStandalone()"
+				class="w-full text-center">
+				<el-button class="
+					font-montserrat
+					shadow-md shadow-emerald-900/[0.2]
+					bg-brand text-emerald-50
+					px-4 py-5
+					active:scale-95
+					[&>*]:w-full" @click="installApp">
+					Tambah ke Halaman Utama
+				</el-button>
+			</div>
+=======
       <div class="
 				bg-white/[0.8] shadow-md
 				rounded-[20px]
@@ -141,6 +155,7 @@
         Sesungguhnya orang yang selalu <b>membaca kitab Allah</b> dan <b>mendirikan shalat</b> dan <b>menafkahkan sebahagian dari rezeki yang Kami anugerahkan kepada mereka</b> dengan diam-diam dan terang-terangan, mereka itu mengharapkan perniagaan yang tidak akan merugi, <br/>
         <b>- &nbsp; Fatir: 29 &nbsp; -</b>
       </div>
+>>>>>>> 7b535f5618622a99c880682a329bc3bf12f5c865
 		</div>
 		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat
@@ -153,6 +168,21 @@
 	</div>
 </template>
 
+
+<script setup>
+import { useA2HS } from '@/composables/useA2HS';
+
+const { canInstall, promptInstall, isStandalone } = useA2HS();
+
+async function installApp() {
+  const result = await promptInstall();
+  if (result?.outcome === 'accepted') {
+    console.log('User accepted the install prompt');
+  } else {
+    console.log('User dismissed the install prompt');
+  }
+}
+</script>
 
 <script>
 import { mapGetters } from 'vuex';

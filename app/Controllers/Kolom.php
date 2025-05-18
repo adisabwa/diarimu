@@ -46,6 +46,7 @@ class Kolom extends BaseController
             }
             $data->options = $options;
             $data->allow_add = $data->allow_add == '1';
+            $data->customInput = false;
             if ($data->allow_add){
                 // echo json_encode($data);exit;
                 $data->isAdding = false;
@@ -56,7 +57,7 @@ class Kolom extends BaseController
                 $data->addFields = empty($model) ? [] : $this->preparation($model->getTableName(), TRUE, '0');
                 // echo json_encode($data);exit;
             }
-            if ($data->input == 'select-double') {
+            if (str_contains($data->input,'select-double')) {
               $data->parentSelect = '';
               $labels = explode(' dan ', $data->label);
               $data->label1 = $labels[0] ?? $data->label;
