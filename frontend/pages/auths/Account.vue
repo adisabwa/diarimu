@@ -1,11 +1,12 @@
 <template>
 	<div id="account-page">
 		<el-card class="mx-2 bg-white pt-[50px] pb-10">
-			<div>
+			<div class="relative">
 				<div class="h-[120px] w-[120px] mx-auto mb-6
           rounded-full overflow-hidden relative
 					flex items-center justify-center
-					border border-solid border-teal-600/[0.4]">
+					border-3 border-solid border-teal-700"
+					@click="showEdit = true;showColumns=['photo']">
           <div v-if="!isEmpty(viewValue.photo)"
             class="w-full h-full bg-cover bg-top"
             :style="`background-image:url('${viewValue.photo}')`"
@@ -23,6 +24,7 @@
 					:fields="fields" 
 					:id="dataId"
 					v-model:form-value="formValue"
+					:show-columns="showColumns"
 					href="data/anggota/store"
 					href-get="data/anggota/get"
 					@saved="saving = false; showEdit = false;
@@ -53,7 +55,7 @@
 					<el-button class="mt-1 flex items-center
 						w-full rounded-full bg-teal-700 
 						text-teal-100 font-bold"
-						@click="showEdit = true">
+						@click="showEdit = true;showColumns=[]">
 						<icons icon="mdi:edit"/>
 						Ubah Profil
 					</el-button>
@@ -79,6 +81,7 @@ export default {
 		return {
 			saving: false,
 			showEdit: false,
+			showColumns:[],
 			fields:{},
       fieldsAkun:{
         id_anggota:{
