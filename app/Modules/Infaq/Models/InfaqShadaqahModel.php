@@ -29,7 +29,7 @@ class InfaqShadaqahModel extends Model
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
         return $this->db->table('mu_infaq_shadaqah f')
-                    ->select('f.*, f.jumlah data_chart, s.nama, s.nbm')
+                    ->select('f.*, f.jumlah data_chart, s.nama, s.nbm, 1 as count')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->where($whereAnd)
                     ->groupStart()

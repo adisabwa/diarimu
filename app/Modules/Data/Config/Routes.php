@@ -2,8 +2,8 @@
 
 use Modules\Data\Controllers\GroupController as Group;
 use Modules\Data\Controllers\GroupActivityController as GroupActivity;
-use Modules\Data\Controllers\Prm;
-use Modules\Data\Controllers\Anggota;
+use Modules\Data\Controllers\UnitController as Unit;
+use Modules\Data\Controllers\AnggotaController as Anggota;
 use Modules\Data\Controllers\Iqab;
 use Modules\Data\Controllers\SholatSunnahController as SholatSunnah;
 
@@ -30,6 +30,12 @@ $routes->group('data/anggota', static function ($routes) {
     $routes->add('store', [Anggota::class, 'store'], [ 'filter' => 'api-validation:mu_anggota']);
 });
 
+
+//----------------------------------Data Unit-------------------------------------
+$routes->group('data/unit', static function ($routes) {
+    $routes->add('/', [Unit::class, 'index']);
+});
+        
 $routes->group('data', [
     'filter' => 'api-auth',
 ], static function ($routes) {
@@ -73,18 +79,17 @@ $routes->group('group/activity', static function ($routes) {
 
 
 
-//----------------------------------Data Iqab-------------------------------------
+//----------------------------------Data Unit-------------------------------------
     $routes->group('iqab', static function ($routes) {
-        $routes->add('/', [Iqab::class, 'index']);
-        $routes->add('prodi', [Iqab::class, 'prodi']);
-        $routes->add('get', [Iqab::class, 'get']);
-        $routes->add('reset_options', [Iqab::class, 'resetOptions']);
-        $routes->add('store', [Iqab::class, 'store'], [ 'filter' => 'api-validation:daiq_iqab']);
-        $routes->add('delete/(:any)', [Iqab::class, 'delete/$1']);
-        $routes->add('delete_many', [Iqab::class, 'delete_many']);
-        $routes->add('template', [Iqab::class, 'template']);
-        $routes->add('upload', [Iqab::class, 'upload']);
-        $routes->add('options', [Iqab::class, 'options']);
+        $routes->add('/', [Unit::class, 'index']);
+        $routes->add('get', [Unit::class, 'get']);
+        $routes->add('reset_options', [Unit::class, 'resetOptions']);
+        $routes->add('store', [Unit::class, 'store'], [ 'filter' => 'api-validation:mu__unit_kerja']);
+        $routes->add('delete/(:any)', [Unit::class, 'delete/$1']);
+        $routes->add('delete_many', [Unit::class, 'delete_many']);
+        $routes->add('template', [Unit::class, 'template']);
+        $routes->add('upload', [Unit::class, 'upload']);
+        $routes->add('options', [Unit::class, 'options']);
     });
 
 //----------------------------------Data Prm Iqab-------------------------------------

@@ -48,6 +48,8 @@ class ValidationFilter implements FilterInterface
         $postData = $request->getPost();
         $postData = $this->groupingData($datas, $postData, $model, $folders);
         
+        // var_dump($folders);
+        
         foreach ($_FILES as $inputName => $fileData) {
             // Get the file object
             $file = $request->getFile($inputName);
@@ -61,10 +63,14 @@ class ValidationFilter implements FilterInterface
                 var_dump($file->getErrorString());
             }
         }
-
+        
         $postData['id'] = $id;
+        // array_walk($postData, function(&$value) {
+        //     if (empty($value))
+        //         $value = NULL;
+        // });
         $newRequest = $request->setGlobal('post', $postData);
-
+        // var_dump($postData);
         return $newRequest;
     }
 
@@ -98,6 +104,8 @@ class ValidationFilter implements FilterInterface
                      ]; 
                      // var_dump("{id}",$id,$validationRule[$nama]['rules']);
                      // $koloms[] = $data;
+                    $validationRule[$nama_rule]['rules'] = str_replace("{id}", $id,$validationRule[$nama_rule]['rules']);
+                    $validationRule[$nama_rule]['rules'] = str_replace("{field}", $nama_rule,$validationRule[$nama_rule]['rules']);
                  }
             } else if (isset($files_data[$nama])) {
                  $validationRule[$nama_rule] = [
@@ -110,10 +118,6 @@ class ValidationFilter implements FilterInterface
                      ],
                  ];
             }
-            if (!is_array($postData[$nama])) {
-                $validationRule[$nama_rule]['rules'] = str_replace("{id}", $id,$validationRule[$nama_rule]['rules']);
-                $validationRule[$nama_rule]['rules'] = str_replace("{field}", $nama_rule,$validationRule[$nama_rule]['rules']);
-            }
 
         }
         return $validationRule;
@@ -123,6 +127,9 @@ class ValidationFilter implements FilterInterface
     {
         helper('functions'); 
 
+        $files_data = $_FILES;
+
+        $tmp_folder = [];
         $double_input = [];
         $input_only = [];
         $tables = [];

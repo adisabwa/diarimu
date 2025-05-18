@@ -24,6 +24,7 @@ $routes->group('infaq/shadaqah', [
     $routes->add('get', [InfaqShadaqah::class, 'get']);
     $routes->add('store', [InfaqShadaqah::class, 'store'], [ 'filter' => 'api-validation:mu_infaq_shadaqah']);
     $routes->add('dashboard', [InfaqShadaqah::class, 'dashboard']);    
+    $routes->add('dashboard_count', [InfaqShadaqah::class, 'dashboard_count']);    
     $routes->add('get_before', [InfaqShadaqah::class, 'get_before']);
 
 });

@@ -46,14 +46,14 @@ $routes->group('auth', static function ($routes) {
 
 //----------------------Data Pengguna-----------------------------//
 $routes->group('pengguna', static function ($routes) {
-    $routes->add('/', 'Pengguna::index');
-    $routes->add('show', 'Pengguna::get_where');
-    $routes->add('get', 'Pengguna::get');
-    $routes->add('store', 'Pengguna::store', [ 'filter' => 'api-validation:mu_pengguna' ]);
-    $routes->add('delete/(:any)', 'Pengguna::delete/$1');
-    $routes->add('delete_many', 'Pengguna::delete_many');
-    $routes->add('template', 'Pengguna::template');
-    $routes->add('upload', 'Pengguna::upload');
+    $routes->add('/', 'PenggunaController::index');
+    $routes->add('show', 'PenggunaController::get_where');
+    $routes->add('get', 'PenggunaController::get');
+    $routes->add('store', 'PenggunaController::store', [ 'filter' => 'api-validation:mu_pengguna' ]);
+    $routes->add('delete/(:any)', 'PenggunaController::delete/$1');
+    $routes->add('delete_many', 'PenggunaController::delete_many');
+    $routes->add('template', 'PenggunaController::template');
+    $routes->add('upload', 'PenggunaController::upload');
 });
 //-----------------------------------------------------------------------//
 

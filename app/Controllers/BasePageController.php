@@ -46,7 +46,7 @@ class BasePageController extends BaseDataController
     }
 
     
-    public function createChart()
+    public function createChart($attr = 'data_chart')
     {
         $postData = $this->request->getGetPost();
         $type = $postData['tipe'] ?? 'week';
@@ -68,9 +68,9 @@ class BasePageController extends BaseDataController
         foreach ($data as $key => $d) {
             $d->id_anggota = "$d->id_anggota-$d->nama";
             if (empty($_data[$d->id_anggota][$d->tanggal])) {
-                $_data[$d->id_anggota][$d->tanggal] = $d->data_chart;
+                $_data[$d->id_anggota][$d->tanggal] = $d->$attr;
             } else {
-                $_data[$d->id_anggota][$d->tanggal] += $d->data_chart;
+                $_data[$d->id_anggota][$d->tanggal] += $d->$attr;
             }
         }
         // var_dump(userdata());

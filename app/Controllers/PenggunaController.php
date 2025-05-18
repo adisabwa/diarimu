@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseDataController;
 
-class Pengguna extends BaseDataController
+class PenggunaController extends BaseDataController
 {
     public function __construct()
     {

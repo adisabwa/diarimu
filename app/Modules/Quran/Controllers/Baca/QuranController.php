@@ -58,7 +58,7 @@ class QuranController extends BasePageController
 
     public function dashboard()
     {
-        return $this->createChart('Jml Ayat');
+        return $this->createChart();
     }
 
     public function get_before()

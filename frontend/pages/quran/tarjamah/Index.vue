@@ -1,6 +1,6 @@
 <template>
   <div id="quran" class="pt-[50px]">
-    <div v-if="user.role == 'mentor'" 
+    <div v-if="user.rola != 'user'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
       <div class="text-sm mb-2">Nama Anggota :</div>

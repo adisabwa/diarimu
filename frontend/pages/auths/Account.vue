@@ -1,13 +1,19 @@
 <template>
 	<div id="account-page">
 		<el-card class="mx-2 bg-white pt-[50px] pb-10">
-			<div class="center-text flex flex-col items-center">
-				<div class="h-[120px] w-[120px] rounded-full
+			<div>
+				<div class="h-[120px] w-[120px] mx-auto mb-6
+          rounded-full overflow-hidden relative
 					flex items-center justify-center
 					border border-solid border-teal-600/[0.4]">
-					<icons icon="mdi:user" class="mr-0 text-teal-700 text-[100px]"/>
+          <div v-if="!isEmpty(viewValue.photo)"
+            class="w-full h-full bg-cover bg-top"
+            :style="`background-image:url('${viewValue.photo}')`"
+            />
+					<icons v-else 
+            icon="mdi:user" class="mr-0 text-teal-700 text-[100px]"/>
 				</div>
-				<el-divider class="w-full [&>*]:w-[max-content] my-3">
+				<el-divider class="w-full [&>*]:w-[max-content] my-4">
 					<div class="text-xl text-center font-bold">Profil Anggota</div>
 				</el-divider>
 				<form-comp v-if="showEdit"
@@ -34,7 +40,9 @@
 						:fields="fields" 
 						:key="'from'+active"
 						label-position="top"
+            v-model:form-value="viewValue"
 						label-width="80px"
+            :pass-columns="['photo']"
 						href-get="/data/anggota/get_where"
 						:keyword="dataId"
 						:search-columns="['id']"
@@ -89,6 +97,8 @@ export default {
 			empty:false,
 			loading:false,
 			dataId:-1,
+      formValue:{},
+      viewValue:{},
 		};
 	},
 	computed:{

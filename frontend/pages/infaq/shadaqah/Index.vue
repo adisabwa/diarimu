@@ -1,6 +1,6 @@
 <template>
     <div id="infaq" class="pt-[50px] translate-y-[-10px]">
-      <div v-if="user.role == 'mentor'" 
+      <div v-if="user.role != 'user'" 
         class="bg-white/[0.9] rounded-[10px] shadow-md
         mb-3 p-4">
       <div class="text-sm mb-2">Nama Anggota :</div>
@@ -54,10 +54,12 @@
               bg-cyan-50/[0.8] border border-solid border-cyan-200
               text-cyan-900
               flex items-center justify-between">
-              <div class="leading-[1.3]">
+              <div class="leading-[1.5]">
                 <div class="font-semibold text-[13px] opacity-70">
                 {{ dateDayIndo(s.tanggal)}}</div>
-                <div class="font-bold text-[20px]">{{ toIDR(s.jumlah) }}</div>
+                <div class="font-bold text-[18px]">
+                  {{ s.tipe == '0' ? 'Tanpa Nominal' : toIDR(s.jumlah) }}
+                </div>
                 <div class="font-semibold text-[13px] opacity-70">{{ s.keterangan }}</div>
               </div>
               <el-button 
@@ -78,10 +80,10 @@
       </el-card>
       <el-dialog v-model="showAdd" draggable
         :append-to-body="true"
-        class="w-fit max-w-[80%] py-3
+        class="w-fit max-w-[90%] py-3
           bg-gradient-to-tr from-white from-50% to-teal-100"
         header-class="font-bold text-[16px]"
-        body-class="text-[14px]">
+        body-class="[&_*]:text-[13px]">
         <template #header>
           <div>Data Shadaqah</div>
         </template>
@@ -93,7 +95,8 @@
           v-model:form-value="formValue" 
           href="infaq/shadaqah/store"
           href-get="infaq/shadaqah/get"
-          :show-columns="['tanggal','jumlah','keterangan']"
+          :show-columns="[...['tipe','tanggal'],
+            ...(formValue.tipe == '1' ? ['jumlah','keterangan'] : [])]"
           @saved="submittedData" 
           @error="saving=false"
           size="large"
@@ -116,16 +119,19 @@
         header="Statistik Sadaqah"
         header-class="py-3 font-bold text-[18px] text-center" >
       <chart ref="infaqChartData" 
-        href="infaq/shadaqah/dashboard"
+        :href="href"
         :add-options="{
           scales: {
             y: {
-              title:{display:true, text:'Nominal Infaq'},
+              title:{
+                display:true, 
+                text: (chartType=='dashboard' ? 'Nominal Infaq' : 'Jumlah Infaq'),
+              },
               ticks: {
                 font: {
                   size: 10
                 },
-                stepSize:100000,
+                stepSize:(chartType=='dashboard' ? 100000 : 1),
                 callback: function(value) {
                   // Custom formatting: add a dollar sign
                   let val = ''
@@ -153,7 +159,15 @@
           }
         }"
         :id-anggota="idAnggota"
-          :key="'infaqChartData'+formKey"/>
+          :key="'infaqChartData'+formKey">
+          <template #filter="{filter}">
+            <el-select size="small" v-model="chartType" placeholder="Jenis Grafik"
+              @change="formKey++; $refs.infaqChartData.getChart()">
+              <el-option value="dashboard" label="Nominal Infaq" />
+              <el-option value="dashboard_count" label="Jumlah Infaq" />
+            </el-select>
+          </template>
+        </chart>
       </el-card>
     </div>
 </template>
@@ -172,9 +186,10 @@
     },
     data: function() {
       return {
+        chartType:'dashboard',
         loading: false,
         showAdd: false,
-        tipe:'',
+        tipeInfaq:'0',
         idAnggota:'',
         formKey:1,
         dataId:-1,
@@ -189,15 +204,16 @@
           ayat_selesai:'',
         },
         fields:{
+          tipe:'',
           tanggal:'',
           jumlah:'',
           keterangan:'',
         },
+        formValue:{},
         loadingScroll:true,
         noMoreScrolling:false,
         limit:5,
         offset:null,
-        formValue:{},
         sizeWindow:window.innerWidth,
         showCreate:false,
         success:false,
@@ -216,6 +232,9 @@
       labelPosition(){
         return this.sizeWindow < 800 ? 'top' : 'left'
       },
+      href(){
+        return "infaq/shadaqah/" + this.chartType
+      }
       
     },
     methods: {
@@ -237,7 +256,6 @@
             this.formKey++
             this.loading = false
           });
-        await this.getChart();
         // this.datas = [];
         // await this.getData();
       },

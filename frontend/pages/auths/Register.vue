@@ -20,6 +20,7 @@
                 v-model:form-value="formValue"
                 href="data/anggota/store"
                 href-get="data/anggota/get"
+                :pass-columns="['tempat_lahir','tanggal_lahir','photo']"
                 @saved="submittedAnggota"  
                 @error="saving=false"
                 size="large"
@@ -100,6 +101,12 @@ export default {
       await this.$http.get('/kolom/preparation?table=mu_anggota&grouping=0&input=0')
         .then(result => {
           var res = result.data;
+          let keys = Object.keys(res)
+          for (let i = 0; i < keys.length; i++) {
+            const element = res[keys[i]];
+            if (element.required == '0')
+              element.placeholder += ' (Opsional) '
+          }
           this.fields = res
           this.formKey++
           this.saving = false
