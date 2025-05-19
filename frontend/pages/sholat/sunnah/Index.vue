@@ -14,20 +14,9 @@
 </style>
 <template>
   <div id="sholat" class="pt-[50px]">
-    <div v-if="user.role == 'mentor'" 
-      class="bg-white/[0.9] rounded-[10px] shadow-md
-      mb-3 p-4">
-      <div class="text-sm mb-2">Nama Anggota :</div>
-      <el-select v-model="idAnggota" placeholder="Pilih Anggota"
-        @change="reloadData">
-        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
-        <el-option v-for="a in anggotas"
-          :key="a.id"
-          :value="a.id_anggota"
-          :label="a.nama"/>
-      </el-select>
-    </div>
-    <el-card v-show="user.role == 'user'"
+    <FilterAnggota v-if="user.role != 'user'" 
+      v-model:id-anggota="idAnggota" @change="reloadData"/>
+    <el-card v-show="['user','super-admin'].includes(user.role)"
       class="rounded-[10px]
       bg-gradient-to-tl from-white/[0.8] from-50% to-rose-200/[0.5] 
       mb-3 p-0"
@@ -73,13 +62,19 @@
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
-      <div id="body-scroll" class="relative px-0 py-6
+      <div class="mt-1 text-center active:scale-90"
+        @click="collapseInput = !collapseInput">
+        <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
+        <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
+      </div>
+      <div id="body-scroll" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-[calc(100vh-600px)] pt-0 pb-6', `relative px-0 
+        animate
         flex    
         overflow-x-scroll
-        snap-x snap-mandatory">
+        snap-x snap-mandatory`]">
         <template v-for="(_data, ind) in datas">
           <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
-            px-5 w-full
+            px-7 w-full 
             relative
             grid grid-cols-1"
             v-loading="loadings[ind]">
@@ -139,28 +134,7 @@
                         </template>
                       </el-input-number> 
                       <div class="text-[12px] mt-1 font-semibold">Raka'at</div>     
-                  </div>     
-                    <!-- <el-dropdown v-if="sholat.do" ref="dropdown"
-                      trigger="click"
-                      @command="(res) => { sholat.rakaat  = res }"
-                      :popper-class="`[&_*]:bg-green-200 [&_*]:text-green-900 bg-green-200 text-green-900`"
-                      class="">
-                      <div class="rounded-full h-full">
-                        <icons icon="mdi:edit" class="text-[13px] mr-1"/>
-                        <span class="mr-2 text-[12px]"> {{ sholat.rakaat }} Rakaat</span>
-                      </div>
-                      <template #dropdown>
-                        <el-dropdown-menu>
-                          <template v-for="o in sholat.optionsRakaat">
-                            <el-dropdown-item :command="o"
-                              :class="`${o == sholat.rakaat ? 'font-bold' : ''}`">
-                              {{ o }} Raka'at
-                            </el-dropdown-item>
-                          </template>
-                        </el-dropdown-menu>
-                      </template>
-                    </el-dropdown>      -->
-                
+                  </div>                  
               </div>
             </template>
             <div class="text-center text-slate-400
@@ -262,17 +236,49 @@
       <chart ref="sunnahChartData" 
         href="sholat/sunnah/dashboard"
          :id-anggota="idAnggota"
-           v-if="showData == 'chart'" 
-        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
+          v-if="showData == 'chart'" 
+        :add-options="{
+          scales:{
+            y:{
+              title:{display:true, text:'Jml Rakaat'},
+              ticks: {stepSize:2}
+            }}}"
         class="px-4"/>
-      <list-data ref="sunnahListData"
+      <ListData ref="sunnahListData"
+        class="[--text-color:theme(colors.rose.900)]
+          [--bg-color:theme(colors.rose.50)]
+          [--border-color:theme(colors.rose.400)]
+          [--bg-button-color:theme(colors.rose.100)]
+          [--button-color:theme(colors.rose.200)]
+        "
         :id-anggota="idAnggota"
-          :key="'sunnahListData'+formKey"
+        href="sholat/sunnah"
+        :group-by="['tanggal']"
         v-if="showData =='list'"
-        @edit-data="(({id}) => {
-          dataId = id
-          showCreate = true
-        })"/>
+        @edit-data="((res) => {
+          tanggal = res.tanggal;
+          setTanggalInitial();
+          setDataInitiall();
+        })">
+        <template #title="{ data }">
+          {{ dateDayIndo(data.tanggal)}}
+        </template>
+        <template #content="{ data }">
+          <div class="flex items-center"
+            @click="data.show_detail = !data.show_detail">
+            <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
+            <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
+            Sholat Sunnah {{ data.total_rakaat }} Raka'at
+          </div>
+          <ol v-show="data.show_detail"
+            class="pl-[30px] italic mt-0 mb-1">
+            <li v-for="(j) in data.daftar_sholat.split('/')"
+              class="pl-1">
+              {{ getLabelSholat(j) }}
+            </li>
+          </ol>
+        </template>
+      </ListData>
     </el-card>
   </div>
 </template>
@@ -282,17 +288,17 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import Form from '@/components/Form.vue'
 import Chart from '@/pages/components/DataChart.vue'
-import ListData from './components/ListData.vue'
+import FilterAnggota from '../../components/FilterAnggota.vue';
+import ListData from '@/pages/components/ListData.vue';
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
   name: "sholat",
   components: {
-    'form-comp' : Form,
     Chart,
     ListData,
+    FilterAnggota,
   },
   data: function() {
     return {
@@ -317,6 +323,7 @@ export default {
       showInput:false,
       sunnahAdd:'',
       sunnahInput:'',
+      collapseInput:true,
     };
   },
   watch: {
@@ -338,6 +345,11 @@ export default {
     
   },
   methods: {
+    getLabelSholat(sholat){
+      // console.log(sholat)
+      let data = sholat.split('-')
+      return `Sholat ${data[0]} - ${data[1]} Raka'at`
+    },
     getData: async function(index) {
       let vm = this
       vm.loading = true;
@@ -542,9 +554,11 @@ export default {
       this.setTanggalInitial()
       this.setDataInitiall()
       this.getAllSunnah()
-      // if (this.showData == 'chart') this.$refs.wajibChartData.getChart();
-      // if (this.showData == 'list') this.$refs.wajibListData.getData(true);
-      this.formKey++
+      setTimeout(this.updateChart(), 400);
+    },
+    updateChart(){
+      if (this.showData == 'chart') this.$refs.sunnahChartData.getChart();
+      if (this.showData == 'list') this.$refs.sunnahListData.getData(true);
     }
   },
   created: function() {

@@ -2,9 +2,10 @@
 	<div
     class="bg-white/[0.9] rounded-[10px] shadow-md
     mb-3 p-4">
-    <div class="text-sm mb-2">Nama Anggota :</div>
+    <div class="text-[15px] mb-2">Nama Anggota :</div>
     <floating-select v-model:value="id" placeholder="Pilih Anggota"
       @change="$emit('change')"
+      size="large"
       filterable
       :options="[
         ...[{ 

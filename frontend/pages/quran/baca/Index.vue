@@ -1,19 +1,8 @@
 <template>
   <div id="quran" class="pt-[50px]">
-    <div v-if="user.role != 'user'" 
-      class="bg-white/[0.9] rounded-[10px] shadow-md
-      mb-3 p-4">
-      <div class="text-sm mb-2">Nama Anggota :</div>
-      <el-select v-model="idAnggota" placeholder="Pilih Anggota"
-        @change="submittedData">
-        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
-        <el-option v-for="a in anggotas"
-          :key="a.id"
-          :value="a.id_anggota"
-          :label="a.nama"/>
-      </el-select>
-    </div>
-    <el-card v-if="user.role == 'user'"
+    <FilterAnggota v-if="user.role != 'user'" 
+      v-model:id-anggota="idAnggota" @change="submittedData"/>
+    <el-card v-if="['user','super-admin'].includes(user.role)"
        class="relative overflow-hidden
        bg-gradient-to-tr from-yellow-50/[0.8] from-50% to-lime-200/[0.7] rounded-[10px]
       z-[0] font-montserrat text-[13px]
@@ -35,7 +24,7 @@
           class="absolute z-[0] top-[-10px] right-[-15px]
             opacity-[0.5]"/>
     </el-card>
-    <el-card v-if="user.role == 'user'"
+    <el-card v-if="['user','super-admin'].includes(user.role)"
       class="bg-white/[0.9] rounded-[10px]
       mb-3 p-0"
       body-class="py-3 px-5 text-[14px]"
@@ -108,20 +97,45 @@
             :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
         </div>
       </template>
-      <chart ref="quranChartData" 
+      <chart v-if="showData == 'chart'" 
+        ref="quranChartData" 
         href="quran/baca/dashboard"
         :id-anggota="idAnggota"
-        v-if="showData == 'chart'" 
-        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
+        :add-options="{scales:{y:{
+          title:{display:true, text:'Jumlah Ayat'},
+          ticks: {stepSize:50},
+        }}}"
         class="px-4"/>
-      <list-data ref="quranListData" 
+      <ListData ref="quranListData"
+        class="[--text-color:theme(colors.lime.900)]
+          [--bg-color:theme(colors.lime.50)]
+          [--border-color:theme(colors.lime.400)]
+          [--bg-button-color:theme(colors.lime.100)]
+          [--button-color:theme(colors.lime.200)]
+        "
         :id-anggota="idAnggota"
-          :key="'quranData'+'formKey'"
+        href="quran/baca"
         v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id
           showCreate = true
-        })"/>
+        })">
+        <template #subtitle="{ data }">
+          {{ dateDayIndo(data.tanggal)}}
+        </template>
+        <template #title="{ data }">
+          <div class="mt-1 text-[16px] leading-[1]">Dari : 
+						<span class="font-bold">
+						{{ data.nama_surat_mulai }} ({{ data.surat_mulai }}) : {{ data.ayat_mulai }}
+						</span>
+					</div>
+					<div class="text-[16px]">Sampai : 
+						<span class="font-bold">
+						{{ data.nama_surat_selesai }} ({{ data.surat_selesai }}) : {{ data.ayat_selesai }}
+						</span>
+					</div>
+        </template>
+      </ListData>
     </el-card>
   </div>
 </template>
@@ -129,18 +143,17 @@
 <script>
 import { mapGetters } from 'vuex';
 import { setStatusText, setStatusType } from '@/helpers/quran'
-import Form from '@/components/Form.vue'
+import FilterAnggota from '../../components/FilterAnggota.vue';
+import ListData from '@/pages/components/ListData.vue';
 import Chart from '@/pages/components/DataChart.vue'
-import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
-import { scales } from 'chart.js';
 
 export default {
   name: "quran",
   components: {
-    'form-comp' : Form,
     Chart,
     ListData,
+    FilterAnggota,
   },
   data: function() {
     return {
@@ -225,10 +238,16 @@ export default {
       this.saving = false;
       this.showCreate = false
       this.success = true
-      if (this.showData == 'chart') this.$refs.quranChartData.getChart();
-      if (this.showData == 'list') this.$refs.quranListData.getData(true);
       this.getInitial();
+      setTimeout(() => {
+        this.updateChart();
+      }, 400);
+      // this.formKey++
     },
+    updateChart(){
+      if (this.showData == 'chart') this.$refs.quranChartData?.getChart();
+      if (this.showData == 'list') this.$refs.quranListData?.getData(true);
+    }
   },
   created: function() {
     // let filter = this.$store.getters.filter

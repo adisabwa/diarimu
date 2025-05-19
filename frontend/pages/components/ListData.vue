@@ -15,18 +15,47 @@
         rounded-[15px]
         bg-[var(--bg-color)] border border-solid border-[var(--border-color)]
         text-[var(--text-color)]
-        flex items-center justify-between">
-        <div class="leading-[1.5]">
+        flex items-center justify-between
+        relative overflow-hidden"
+				draggable="true"
+				@click="(event) => editData(event, key)"
+				v-click-outside="() => addClass('#listData'+key, 'translate-x-[120px]')">
+        <div class="leading-[1.5] w-full">
           <div class="font-semibold text-[13px] opacity-70">
             <slot name="subtitle" :data="s" />
           </div>
-          <div class="font-bold text-[18px]">
+          <div class="font-bold text-[17px]">
             <slot name="title" :data="s"/>
           </div>
-          <div class="font-semibold text-[13px] opacity-70">
+          <div class="font-semibold text-[13px] opacity-70" ref="contentData">
             <slot name="content" :data="s" />
           </div>
+          <div v-if="showName" class="font-normal italic text-[14px] 
+            mt-1 opacity-70" ref="contentData">
+            {{ s.nama }}
+          </div>
         </div>
+				<div :id="'listData'+key"
+					class="absolute bg-[var(--bg-button-color)] right-0 translate-x-[120px]
+					px-4
+					animate
+					h-full w-fit flex items-center" 
+					v-if="['user','super-admin'].includes(user.role)">
+					<el-button
+						class="rounded-full h-[40px] w-[40px]
+						border border-solid border-[var(--border-color)]
+						bg-[var(--button-color)]"
+						@click="$emit('editData',{id:s.id, tanggal:s.tanggal})">
+						<icons icon="mdi:edit" class="m-0 text-[20px] text-[var(--text-color)]" />
+					</el-button>
+					<el-button
+						class="rounded-full h-[40px] w-[40px]
+						border border-solid border-[var(--border-color)]
+						bg-red-200"
+						@click="deleteData(s.id)">
+						<icons icon="mdi:delete" class="m-0 text-[20px] text-red-500" />
+					</el-button>
+				</div>
       </div>
 		</template>
 		<p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
@@ -36,10 +65,11 @@
 
 <script setup>
 
+import { groupBy } from 'lodash';
+
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
 
 export default {
   name: "list-data",
@@ -52,13 +82,11 @@ export default {
     href:{
       type:[String, Number],
       default:'',
-    }
+    },
+    groupBy:{type:Array, default:[]}
   },
   computed: {
-    ...mapGetters({
-      user: 'loggedUser',
-      anggotas:'data/anggotas'
-    }),
+    
   },
   data: function() {
     return {
@@ -67,6 +95,8 @@ export default {
 			noMoreScrolling:false,
 			limit:5,
 			offset:null,
+      user:this.$store.getters.loggedUser,
+      showName:false,
 		}
 	},
 	computed:{
@@ -76,40 +106,51 @@ export default {
 
 	},
 	methods:{
-      getData(reset = true){
-        console.log(this.href, this.idAnggota)
-        this.loading = true
-				if (reset) {
-					this.offset = 0
-					this.limit = 5
-				}
-        this.$http.get(this.href, {
-            params: {
-							in:{
-								id_anggota: this.idAnggota.split(','),
-							},
-							order:['tanggal desc'],
-              limit:this.limit,
-              offset:this.offset,
-            }
-          }).then(result => {
-            var res = result.data;
-            this.datas = reset ? res : [...this.datas, ...res]
-            console.log(this.datas)
-            this.loading = false
-            this.loadingScroll = false
-            if (this.isEmpty(res)) {
-              this.noMoreScrolling = true
-            } else {
-              this.offset += 5
-            }
-						// console.log(this.datas)
-          });
-      },
-      loadingData(){
-        this.loadingScroll = true
-        this.getData(false)
-      },
+    getData(reset = true){
+      // console.log(this.href, this.idAnggota)
+      this.loading = true
+      if (reset) {
+        this.offset = 0
+        this.limit = 5
+        this.noMoreScrolling = false
+      }
+      this.$http.get(this.href, {
+          params: {
+            in:{
+              id_anggota: this.idAnggota.split(','),
+            },
+            order:['tanggal desc','nama','id desc'],
+            limit:this.limit,
+            offset:this.offset,
+            grouping:this.groupBy,
+          }
+        }).then(result => {
+          var res = result.data;
+          this.datas = reset ? res : [...this.datas, ...res]
+          // console.log(this.datas)
+          this.loading = false
+          this.showName = this.idAnggota.split(',').length > 1
+          this.loadingScroll = false
+          if (this.isEmpty(res)) {
+            this.noMoreScrolling = true
+          } else {
+            this.offset += 5
+          }
+          // console.log(this.datas)
+        });
+    },
+    loadingData(){
+      this.loadingScroll = true
+      this.getData(false)
+    },
+    editData(event, key){
+      const parent = this.$refs.contentData[0];
+      // console.log(parent, event.target)
+      if (parent?.contains(event.target)) {
+        return; // Ignore clicks on the excluded element
+      }
+      this.removeClass('#listData'+key, 'translate-x-[120px]')
+    }
 	},
 	mounted(){
 	}

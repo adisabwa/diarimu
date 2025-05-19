@@ -3,7 +3,7 @@
   <div id="sholat relative" class="pt-[50px]">
     <FilterAnggota v-if="user.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="reloadData"/>
-    <el-card v-show="user.role == 'user'"
+    <el-card v-show="['user','super-admin'].includes(user.role)"
       class="rounded-[10px]
       bg-gradient-to-tr from-white/[0.8] from-30% to-purple-200/[0.7] 
       mb-3 p-0"
@@ -17,6 +17,7 @@
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
             <date-wheel-picker
+              ref="editTanggal"
               id="editTanggal"
               class="w-fit mx-auto"
               v-model:value="tanggal"
@@ -49,10 +50,16 @@
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
-      <div id="body-scroll" class="relative px-0 py-6
+      <div class="mt-1 text-center active:scale-90"
+        @click="collapseInput = !collapseInput">
+        <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
+        <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
+      </div>
+      <div id="body-scroll" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-screen pt-0 pb-6', `relative px-0 
+        animate
         flex    
         overflow-x-scroll
-        snap-x snap-mandatory">
+        snap-x snap-mandatory`]">
         <template v-for="(_data, ind) in datas">
           <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
             px-5 w-full
@@ -155,7 +162,7 @@
       </template>
       <chart ref="wajibChartData" 
         href="sholat/wajib/dashboard"
-         :id-anggota="idAnggota"
+        :id-anggota="idAnggota"
         :add-options="{
           scales:{
             y:{
@@ -167,7 +174,10 @@
       <ListData ref="wajibListData"
         class="[--text-color:theme(colors.purple.900)]
           [--bg-color:theme(colors.purple.50)]
-          [--border-color:theme(colors.purple.400)]"
+          [--border-color:theme(colors.purple.400)]
+          [--bg-button-color:theme(colors.purple.100)]
+          [--button-color:theme(colors.purple.200)]
+        "
         :id-anggota="idAnggota"
         href="sholat/wajib"
         v-if="showData =='list'"
@@ -273,6 +283,7 @@ export default {
       sizeWindow:window.innerWidth,
       sholat: topMenu.sholatWajib,
       showData:'chart',
+      collapseInput:false,
     };
   },
   watch: {
@@ -423,11 +434,11 @@ export default {
     changeTanggal(){
       let vm = this
       vm.editTanggal = true;
-      console.log('change')
+      // console.log('change', this.tanggal)
       setTimeout(() => {
-        console.log(vm.jquery('#editTanggal .el-input__inner'))
         vm.jquery('#editTanggal .el-input__inner')[0].focus();
-      }, 500);
+        this.$refs.editTanggal.showModal = true
+      }, 100);
     },
     setHeaderToCenter(){
       // console.log('center')
@@ -516,7 +527,7 @@ export default {
       // }, 500);
     },  
     reloadData(){
-      console.log(this.idAnggota)
+      // console.log(this.idAnggota)
       this.setTanggalInitial()
       this.setDataInitial()
       this.getLast()
