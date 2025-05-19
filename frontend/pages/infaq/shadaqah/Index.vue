@@ -1,5 +1,5 @@
 <template>
-  <div id="infaq" class="pt-[50px] translate-y-[-10px]">
+  <div id="infaq" class="pt-[50px] translate-y-[-10px] px-0">
     <div v-if="user.role != 'user'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
@@ -13,6 +13,7 @@
           :label="a.nama"/>
       </el-select>
     </div>
+    <lazismu v-model:show="showLazismu"/>
     <el-card class="relative overflow-hidden
         bg-gradient-to-tr from-white/[0.8] from-40% to-teal-200/[0.7] rounded-[10px]
       z-[0]
@@ -22,9 +23,13 @@
       body-class="py-4 px-0">
       <template #header>
         <span>Data Infaq Anda</span>
-          <img :src="infaq.image" height="90px" width="90px"
-              class="absolute z-[-1] top-[-10px] right-[-15px]
-                opacity-[0.5]"/>
+        <img :src="$baseUrl+'assets/images/logo-lazismu.png'" height="35px"
+            class="absolute scale-x-[1.1] z-[1] top-[12px] left-[20px]
+              active:scale-90"
+          @click="showLazismu = true"/>
+        <img :src="infaq.image" height="90px" width="90px"
+            class="absolute z-[-1] top-[-10px] right-[-15px]
+              opacity-[0.5]"/>
       </template>
       <div class="px-8"
         v-if="user.role == 'user'">
@@ -83,12 +88,12 @@
       class="w-fit max-w-[90%] py-3
         bg-gradient-to-tr from-white from-50% to-teal-100"
       header-class="font-bold text-[16px]"
-      body-class="[&_*]:text-[13px]">
+      body-class="">
       <template #header>
         <div>Data Shadaqah</div>
       </template>
       <form-comp ref="formInfaq"
-        class="[&_*]:rounded-[15px]"
+        class=""
         :key="'form-shadaqah-'+formKey"
         :fields="fields" 
         v-model:id="dataId"
@@ -174,19 +179,20 @@
   
   <script>
   import { mapGetters } from 'vuex';
-  import Form from '@/components/Form.vue'
   import Chart from '@/components/statistics/DataChart.vue'
+  import Lazismu from '@/pages/infaq/LazisPage.vue'
   import { topMenu } from '@/helpers/menus.js'
   
   export default {
     name: "infaq",
     components: {
-      'form-comp' : Form,
       Chart,
+      Lazismu,
     },
     data: function() {
       return {
         chartType:'dashboard',
+        showLazismu:false,
         loading: false,
         showAdd: false,
         tipeInfaq:'0',

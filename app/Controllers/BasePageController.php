@@ -22,12 +22,13 @@ class BasePageController extends BaseDataController
     {
         $where = $this->request->getGetPost('where') ?? [];
         $whereOr = $this->request->getGetPost('or') ?? [];
+        $whereIn = $this->request->getGetPost('in') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
         $grouping = $this->request->getGetPost('grouping') ?? ['id'];
 
         $data = $this->model->getAll($where,$whereOr,'tanggal desc, id',
-        $limit, $offset, $grouping);
+        $limit, $offset, $grouping, $whereIn);
 
         return $this->respondCreated($data);
 

@@ -1,19 +1,8 @@
 
 <template>
   <div id="sholat relative" class="pt-[50px]">
-    <div v-if="user.role == 'mentor'" 
-      class="bg-white/[0.9] rounded-[10px] shadow-md
-      mb-3 p-4">
-      <div class="text-sm mb-2">Nama Anggota :</div>
-      <el-select v-model="idAnggota" placeholder="Pilih Anggota"
-        @change="reloadData">
-        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
-        <el-option v-for="a in anggotas"
-          :key="a.id"
-          :value="a.id_anggota"
-          :label="a.nama"/>
-      </el-select>
-    </div>
+    <FilterAnggota v-if="user.role != 'user'" 
+      v-model:id-anggota="idAnggota" @change="reloadData"/>
     <el-card v-show="user.role == 'user'"
       class="rounded-[10px]
       bg-gradient-to-tr from-white/[0.8] from-30% to-purple-200/[0.7] 
@@ -28,6 +17,7 @@
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
             <date-wheel-picker
+              id="editTanggal"
               class="w-fit mx-auto"
               v-model:value="tanggal"
               value-format="YYYY-MM-DD"
@@ -168,9 +158,8 @@
          :id-anggota="idAnggota"
            v-if="showData == 'chart'" 
         class="px-4"/>
-      <list-data ref="wajibListData"
+      <ListData ref="wajibListData"
         :id-anggota="idAnggota"
-          :key="'wajibListData'+formKey"
         :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
         v-if="showData =='list'"
         @edit-data="(({id}) => {
@@ -189,10 +178,11 @@
 import { mapGetters } from 'vuex';
 import Form from '@/components/Form.vue'
 import Chart from '@/components/statistics/DataChart.vue'
-import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 import Star from '../components/Star.vue'
 import { getGlobalThis } from '@vue/shared';
+import FilterAnggota from '../../components/FilterAnggota.vue';
+import ListData from './components/ListData.vue';
 
 export default {
   name: "sholat",
@@ -201,6 +191,7 @@ export default {
     Chart,
     ListData,
     Star,
+    FilterAnggota,
   },
   data: function() {
     return {
@@ -402,9 +393,10 @@ export default {
       let vm = this
       vm.editTanggal = true;
       console.log('change')
-      // setTimeout(() => {
-      //   vm.jquery('#editTanggal.el-input__inner')[0].focus();
-      // }, 5000);
+      setTimeout(() => {
+        console.log(vm.jquery('#editTanggal .el-input__inner'))
+        vm.jquery('#editTanggal .el-input__inner')[0].focus();
+      }, 500);
     },
     setHeaderToCenter(){
       // console.log('center')
@@ -493,12 +485,16 @@ export default {
       // }, 500);
     },  
     reloadData(){
+      console.log(this.idAnggota)
       this.setTanggalInitial()
       this.setDataInitial()
       this.getLast()
-      if (this.showData == 'chart') this.$refs.wajibChartData.getChart();
-      if (this.showData == 'list') this.$refs.wajibListData.getData(true);
-      this.formKey++
+      this.updateChart();
+      // this.formKey++
+    },
+    updateChart(){
+      if (this.showData == 'chart') this.$refs.wajibChartData?.getChart();
+      if (this.showData == 'list') this.$refs.wajibListData?.getData(true);
     }
   },
   created: function() {

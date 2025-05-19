@@ -21,6 +21,7 @@ class BaseDataController extends BaseController
     public function index()
     {
         $where = $this->request->getGetPost('where') ?? [];
+        $in = $this->request->getGetPost('in') ?? [];
         $or = $this->request->getGetPost('or') ?? ['1=1' => NULL];
         $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
@@ -30,6 +31,7 @@ class BaseDataController extends BaseController
 
         $data = $this->model->builder()
                             ->where($where)
+                            ->whereIn($whereIn)
                             ->groupStart()
                                 ->orWhere($or)
                             ->groupEnd()
@@ -37,7 +39,7 @@ class BaseDataController extends BaseController
                             ->limit($limit, $offset)
                             ->get()
                             ->getResult();
-        // var_dump($this->model->getLastQuery());
+        var_dump($this->model->getLastQuery());exit;
         foreach ($data as $key => $d) {
             $d->checked = false;
         }

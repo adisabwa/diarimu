@@ -23,7 +23,7 @@ class QuranBacaModel extends Model
 
     }
 
-    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0)
+    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0, $groupBy = ['id'], $whereIn = [])
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
@@ -35,13 +35,20 @@ class QuranBacaModel extends Model
                     ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
                     ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
                     ->where($whereAnd)
-                    ->groupStart()
-                        ->orWhere($whereOr)
-                    ->groupEnd()
-                    ->orderBy($order)
-                    ->limit($limit, $offset)
-                    ->get()
-                    ->getResultObject();
+                    ->where($whereAnd);
+
+        foreach($whereIn as $key => $in) {
+            $builder->whereIn($key, $in);
+        }
+
+        return $builder->groupStart()
+                            ->orWhere($whereOr)
+                        ->groupEnd()
+                        ->orderBy($order)
+                        ->groupBy($groupBy)
+                        ->limit($limit, $offset)
+                        ->get()
+                        ->getResult();
 
         return $data;
     }

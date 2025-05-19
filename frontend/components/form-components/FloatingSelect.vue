@@ -94,7 +94,6 @@ export default {
       immediate: true,
         async handler(val) {
         let vm = this
-        vm.changedValue(vm.vModel)
         if (val) {
           setTimeout(() => {
             vm.jquery('#filterSelect.el-input__inner')[0]?.focus();
@@ -102,6 +101,8 @@ export default {
           vm.searchData = ''
           if (vm.isEmpty(vm.vModel))
             vm.vModel = vm.listOptions[0]?.value
+        } else {
+          vm.changedValue(vm.vModel)
         }
       },
     },

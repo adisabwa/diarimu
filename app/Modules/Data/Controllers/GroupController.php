@@ -75,7 +75,7 @@ class GroupController extends BaseDataController
         $id = $this->request->getGetPost('id') ?? userdata()->id_anggota;
         $data = $this->modelAnggota->where(['id_anggota' => $id,'type' => 'mentor'])->find()[0] ?? [];
         $datas = [];
-
+        
         if ($user->role == 'super-admin')
             $where_group = "1=1";
         else if ($user->role == 'admin')

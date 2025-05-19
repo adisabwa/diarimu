@@ -58,7 +58,7 @@
 import Star from '../../components/Star.vue'
 
 export default {
-  name: "data",
+  name: "list-data",
 	emits:['editData'],
   props:{
     idAnggota:{
@@ -93,8 +93,8 @@ export default {
 				}
         await this.$http.get('sholat/wajib', {
             params: {
-							where:{
-								id_anggota: this.idAnggota,
+							in:{
+								id_anggota: this.idAnggota.split(','),
 							},
 							order:['tanggal desc'],
               limit:this.limit,
@@ -110,7 +110,7 @@ export default {
             } else {
               this.offset += 5
             }
-						console.log(this.datas)
+						// console.log(this.datas)
           });
       },
 
