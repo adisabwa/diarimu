@@ -253,6 +253,7 @@
         "
         :id-anggota="idAnggota"
         href="sholat/sunnah"
+        href-delete="sholat/sunnah/delete"
         :group-by="['tanggal']"
         v-if="showData =='list'"
         @edit-data="((res) => {

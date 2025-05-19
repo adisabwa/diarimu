@@ -180,6 +180,7 @@
         "
         :id-anggota="idAnggota"
         href="sholat/wajib"
+        href-delete="sholat/wajib/delete"
         v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id

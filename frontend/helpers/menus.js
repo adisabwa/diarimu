@@ -56,6 +56,15 @@ let topMenu = {
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/infaq.png',
   },
+  kajian: {
+    url:'kajian',
+    label:"Kajian / Halaqah",
+    route:'kajian',
+    color:'bg-cyan-200',
+    shadowColor:'shadow-cyan-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/mimbar.png',
+  },
 }
 
 

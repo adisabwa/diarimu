@@ -39,13 +39,16 @@ class Kolom extends BaseController
                         ];
                     }
                 } else {
-                    $model = $data->pilihan;
+                    $methods = explode('::',$data->pilihan);
+                    $model = $methods[0];
+                    $method = $methods[1] ?? 'getOptions';
                     $model = model($model);
-                    $options = $model->getOptions() ?? [];
+                    $options = $model->$method() ?? [];
                 }
             }
             $data->options = $options;
             $data->allow_add = $data->allow_add == '1';
+            $data->allow_create = $data->allow_create == '1';
             $data->customInput = false;
             if ($data->allow_add){
                 // echo json_encode($data);exit;

@@ -111,6 +111,7 @@
         "
         :id-anggota="idAnggota"
         href="quran/tarjamah"
+        href-delete="quran/tarjamah/delete"
         v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id

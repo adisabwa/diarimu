@@ -26,6 +26,7 @@ $routes->group('infaq/shadaqah', [
     $routes->add('dashboard', [InfaqShadaqah::class, 'dashboard']);    
     $routes->add('dashboard_count', [InfaqShadaqah::class, 'dashboard_count']);    
     $routes->add('get_before', [InfaqShadaqah::class, 'get_before']);
+    $routes->add('delete/(:any)', [InfaqShadaqah::class, 'delete/$1']);
 
 });
 

@@ -115,6 +115,7 @@
         "
         :id-anggota="idAnggota"
         href="quran/baca"
+        href-delete="quran/baca/delete"
         v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id

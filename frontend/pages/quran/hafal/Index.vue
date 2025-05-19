@@ -128,6 +128,7 @@
           [--button-color:theme(colors.orange.200)]
         "
         :id-anggota="idAnggota"
+        href-delete="quran/hafal/delete"
         href="quran/hafal"
         v-if="showData =='list'"
         @edit-data="(({id}) => {

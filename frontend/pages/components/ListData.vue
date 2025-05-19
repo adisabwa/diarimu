@@ -1,9 +1,10 @@
 <template>
   
 	<div 
+    ref="scrollContainer"
 		v-infinite-scroll="loadingData"
 		class="min-h-[200px] max-h-[50vh] overflow-auto px-6 "
-		:infinite-scroll-disabled="noMoreScrolling"
+		:infinite-scroll-disabled="disabledScroll"
 		infinite-scroll-delay="1000"
 		infinite-scroll-distance="10">
 		<template v-for="(s, key) in datas">
@@ -19,24 +20,24 @@
         relative overflow-hidden"
 				draggable="true"
 				@click="(event) => editData(event, key)"
-				v-click-outside="() => addClass('#listData'+key, 'translate-x-[120px]')">
+				v-click-outside="() => addClass('#listData'+key, 'translate-x-[125px]')">
         <div class="leading-[1.5] w-full">
-          <div class="font-semibold text-[13px] opacity-70">
+          <div v-if="$slots.subtitle" class="font-semibold text-[13px] opacity-70">
             <slot name="subtitle" :data="s" />
           </div>
-          <div class="font-bold text-[17px]">
+          <div v-if="$slots.title" class="font-bold text-[17px]">
             <slot name="title" :data="s"/>
           </div>
-          <div class="font-semibold text-[13px] opacity-70" ref="contentData">
+          <div v-if="$slots.content" class="content-data-list font-semibold text-[13px] opacity-70">
             <slot name="content" :data="s" />
           </div>
-          <div v-if="showName" class="font-normal italic text-[14px] 
-            mt-1 opacity-70" ref="contentData">
+          <div v-if="showName" class="content-data-list font-normal italic text-[14px] 
+            mt-1 opacity-70">
             {{ s.nama }}
           </div>
         </div>
 				<div :id="'listData'+key"
-					class="absolute bg-[var(--bg-button-color)] right-0 translate-x-[120px]
+					class="absolute bg-[var(--bg-button-color)] right-0 translate-x-[125px]
 					px-4
 					animate
 					h-full w-fit flex items-center" 
@@ -63,16 +64,10 @@
 	</div>
 </template>
 
-<script setup>
-
-import { groupBy } from 'lodash';
-
-</script>
-
 <script>
 
 export default {
-  name: "list-data",
+  name: "ListData",
 	emits:['editData'],
   props:{
     idAnggota:{
@@ -80,6 +75,10 @@ export default {
       default:null,
     },
     href:{
+      type:[String, Number],
+      default:'',
+    },
+    hrefDelete:{
       type:[String, Number],
       default:'',
     },
@@ -99,20 +98,31 @@ export default {
       showName:false,
 		}
 	},
+  watch:{
+    idAnggota(val){
+      // console.log('id_anggota', val)
+      setTimeout(this.getData(),300)
+    },
+    disabledScroll(val){
+      // console.log('disable', val)
+    }
+  },
 	computed:{
 		disabledScroll(){
+      // console.log(this.noMoreScrolling, this.loadingScroll)
 			return this.noMoreScrolling || this.loadingScroll
 		}
 
 	},
 	methods:{
     getData(reset = true){
-      // console.log(this.href, this.idAnggota)
-      this.loading = true
+      // console.log(this.href, reset, this.idAnggota)
+      this.loadingScroll = true
       if (reset) {
         this.offset = 0
         this.limit = 5
         this.noMoreScrolling = false
+        this.datas = []
       }
       this.$http.get(this.href, {
           params: {
@@ -126,30 +136,51 @@ export default {
           }
         }).then(result => {
           var res = result.data;
-          this.datas = reset ? res : [...this.datas, ...res]
+          this.datas = [...this.datas, ...res]
           // console.log(this.datas)
-          this.loading = false
           this.showName = this.idAnggota.split(',').length > 1
           this.loadingScroll = false
-          if (this.isEmpty(res)) {
-            this.noMoreScrolling = true
+          // console.log('no-more', res.length < this.limit)
+          if (res.length < this.limit) {
+            this.noMoreScrolling = true;
           } else {
-            this.offset += 5
+            this.offset += this.limit;
           }
-          // console.log(this.datas)
+          // this.$nextTick(() => {
+          //   const el = this.$refs.scrollContainer;
+          //   if (
+          //     el &&
+          //     el.scrollHeight <= el.clientHeight &&
+          //     !this.noMoreScrolling
+          //   ) {
+          //     // console.log('scroll one more')
+          //     this.getData(false); // Load more if not scrollable
+          //   }
+          // });
+          // // console.log(this.datas)
         });
     },
     loadingData(){
+      // console.log('loading')
       this.loadingScroll = true
       this.getData(false)
     },
     editData(event, key){
-      const parent = this.$refs.contentData[0];
-      // console.log(parent, event.target)
-      if (parent?.contains(event.target)) {
+      const isInsideParent = jquery('.content-data-list').toArray().some(function(parent) {
+        return jquery.contains(parent, event.target);
+      });
+      if (isInsideParent) {
         return; // Ignore clicks on the excluded element
       }
-      this.removeClass('#listData'+key, 'translate-x-[120px]')
+      this.removeClass('#listData'+key, 'translate-x-[125px]')
+    },
+    deleteData(id){
+      this.$store.dispatch('data/deleteData',{
+        href:this.hrefDelete,
+        id:id,
+      }).then( res => {
+        this.getData(true);
+      })
     }
 	},
 	mounted(){

@@ -61,8 +61,9 @@
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
             <template v-else-if="field.input == 'select' || field.input == 'select-multiple'">
-              <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
+              <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
                 filterable clearable
+                :allow-create="field.allow_create"
                 :class="['w-full',inputClass]" 
                 :size="size"
                 @change="changedValue(field.nama_kolom)"

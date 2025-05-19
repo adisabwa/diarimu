@@ -16,11 +16,11 @@
       header-class="flex items-center"
       body-class="relative px-0  text-[16px]">
       <template #header v-if="filterable">
-        <el-input id="filterSelect" v-model="searchData" placeholder="Cari Data" 
+        <el-input id="filterSelect" v-model="searchData" :placeholder="'Cari Data' + (allowCreate ? ' / Tambah Baru' : '')" 
           class="px-5" size="large"/>
       </template>
       <div v-if="type =='select'"
-        class="max-h-[65vh] overflow-scroll">
+        class="max-h-[65vh] overflow-y-auto">
         <div v-for="o in optionsFilter"
           :class="['px-5 py-1 active:bg-teal-100',
             (vModel == o.value ? 'bg-teal-100' : '')
@@ -30,6 +30,10 @@
             <slot name="prefix" />
           </template>
           {{ o.label }}
+        </div>
+        <div v-if="optionsFilter.length == 0"
+          class="text-center text-[14px]">
+          - Tidak ada data -
         </div>
         <template v-if="$slots.footer">
           <el-divider class="my-2"/>
@@ -65,6 +69,7 @@ export default {
     filterable:{type:[Boolean], default:false,},
     clearable:{type:[Boolean], default:false,},
     multiple:{type:[Boolean], default:false,},
+    allowCreate:{type:[Boolean], default:false,},
     options:{type:[Array, Object], default:[],},
     type:{type:[String], default:'select',},
     prefix:{type:[String], default:'',},
@@ -76,15 +81,28 @@ export default {
       searchData:'',
       labelModel:'',
       listOptions:[],
+      newOption:{},
     }
   },
   computed:{
     optionsFilter: function() {
       var q = this.searchData.toLowerCase();
       if (q.length > 0) {
-        return this.listOptions.filter(data => {
+        let exact = this.listOptions.filter(data => {
+            return data.label == q
+          });
+        let data = this.listOptions.filter(data => {
             return data.label.toLowerCase().includes(q)
           });
+        if (this.allowCreate && exact.length == 0) {
+          this.newOption =  {
+            value: q,
+            label:this.ucFirst(q),
+          }
+          return [...data, ...[this.newOption]]
+        } else {
+          return data
+        }
       }
       return this.listOptions;
     },  
@@ -142,7 +160,7 @@ export default {
       let filter = this.listOptions.filter(d => {
         return d.value == val
       })[0]
-      this.labelModel = filter?.label
+      this.labelModel = filter?.label ?? this.newOption?.label
       // console.log('selectOption', this.labelModel)
     }
   }

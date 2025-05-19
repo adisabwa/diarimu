@@ -28,6 +28,7 @@ $routes->group('sholat/wajib', [
     $routes->add('dashboard', [SholatWajib::class, 'dashboard']);
     $routes->add('get_last_and_best', [SholatWajib::class, 'get_last_and_best']);
     $routes->add('get_before', [SholatWajib::class, 'get_before']);
+    $routes->add('delete/(:any)', [SholatWajib::class, 'delete/$1']);
 
 });
 
@@ -44,6 +45,7 @@ $routes->group('sholat/sunnah', [
     $routes->add('dashboard', [SholatSunnah::class, 'dashboard']);
     $routes->add('get_last_and_best', [SholatSunnah::class, 'get_last_and_best']);
     $routes->add('get_before', [SholatSunnah::class, 'get_before']);
+    $routes->add('delete/(:any)', [SholatSunnah::class, 'delete/$1']);
     // $routes->add('summary', [SholatSunnah::class, 'summary']);
 
 });
