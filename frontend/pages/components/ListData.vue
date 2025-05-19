@@ -1,5 +1,4 @@
 <template>
-  
 	<div 
 		v-infinite-scroll="loadingData"
 		class="min-h-[200px] max-h-[50vh] overflow-auto px-6 "
@@ -62,12 +61,6 @@
 		<p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p>
 	</div>
 </template>
-
-<script setup>
-
-import { groupBy } from 'lodash';
-
-</script>
 
 <script>
 

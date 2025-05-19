@@ -20,12 +20,12 @@
       class="rounded-[10px]
       bg-gradient-to-tl from-white/[0.8] from-50% to-rose-200/[0.5] 
       mb-3 p-0"
-      body-class="relative p-0"
+      :body-class="[collapseInput ? 'max-h-[30px] py-0' : 'max-h-[calc(100vh-200px)] pt-0 pb-2', 'animate overflow-y-auto overflow-x-hidden relative p-0']"
       header-class="relative p-0">
-      <img :src="sholat.image" height="90px" width="90px"
-          class="absolute z-[0] top-[-70px] right-[-15px]
-            opacity-[0.5]"/>
       <template #header>
+        <img :src="sholat.image" height="90px" width="90px"
+            class="absolute z-[0] top-[0px] right-[-15px]
+              opacity-[0.5]"/>
         <div id="header-scroll" class="relative px-0 py-3 font-bold text-[18px] overflow-x-scroll
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
@@ -67,14 +67,14 @@
         <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
         <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
       </div>
-      <div id="body-scroll" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-[calc(100vh-600px)] pt-0 pb-6', `relative px-0 
+      <div id="body-scroll" :class="[`pb-6 relative px-0 
         animate
         flex    
         overflow-x-scroll
         snap-x snap-mandatory`]">
         <template v-for="(_data, ind) in datas">
           <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
-            px-7 w-full 
+            px-7 w-full
             relative
             grid grid-cols-1"
             v-loading="loadings[ind]">
@@ -450,8 +450,8 @@ export default {
       } )
         .then(result => {
           // this.getData()
-          if (this.showData == 'chart') this.$refs.sunnahChartData.getChart();
-          if (this.showData == 'list') this.$refs.sunnahListData.getData(true);
+          if (this.showData == 'chart') this.$refs.sunnahChartData?.getChart();
+          if (this.showData == 'list') this.$refs.sunnahListData?.getData(true);
         })
         .catch(err => {
           
@@ -554,7 +554,7 @@ export default {
       this.setTanggalInitial()
       this.setDataInitiall()
       this.getAllSunnah()
-      setTimeout(this.updateChart(), 400);
+      setTimeout(this.updateChart(), 500);
     },
     updateChart(){
       if (this.showData == 'chart') this.$refs.sunnahChartData.getChart();
