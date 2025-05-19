@@ -132,31 +132,27 @@
 						
 					</div>
 			</el-card>
-<<<<<<< HEAD
-			<div v-if="!canInstall && !isStandalone()"
-				class="w-full text-center">
-				<el-button class="
-					font-montserrat
-					shadow-md shadow-emerald-900/[0.2]
-					bg-brand text-emerald-50
-					px-4 py-5
-					active:scale-95
-					[&>*]:w-full" @click="installApp">
-					Tambah ke Halaman Utama
-				</el-button>
-			</div>
-=======
       <div class="
 				bg-white/[0.8] shadow-md
 				rounded-[20px]
-        
-        py-5 px-7 mb-20
+        py-5 px-7 mb-6
         text-center text-[13px] italic">
         Sesungguhnya orang yang selalu <b>membaca kitab Allah</b> dan <b>mendirikan shalat</b> dan <b>menafkahkan sebahagian dari rezeki yang Kami anugerahkan kepada mereka</b> dengan diam-diam dan terang-terangan, mereka itu mengharapkan perniagaan yang tidak akan merugi, <br/>
         <b>- &nbsp; Fatir: 29 &nbsp; -</b>
       </div>
->>>>>>> 7b535f5618622a99c880682a329bc3bf12f5c865
+		<div v-if="canInstall && !isStandalone()"
+			class="w-full text-center">
+			<el-button class="
+				font-montserrat
+				shadow-md shadow-emerald-900/[0.2]
+				bg-brand text-emerald-50
+				px-4 py-5
+				active:scale-95
+				[&>*]:w-full" @click="installApp">
+				Tambah ke Halaman Utama
+			</el-button>
 		</div>
+	</div>
 		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat
 				h-[60px] min-w-[600px] w-full
@@ -171,7 +167,9 @@
 
 <script setup>
 import { useA2HS } from '@/composables/useA2HS';
+import { useAddToHomescreen } from '@owliehq/vue-addtohomescreen';
 
+useAddToHomescreen({ buttonColor: 'red' });
 const { canInstall, promptInstall, isStandalone } = useA2HS();
 
 async function installApp() {

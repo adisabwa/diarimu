@@ -173,7 +173,13 @@ export default {
       },
     async getData() {
       this.loading = true;
-      this.$http.get('/data/group')
+      this.$http.get('/data/group',{
+        params: {
+          where: {
+            id_anggota:this.$store.getters.loggedUser.id_anggota
+          }
+        }
+      })
           .then(result => {
             var res = result.data;
             // console.log(res)

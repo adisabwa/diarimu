@@ -10,7 +10,7 @@
       </template>
     </el-input>
     <el-dialog v-model="showModal"
-      :class="['min-w-[250px] max-w-[80%] p-0 py-4 mt-20',
+      :class="['min-w-[250px] max-w-[80%] p-0 py-4 mt-28',
         type == 'scroll' ? 'mt-40' : '',
       ]"
       header-class="flex items-center"
@@ -20,14 +20,12 @@
           class="px-5" size="large"/>
       </template>
       <div v-if="type =='select'"
-        class="max-h-[70vh] overflow-scroll">
+        class="max-h-[65vh] overflow-scroll">
         <div v-for="o in optionsFilter"
           :class="['px-5 py-1 active:bg-teal-100',
             (vModel == o.value ? 'bg-teal-100' : '')
           ]"
-          @click="showModal = false;
-            vModel = o.value;
-            changedValue(o.value)">
+          @click="vModel = o.value;showModal = false;">
           <template v-if="$slots.prefix">
             <slot name="prefix" />
           </template>
@@ -92,26 +90,30 @@ export default {
     },  
   },
   watch:{
-    showModal(val){
-      let vm = this
-      if (val) {
-        setTimeout(() => {
-          vm.jquery('#filterSelect.el-input__inner')[0]?.focus();
-        }, 500)
-        vm.searchData = ''
-        if (vm.isEmpty(vm.vModel))
-          vm.vModel = vm.listOptions[0]?.value
-      }
+    showModal:{
+      immediate: true,
+        async handler(val) {
+        let vm = this
+        vm.changedValue(vm.vModel)
+        if (val) {
+          setTimeout(() => {
+            vm.jquery('#filterSelect.el-input__inner')[0]?.focus();
+          }, 500)
+          vm.searchData = ''
+          if (vm.isEmpty(vm.vModel))
+            vm.vModel = vm.listOptions[0]?.value
+        }
+      },
     },
     vModel(val){
-      console.log('model', val)
+      // console.log('model', val)
       this.selectOption(val)
       this.$emit('update:value', val)
     },
     value: {
       immediate: true,
       async handler(val) {
-        console.log(this.placeholder, val)
+        // console.log(this.placeholder, val)
         this.vModel = val;
       },
     },

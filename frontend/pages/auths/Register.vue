@@ -13,7 +13,7 @@
             <el-divider class="my-4 mx-0"/>
             <div class="flex flex-col mt-6">
               <form-comp ref="formRegistrasi"
-                class="[&_*]:text-center [&_*]:rounded-full"
+                class="[&_*]:text-center"
                 :key="'form-registrasi-'+formKey"
                 :fields="fields" 
                 :id="dataId"
@@ -31,7 +31,7 @@
               ></form-comp>  
               <el-divider class="m-0 mb-5 "/>
               <form-comp ref="formAkun"
-                class="[&_*]:text-center [&_*]:rounded-full"
+                class="[&_*]:text-center"
                 :key="'form-akun-'+formKeyAkun"
                 :fields="fieldsAkun" 
                 :id="dataIdAkun"

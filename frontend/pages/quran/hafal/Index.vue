@@ -1,6 +1,6 @@
 <template>
   <div id="quran" class="pt-[50px]">
-    <div v-if="user.rola != 'user'" 
+    <div v-if="user.role != 'user'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
       <div class="text-sm mb-2">Nama Anggota :</div>
@@ -77,7 +77,7 @@
         </el-button>
       </template>
       <template v-else>
-        <form-comp ref="formBaca"
+        <form-comp ref="formHafal"
           class="[&_.el-form-item\_\_label]:mb-1 mb-2"
           :key="'form-hafal-'+formKey"
           :fields="fields" 
@@ -87,6 +87,7 @@
           href-get="quran/hafal/get"
           :show-columns="['tanggal','surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']"
           @saved="submittedData" 
+          @changed-value="changedValue"
           @error="saving=false"
           size="large"
           :show-submit="false"
@@ -99,7 +100,7 @@
           size="large" type="success"
           class="rounded-xl w-full font-bold py-1 text-[13px]"
           :loading="saving" :disable="saving"
-          @click="$refs.formBaca.submitForm(); saving=false">
+          @click="$refs.formHafal.submitForm(); saving=false">
           Simpan Data
         </el-button>
       </template>
@@ -233,6 +234,15 @@ export default {
       if (this.showData == 'chart') this.$refs.quranChartData.getChart();
       if (this.showData == 'list') this.$refs.quranListData.getData(true);
       this.getInitial();
+    },
+    changedValue({ field, parent, value}){
+      // console.log(field, parent, value)
+      if (field == 'surat_mulai-ayat_mulai') {
+      // console.log(field)
+        let changedField = 'surat_selesai-ayat_selesai'
+        this.$refs.formHafal.changeData(changedField, parent, 'parent')
+        this.$refs.formHafal.changeData(changedField, value)
+      }
     },
   },
   created: function() {
