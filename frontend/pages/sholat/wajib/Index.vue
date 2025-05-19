@@ -205,7 +205,7 @@ export default {
   data: function() {
     return {
       loading: false,
-      editTanggal:true,
+      editTanggal:false,
       dataId:-1,
       idAnggota:null,
       formKey:1,

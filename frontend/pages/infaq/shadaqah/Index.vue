@@ -34,7 +34,7 @@
           bg-teal-700
           text-white
           active:scale-90"
-          @click="showAdd = true;">
+          @click="showAdd = true; dataId = -1">
           <icons icon="mdi:plus" />Tambah Data
         </el-button>
       </div>

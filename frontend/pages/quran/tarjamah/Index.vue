@@ -1,6 +1,6 @@
 <template>
   <div id="quran" class="pt-[50px]">
-    <div v-if="user.rola != 'user'" 
+    <div v-if="user.role != 'user'" 
       class="bg-white/[0.9] rounded-[10px] shadow-md
       mb-3 p-4">
       <div class="text-sm mb-2">Nama Anggota :</div>
@@ -213,8 +213,8 @@ export default {
       if (field == 'surat_mulai-ayat_mulai') {
       console.log(field)
         let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formBaca.changeData(changedField, parent, 'parent')
-        this.$refs.formBaca.changeData(changedField, value)
+        this.$refs.formTarjamah.changeData(changedField, parent, 'parent')
+        this.$refs.formTarjamah.changeData(changedField, value)
       }
     },
     submittedData(){

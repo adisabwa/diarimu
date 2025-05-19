@@ -44,6 +44,12 @@ app.config.globalProperties.defaultRoute = defaultRoute;
 import API from '@/config/api'
 app.config.globalProperties.$http = API
 
+
+import AddToHomescreen from '@owliehq/vue-addtohomescreen';
+app.use(AddToHomescreen, {
+  buttonColor: 'blue',
+});
+
 if ('serviceWorker' in navigator) {
 // Wait until the page is loaded
     window.addEventListener('load', () => {

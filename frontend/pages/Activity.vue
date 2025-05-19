@@ -214,7 +214,9 @@
               bg-cyan-50/[0.8] border border-solid border-cyan-200
               text-cyan-900">
               <div class="leading-[1.5]">
-                <div class="font-bold text-[15px]">Rp.{{ setCurrency(i.jumlah) }}</div>
+                <div class="font-bold text-[15px]"> 
+                  {{ i.tipe == '0' ? 'Tanpa Nominal' : toIDR(i.jumlah) }}
+                </div>
                 <div class="font-semibold text-[11px] opacity-70">{{ i.keterangan }}</div>
               </div>
             </div>

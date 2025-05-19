@@ -61,58 +61,40 @@
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
             <template v-else-if="field.input == 'select' || field.input == 'select-multiple'">
-              <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
-                :class="['w-full',inputClass]"
-                clearable
-                :size="size"
-                @change="changedValue(field.nama_kolom)"
-                :style="{width:field.width_input + ' !important'}"></el-input>
-              <el-select v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
+              <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
+                filterable clearable
                 :class="['w-full',inputClass]" 
-                filterable clearable :multiple="field.input == 'select-multiple'"
-                popper-class="h-auto max-w-[800px]
-                  fixed top-0 left-0
-                  [&_li]:h-auto
-                  [&_li_span]:whitespace-normal
-                  [&_li_span]:block [&_li_span]:leading-[1.6] [&_li_span]:py-2"
                 :size="size"
                 @change="changedValue(field.nama_kolom)"
-                :style="{width:field.width_input + ' !important'}">
-                <template #prefix v-if="!isEmpty(field.prepend)"> {{ field.prepend }}</template>
-                <template 
-                  v-for="item in field.options"
-                  :key="item">
-                  <el-option
-                    :value="item.value"
-                    :label="item.label">
-                  </el-option>
-                </template>
+                :style="{width:(field.width_input.split('-')[1] ?? '') + ' !important'}"  
+                :options="field.options"
+                :prefix="field.prepend">
                 <template v-if="field.allow_add" #footer>
-                  <el-button v-if="!field.isAdding" text size="small" @click="field.isAdding = !field.isAdding">
+                  <el-button v-if="!field.isAdding" text  size="small" @click="field.isAdding = !field.isAdding">
                     Tambah Pilihan
                   </el-button>
-                  <el-dialog v-model="field.isAdding"
-                    :title="'Tambah ' + field.label"
-                    class="p-7"
-                    :close-on-click-modal="false"
-                    width="500px">
-                    <Form 
-                      :fields="field.addFields" 
-                      ref="formAdd"
-                      :key="'from'+field.nama_kolom"
-                      size="default"
-                      :show-label="false"
-                      :href="field.addHref"
-                      :href-get="field.addHrefGet"
-                      @saved="field.isAdding = false; resetOptions(ind, field.addReset);"
-                      :show-required-text="false"
-                      :text-submit="'Konfirmasi'"
-                     />
-                    <el-button size="default" @click="field.isAdding = !field.isAdding"
-                     class="float-left translate-y-[-25px]">Batal</el-button>
-                  </el-dialog>
                 </template>
-              </el-select>
+              </floating-select>
+              <el-dialog v-model="field.isAdding"
+                :title="'Tambah ' + field.label"
+                class="p-7"
+                :close-on-click-modal="false"
+                width="500px">
+                <Form 
+                  :fields="field.addFields" 
+                  ref="formAdd"
+                  :key="'from'+field.nama_kolom"
+                  size="default"
+                  :show-label="false"
+                  :href="field.addHref"
+                  :href-get="field.addHrefGet"
+                  @saved="field.isAdding = false; resetOptions(ind, field.addReset);"
+                  :show-required-text="false"
+                  :text-submit="'Konfirmasi'"
+                  />
+                <el-button size="default" @click="field.isAdding = !field.isAdding"
+                  class="float-left translate-y-[-25px]">Batal</el-button>
+              </el-dialog>
             </template>
             <template v-else-if="field.input.includes('select-double')">
               <floating-select v-model:value="field.parentSelect" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label1}`" 
