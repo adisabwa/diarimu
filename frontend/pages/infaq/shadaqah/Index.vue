@@ -179,7 +179,7 @@
   
   <script>
   import { mapGetters } from 'vuex';
-  import Chart from '@/components/statistics/DataChart.vue'
+  import Chart from '@/pages/components/DataChart.vue'
   import Lazismu from '@/pages/infaq/LazisPage.vue'
   import { topMenu } from '@/helpers/menus.js'
   

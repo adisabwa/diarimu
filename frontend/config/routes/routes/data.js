@@ -12,7 +12,7 @@ let routes = [
       {
         path: 'create',
         name: 'psb-create', 
-        component: () => import('@/pages/psb/Create.vue'),
+        component: () => import('@/pages/compsb/Create.vue'),
         meta: {
           enterFromClass : "translate-x-full opacity-0",
           enterToClass : "opacity-50",

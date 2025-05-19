@@ -144,7 +144,7 @@
 import { mapGetters } from 'vuex';
 import { setStatusText, setStatusType } from '@/helpers/quran'
 import Form from '@/components/Form.vue'
-import Chart from '@/components/statistics/DataChart.vue'
+import Chart from '@/pages/components/DataChart.vue'
 import ListData from './components/ListData.vue'
 import { topMenu } from '@/helpers/menus.js'
 

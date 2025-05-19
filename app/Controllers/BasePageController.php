@@ -66,6 +66,7 @@ class BasePageController extends BaseDataController
             ]
         );
         $_data = [];
+        // var_dump($data);
         foreach ($data as $key => $d) {
             $d->id_anggota = "$d->id_anggota-$d->nama";
             if (empty($_data[$d->id_anggota][$d->tanggal])) {

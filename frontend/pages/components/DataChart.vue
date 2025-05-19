@@ -24,7 +24,7 @@
     </div>
     <div class="mb-4">
       <div v-if="!isEmpty(statistic.datasets)">
-        <line-chart class="h-[300px]"
+        <line-chart chart-class="h-[280px]"
           :add-options="addOptions"
           :statistic="statistic" :max="max" :min="min" />
       </div>

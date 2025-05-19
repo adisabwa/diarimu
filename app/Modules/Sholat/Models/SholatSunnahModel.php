@@ -28,7 +28,7 @@ class SholatSunnahModel extends Model
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        return $this->db->table('mu_sholat_sunnah f')
+        $builder = $this->db->table('mu_sholat_sunnah f')
                     ->select("f.*, s.nama, s.nbm,
                         su.nama_sholat,
                         SUM(f.rakaat) total_rakaat, 

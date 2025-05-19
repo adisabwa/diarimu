@@ -54,7 +54,10 @@ export default {
       immediate:true,
       handler(val){ this.id = val }
     },
-    id(val){ this.$emit('update:idAnggota', val) }
+    id(val){ 
+      console.log(val)
+      this.$emit('update:idAnggota', val)
+     }
   },
 	methods:{
 	},

@@ -129,6 +129,7 @@ export default {
           d.name = pre + ' ' + d.label
         })
         this.listOptions = opt
+        this.selectOption(this.vModel)
       }
     }
   },
@@ -142,6 +143,7 @@ export default {
         return d.value == val
       })[0]
       this.labelModel = filter?.label
+      // console.log('selectOption', this.labelModel)
     }
   }
 

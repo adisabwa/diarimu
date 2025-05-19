@@ -7,6 +7,7 @@ import GetIcon from '@/components/Icon.vue'
 import Loading from '@/components/Loading.vue'
 import File from '@/components/File.vue'
 import Form from '@/components/Form.vue'
+import Star from '@/components/Star.vue'
 import DateWheelPicker from '@/components/form-components/DateWheelPicker.vue'
 import FloatingSelect from '@/components/form-components/FloatingSelect.vue'
 
@@ -17,6 +18,7 @@ export default {
     app.component('icons', GetIcon)
     app.component('loading', Loading)
     app.component('file', File)
+    app.component('star', Star)
     app.component('date-wheel-picker', DateWheelPicker)
     app.component('floating-select', FloatingSelect)
     app.component('form-comp', Form)

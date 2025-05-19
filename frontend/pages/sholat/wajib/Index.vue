@@ -116,7 +116,7 @@
         <template v-for="(data, ind) in {last:lastData, best:bestData}">
           <div class="shrink-1 text-center py-4 px-4
             border-2 border-solid border-indigo-200
-            bg-sky-100/[0.4]
+            bg-purple-100/[0.4]
             rounded-[20px]">
             <div class="text-gray-500 font-bold w-[100px] text-[14px]
               mb-4">Nilai {{ ind == 'best' ? 'Terbaik' : 'Terakhir' }}</div>
@@ -156,16 +156,51 @@
       <chart ref="wajibChartData" 
         href="sholat/wajib/dashboard"
          :id-anggota="idAnggota"
+        :add-options="{
+          scales:{
+            y:{
+              title:{display:true, text:'Total Score'},
+              ticks: {stepSize:50}
+            }}}"
            v-if="showData == 'chart'" 
         class="px-4"/>
       <ListData ref="wajibListData"
+        class="[--text-color:theme(colors.purple.900)]
+          [--bg-color:theme(colors.purple.50)]
+          [--border-color:theme(colors.purple.400)]"
         :id-anggota="idAnggota"
-        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
+        href="sholat/wajib"
         v-if="showData =='list'"
         @edit-data="(({id}) => {
           dataId = id
           showCreate = true
-        })"/>
+        })">
+        <template #title="{ data }">
+          {{ dateDayIndo(data.tanggal)}}
+        </template>
+        <template #content="{ data }">
+          <div class="flex items-center"
+            @click="data.show_detail = !data.show_detail">
+            <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
+            <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
+            Sholat Wajib {{ (
+              (data.shubuh > 0 ? 2 : 0) + (data.dhuhur > 0 ? 4 : 0) + (data.asar > 0 ? 4 : 0) + (data.maghrib > 0 ? 3 : 0) + (data.isya > 0 ? 4 : 0) 
+            ) }} Raka'at
+          </div>
+          <ol v-show="data.show_detail"
+            class="pl-[30px] italic mt-0 mb-1">
+            <li v-for="ind in ['shubuh','dhuhur','asar','maghrib','isya']"
+              class="pl-1">
+              Sholat {{ ucFirst(ind) }} ( {{ getLabel(data[ind]) }} ) 
+              <template v-if="data[ind] >= 25">
+                <star :id="'3star'+ind+'data'" :class="['scale-100', data[ind] == 100 ? '' : 'grayscale']" width="10px"/>
+                <star :id="'3star'+ind+'data'" :class="['scale-100', data[ind] >= 75 ? '' : 'grayscale']" width="10px"/>
+                <star :id="'3star'+ind+'data'" :class="['scale-100', data[ind] >= 50 ? '' : 'grayscale']" width="10px"/>
+              </template>
+            </li>
+          </ol>
+        </template>
+      </ListData>
     </el-card>
   </div>
 </template>
@@ -176,21 +211,17 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import Form from '@/components/Form.vue'
-import Chart from '@/components/statistics/DataChart.vue'
+import Chart from '@/pages/components/DataChart.vue'
 import { topMenu } from '@/helpers/menus.js'
-import Star from '../components/Star.vue'
-import { getGlobalThis } from '@vue/shared';
 import FilterAnggota from '../../components/FilterAnggota.vue';
-import ListData from './components/ListData.vue';
+import ListData from '@/pages/components/ListData.vue';
+import { set } from 'lodash';
 
 export default {
   name: "sholat",
   components: {
-    'form-comp' : Form,
     Chart,
     ListData,
-    Star,
     FilterAnggota,
   },
   data: function() {
@@ -241,7 +272,7 @@ export default {
       },
       sizeWindow:window.innerWidth,
       sholat: topMenu.sholatWajib,
-      showData:'list',
+      showData:'chart',
     };
   },
   watch: {
@@ -489,7 +520,9 @@ export default {
       this.setTanggalInitial()
       this.setDataInitial()
       this.getLast()
-      this.updateChart();
+      setTimeout(() => {
+        this.updateChart();
+      }, 400);
       // this.formKey++
     },
     updateChart(){
