@@ -48,16 +48,18 @@ routes.beforeEach(async (to, from, next) => {
 
   store.dispatch('changePageTitle', pageTitle)
   store.dispatch('changePageSubTitle', pageSubTitle)
-
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  
+   // If login, dont enter login and default=
+  if (loggedUser.role != '' && ['login','default'].includes(to.name)) {
+    next({name:'dashboard'})
+  } else if (to.matched.some(record => record.meta.requiresAuth)) {
     if (loggedUser.role == '') {
       // window.alert('Silahkan login terlebih dahulu')
       next({
         name: 'login',
         query: { nextUrl: to.fullPath }
       })
-    } else {
-      if (to.meta.allowedRoles) {
+    } else { if (to.meta.allowedRoles) {
         // console.log(to.meta.app, loggedUser.app);
         if (!loggedUser.role.includes(to.meta.allowedRoles)) {
           let name = 'unauthorized'

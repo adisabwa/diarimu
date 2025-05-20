@@ -6,17 +6,18 @@
 		:infinite-scroll-disabled="disabledScroll"
 		infinite-scroll-delay="1000"
 		infinite-scroll-distance="10">
-		<template v-for="(s, key) in datas">
-			<div v-if="s.tanggal.slice(0, 7) != datas[key - 1]?.tanggal?.slice(0,7)" 
+		<template v-for="(s, key) in listData">
+			<div v-if="s?.tanggal?.slice(0, 7) != listData[key - 1]?.tanggal?.slice(0,7)" 
         class="bg-slate-100
         text-slate-400 text-[15px]
         p-2 py-1 mb-3">{{ monthIndo(s.tanggal) }}</div>
-      <div class="h-fit px-5 py-3 mb-3
+      <div :class="[`h-fit px-5 py-3 mb-3
         rounded-[15px]
         bg-[var(--bg-color)] border border-solid border-[var(--border-color)]
         text-[var(--text-color)]
         flex items-center justify-between
-        relative overflow-hidden"
+        relative overflow-hidden`,
+        boxClass]"
 				draggable="true"
 				@click="(event) => editData(event, key)"
 				v-click-outside="() => addClass('#listData'+key, 'translate-x-[125px]')">
@@ -67,7 +68,7 @@
 
 export default {
   name: "ListData",
-	emits:['editData'],
+	emits:['editData','deleteData'],
   props:{
     idAnggota:{
       type:[String, Number],
@@ -81,14 +82,16 @@ export default {
       type:[String, Number],
       default:'',
     },
-    groupBy:{type:Array, default:[]}
+    boxClass:{type:String,default:''},
+    groupBy:{type:Array, default:[]},
+    datas:{type:[Array, Object], default:[]}
   },
   computed: {
     
   },
   data: function() {
     return {
-			datas:[],
+			listData:[],
 			loadingScroll:true,
 			noMoreScrolling:false,
 			limit:5,
@@ -116,12 +119,19 @@ export default {
 	methods:{
     getData(reset = true){
       // console.log(this.href, reset, this.idAnggota)
+      console.log(this.datas)
+      if (!this.isEmpty(this.datas)) {
+        this.listData = this.datas
+        this.noMoreScrolling = true
+        this.loadingScroll = false
+        return;
+      }
       this.loadingScroll = true
       if (reset) {
         this.offset = 0
         this.limit = 5
         this.noMoreScrolling = false
-        this.datas = []
+        this.listData = []
       }
       this.$http.get(this.href, {
           params: {
@@ -135,8 +145,8 @@ export default {
           }
         }).then(result => {
           var res = result.data;
-          this.datas = [...this.datas, ...res]
-          // console.log(this.datas)
+          this.listData = [...this.listData, ...res]
+          // console.log(this.listData)
           this.showName = this.idAnggota.split(',').length > 1
           this.loadingScroll = false
           // console.log('no-more', res.length < this.limit)
@@ -156,7 +166,7 @@ export default {
           //     this.getData(false); // Load more if not scrollable
           //   }
           // });
-          // // console.log(this.datas)
+          // // console.log(this.listData)
         });
     },
     loadingData(){
@@ -179,10 +189,12 @@ export default {
         id:id,
       }).then( res => {
         this.getData(true);
+        this.$emit('deleteData', id)
       })
     }
 	},
 	mounted(){
+    this.getData(true)
 	}
 }
 </script>

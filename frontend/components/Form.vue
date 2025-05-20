@@ -477,7 +477,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err)
+          // console.log(err)
           this.saving = false;
           var res = err.response;
           var code = res.status;
@@ -529,15 +529,15 @@ export default {
         })
         .catch(err => {
           this.saving = false;
-          console.log(err)
+          // console.log(err)
           var res = err.response;
           var code = res.status;
           this.$emit('error', false);
           
           if (code == '400') {
             // Populating error message
-            // console.log(res.data.messages, this.errors)
-            this.fillObjectValue(this.errors, res.data.messages);
+            this.fillAndAddObjectValue(this.errors, res.data.messages);
+            console.log(res.data.messages, this.errors)
             if (this.showNotification)
               this.$notify.error({
                 title: 'Gagal',
@@ -563,8 +563,8 @@ export default {
       fieldsData.forEach(d => {
         if (d.from_user == '1' || d.from_user == undefined) {
           vm.fieldsData[d.nama_kolom] = d
-          vm.form[d.nama_kolom] = d.input == 'array' ? [['']] : vm.coalesce([d.default,''])
-          vm.errors[d.nama_kolom] = d.input == 'array' ? [['']] : ''
+          vm.form[d.nama_kolom] = d.input == 'array' ? [] : vm.coalesce([d.default,''])
+          vm.errors[d.nama_kolom] = d.input == 'array' ? [] : ''
           vm.original[d.nama_kolom] = false
           if (d.input == 'file') {
             // delete vm.form[d.nama_kolom]

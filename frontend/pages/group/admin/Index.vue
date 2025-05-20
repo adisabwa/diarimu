@@ -24,38 +24,60 @@
           Data Kelompok
         </div>
       </template>
-      <div class="px-4">
-        <div v-for="data in datas"
-          class="relative py-3 px-5 pb-3 bg-white/[0.9] rounded-[15px] mb-3
-          border border-solid border-teal-700/[0.5]
-          flex gap-x-2
-          text-[15px]">
-          <div class="w-full">
-            <div class="font-bold">Kel. {{ data.nama_group }}</div>
-            <el-divider class="my-1
-              border-0 border-b border-solid border-teal-700/[0.5]"/>
-            <div class="text-[13px] font-semibold
-              flex items-center"
-              @click="data.show = !data.show">
-              <icons :icon="data.show ? 'fe:arrow-down' : 'fe:arrow-up'" 
-                class="text-[13px]"/>
-              Mentor : {{ data.anggota[0].nama }}</div>
-            <ol v-if="data.show" class="text-[12px] pl-8 m-0">
-              <template v-for="(i, key) in data.anggota">
-                <li class="pl-1"
-                  v-if="key > 0">{{ i.nama }}</li>
+      
+      <ListData ref="listGroup"
+        class="[--text-color:theme(colors.teal.900)]
+          [--bg-color:theme(colors.teal.50)]
+          [--border-color:theme(colors.teal.400)]
+          [--bg-button-color:theme(colors.teal.100)]
+          [--button-color:theme(colors.teal.200)]
+          font-sans max-h-screen
+        "
+        :datas="datas"
+        hrefDelete="data/group/delete"
+        box-class="px-2 mb-4"
+        @edit-data="(({id}) => {
+          dataId = id
+          showAdd = true
+        })"
+        @delete-data="submittedData">
+        <template #title="{ data }">
+          <div class="text-[16px] mb-1">
+            Kel. {{ data.nama_group }}
+          </div>
+          <el-divider class="m-0"/>
+        </template>
+        <template #content="{ data }">
+          <div class="text-[13px] font-semibold
+            flex items-center justify-between
+            py-1 pb-2
+            "
+            @click="data.show = !data.show">
+            <div>
+              Daftar Anggota <br/>
+              <span class="italic"> ( {{data.anggota.filter(r => r.type == 'mentor').length }} Mentor & 
+              {{ data.anggota.filter(r => r.type == 'anggota').length }} Anggota )</span>
+            </div>
+            <icons :icon="data.show ? 'fe:arrow-down' : 'fe:arrow-up'" 
+              class="ml-1 text-[12px]"/>
+          </div>
+          <div :class="['animate bg-white px-2  overflow-hidden',
+            data.show ? 'max-h-screen pt-1 pb-2' : 'max-h-0 p-0']">
+            <div class="italic">Mentor :</div>
+            <ol class="text-[12px] italic pl-4 m-0">
+              <template v-for="(i, key) in data.anggota.filter(r => r.type == 'mentor')">
+                <li class="pl-1">{{ i.nama }}</li>
+              </template>
+            </ol>
+            <div class="mt-1 italic">Anggota :</div>
+            <ol class="text-[12px] italic pl-4 m-0">
+              <template v-for="(i, key) in data.anggota.filter(r => r.type == 'anggota')">
+                <li class="pl-1">{{ i.nama }}</li>
               </template>
             </ol>
           </div>
-          <icons icon="mdi:edit-circle"
-            class="m-0 text-[40px] mt-[5px]
-              active:scale-75 cursor-pointer
-              text-teal-700/[0.8]"
-            @click="showAdd = true;
-              dataId = data.id;
-              formKey = formKey + 1"/>
-        </div>
-      </div>
+        </template>
+      </ListData>
     </el-card>
     
     <el-dialog v-model="showAdd" draggable
@@ -75,11 +97,58 @@
         href="data/group/store"
         href-get="data/group/get"
         @saved="submittedData" 
+        :pass-columns="['mu_group_anggota']"
         @error="saving=false"
         size="large"
         :show-submit="false"
         label-position="top"
         :show-required-text="false">
+        <template #default="{ form, errors, fields }">
+          <template v-for="tipe in ['mentor', 'anggota']">
+            <el-form-item
+              :label="`Nama ${ucFirst(tipe)}`"
+              :prop="`mu_group_anggota.${tipe}`">
+              <floating-select
+                class="w-full"
+                v-model="form[tipe]"
+                :options="fields['mu_group_anggota']?.fields?.id_anggota?.options"
+                :placeholder="`Pilih ${ucFirst(tipe)}`"
+                :clearable="true"
+                :filterable="true"
+                :multiple="true"
+                @change="(ids) => {
+                  form['mu_group_anggota'] = form['mu_group_anggota']?.filter(i => i?.type == undefined || i.type != tipe)                
+                  if (Array.isArray(ids) == false) {
+                    return
+                  }
+                  ids.forEach((id) => {
+                    let index = form['mu_group_anggota'].findIndex(i => i.id_anggota == id)
+                    if (index > 0) {
+                      form['mu_group_anggota'][index].type = tipe
+                    } else {
+                      form['mu_group_anggota'].push({
+                        id_anggota: id,
+                        type: tipe,
+                      })
+                    }
+                  })
+                }"/>
+              <ol class="text-[14px] italic pl-6 m-0 leading-[1.5] mt-1">
+                <template v-for="(i, key) in form['mu_group_anggota']">
+                  <li v-if="i?.type == tipe">
+                    <div>
+                      {{ runFunction(null, i?.id_anggota, fields['mu_group_anggota']?.fields?.id_anggota?.options) }}
+                    </div>
+                    <div v-if="errors['mu_group_anggota']?.[key]?.id_anggota"
+                      class="text-red-500 text-[12px]">
+                      {{ errors['mu_group_anggota']?.[key]?.id_anggota }}
+                    </div>
+                  </li>
+                </template>
+              </ol>
+            </el-form-item>
+          </template>
+        </template>
       </form-comp>  
       <template #footer>
         <div class="dialog-footer">
@@ -95,12 +164,14 @@
 </template>
 
 <script>
-import Form from '@/components/Form.vue'
+import ListData from '@/pages/components/ListData.vue';
+import { error } from 'jquery';
+import { isEmpty } from 'lodash';
 
 export default {
   name:'group-admin',
   components:{
-    'form-comp': Form,
+    ListData,
   },
   data: () => {
     return {
@@ -120,6 +191,9 @@ export default {
             var res = result.data;
             this.datas = res
             this.loading = false
+            this.$nextTick(() => {
+              this.$refs.listGroup.getData(true)
+            });
           });
     },
     getInitial: async function() {
@@ -138,11 +212,14 @@ export default {
     submittedData(){
       this.saving = false
       this.showAdd = false
+      this.getData()
     },
   },
   created: function() {
     this.getData()
     this.getInitial()
   },
+  mounted(){
+  }
 }
 </script>

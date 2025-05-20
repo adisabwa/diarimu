@@ -70,7 +70,7 @@ let listFunction = {
     setObjectValueByPath(obj, path, value) {
       const keys = path.split('.'); // Split the path into individual keys
       let current = obj;
-    
+      // console.log('setObjectValueByPath', keys, value)
       // Iterate over the keys to find the target location
       keys.forEach((key, index) => {
         // console.log(current, keys, key)
