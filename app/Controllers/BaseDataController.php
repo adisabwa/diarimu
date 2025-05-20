@@ -30,16 +30,21 @@ class BaseDataController extends BaseController
         $order = implode(",", $order);
 
         $data = $this->model->builder()
-                            ->where($where)
-                            ->whereIn($whereIn)
-                            ->groupStart()
-                                ->orWhere($or)
-                            ->groupEnd()
-                            ->orderBy($order)
-                            ->limit($limit, $offset)
-                            ->get()
-                            ->getResult();
-        var_dump($this->model->getLastQuery());exit;
+                            ->where($where);
+        
+        foreach ($in as $key => $value) {
+            $data->whereIn($key, $value);
+        }
+
+        $data->groupStart()
+                    ->orWhere($or)
+                    ->groupEnd()
+                    ->orderBy($order)
+                    ->limit($limit, $offset)
+                    ->get()
+                    ->getResult();
+
+        // var_dump($this->model->getLastQuery());exit;
         foreach ($data as $key => $d) {
             $d->checked = false;
         }

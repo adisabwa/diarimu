@@ -1,5 +1,4 @@
 <template>
-  
 	<div 
     ref="scrollContainer"
 		v-infinite-scroll="loadingData"
