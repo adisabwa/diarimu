@@ -48,6 +48,7 @@ class Autoload extends AutoloadConfig
         'Modules\Infaq'      => APPPATH . 'Modules/Infaq',
         'Modules\Sholat'      => APPPATH . 'Modules/Sholat',
         'Modules\Kajian'      => APPPATH . 'Modules/Kajian',
+        'Modules\Persyarikatan'      => APPPATH . 'Modules/Persyarikatan',
     ];
 
     /**

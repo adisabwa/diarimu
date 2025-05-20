@@ -56,6 +56,15 @@ let topMenu = {
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/infaq.png',
   },
+  group: {
+    url:'group',
+    label:"Data Kelompok",
+    route:'group-admin',
+    color:'bg-orange-200',
+    shadowColor:'shadow-orange-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/group.png',
+  },
   kajian: {
     url:'kajian',
     label:"Kajian / Halaqah",
@@ -64,6 +73,15 @@ let topMenu = {
     shadowColor:'shadow-cyan-600',
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/mimbar.png',
+  },
+  persyarikatan: {
+    url:'persyarikatan',
+    label:"Kegiatan Persyarikatan",
+    route:'persyarikatan',
+    color:'bg-indigo-200',
+    shadowColor:'shadow-indigo-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/meeting.png',
   },
 }
 

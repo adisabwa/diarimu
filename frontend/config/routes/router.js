@@ -8,6 +8,7 @@ import authRoute from './routes/auth'
 import infaqRoute from './routes/infaq'
 import defaultRoute from './routes/default'
 import sholatRoute from './routes/sholat'
+import persyarikatanRoute from './routes/persyarikatan'
 import kajianRoute from './routes/kajian'
 // Vue router
 const routes = new createRouter({
@@ -19,6 +20,7 @@ const routes = new createRouter({
     ...authRoute,
     ...quranRoute,
     ...kajianRoute,
+    ...persyarikatanRoute,
     ...sholatRoute,
 	],
   scrollBehavior: function(to, from, savedPosition) {

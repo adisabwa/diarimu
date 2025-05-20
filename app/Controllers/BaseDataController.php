@@ -36,14 +36,14 @@ class BaseDataController extends BaseController
             $data->whereIn($key, $value);
         }
 
-        $data->groupStart()
+        $data = $data->groupStart()
                     ->orWhere($or)
                     ->groupEnd()
                     ->orderBy($order)
                     ->limit($limit, $offset)
                     ->get()
                     ->getResult();
-
+        // var_dump($data);
         // var_dump($this->model->getLastQuery());exit;
         foreach ($data as $key => $d) {
             $d->checked = false;

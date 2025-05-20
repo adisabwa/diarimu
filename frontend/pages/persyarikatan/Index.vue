@@ -1,17 +1,17 @@
 <template>
-  <div id="kajian" class="pt-[50px] translate-y-[-10px] px-0">
+  <div id="persyarikatan" class="pt-[50px] translate-y-[-10px] px-0">
     <FilterAnggota v-if="user.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="submittedData"/>
     <el-card class="relative overflow-hidden
-        bg-gradient-to-tr from-white/[0.8] from-40% to-cyan-200/[0.7] rounded-[10px]
+        bg-gradient-to-tr from-white/[0.8] from-40% to-indigo-200/[0.7] rounded-[10px]
       z-[0]
         font-montserrat
       mb-3 p-0" 
       header-class="px-6 pt-6 pb-2 text-[15px] font-montserrat font-bold text-center"
       body-class="py-4 px-0">
       <template #header>
-        <span>List Kajian / Halaqah</span>
-        <img :src="kajian.image" height="90px" width="90px"
+        <span>Kegiatan Persyarikatan</span>
+        <img :src="persyarikatan.image" height="90px" width="90px"
             class="absolute z-[-1] top-[-10px] right-[-15px]
               opacity-[0.5]"/>
       </template>
@@ -20,7 +20,7 @@
         <el-button class="rounded-full w-full
           font-montserrat
           mb-4
-          bg-cyan-700
+          bg-indigo-700
           text-white
           active:scale-90"
           @click="showAdd = true; dataId = -1;
@@ -29,17 +29,17 @@
         </el-button>
       </div>
       
-      <ListData ref="kajianListData"
-        class="[--text-color:theme(colors.cyan.900)]
-          [--bg-color:theme(colors.cyan.50)]
-          [--border-color:theme(colors.cyan.400)]
-          [--bg-button-color:theme(colors.cyan.100)]
-          [--button-color:theme(colors.cyan.200)]
+      <ListData ref="persyarikatanListData"
+        class="[--text-color:theme(colors.indigo.900)]
+          [--bg-color:theme(colors.indigo.50)]
+          [--border-color:theme(colors.indigo.400)]
+          [--bg-button-color:theme(colors.indigo.100)]
+          [--button-color:theme(colors.indigo.200)]
           max-h-[70vh]
         "
         :id-anggota="idAnggota"
-        href="kajian"
-        href-delete="kajian/delete"
+        href="persyarikatan"
+        href-delete="persyarikatan/delete"
         @edit-data="(({id}) => {
           dataId = id
           showAdd = true
@@ -49,7 +49,7 @@
         </template>
         <template #title="{ data }">
           <div class="text-[16px] ">
-            {{ ucFirst(data.tipe) }} : {{ data.judul }}
+            {{ ucFirst(data.kegiatan) }}
           </div>
           <div class="text-[13px]">
             {{ ucFirst(data.lokasi) }}
@@ -57,10 +57,10 @@
         </template>
         <template #content="{ data }">
           <div class="text-[12px]">
-            Pengisi : {{ ucFirst(data.pengisi) }}
+            Diselenggarakan oleh {{ ucFirst(data.penyelenggara) }}
           </div>
           <div class="text-[12px]">
-            Materi : {{ ucFirst(data.materi) }}
+            Materi : {{ ucFirst(data.isi) }}
           </div>
         </template>
       </ListData>
@@ -68,7 +68,7 @@
     <el-dialog v-model="showAdd" draggable
       :append-to-body="true"
       class="w-fit max-w-[90%] py-3
-        bg-gradient-to-tr from-white from-50% to-cyan-100"
+        bg-gradient-to-tr from-white from-50% to-indigo-100"
       header-class="font-bold text-[16px]"
       body-class="">
       <template #header>
@@ -80,10 +80,10 @@
         :fields="fields" 
         v-model:id="dataId"
         v-model:form-value="formValue" 
-        href="kajian/store"
-        href-get="kajian/get"
+        href="persyarikatan/store"
+        href-get="persyarikatan/get"
         :pass-columns="['id_anggota']"
-        @saved="submittedData" 
+        @saved="submittedData();updateChart();" 
         @error="saving=false"
         size="large"
         :show-submit="false"
@@ -94,7 +94,7 @@
         <div class="dialog-footer">
           <el-button @click="showAdd = false">Batal</el-button>
           <el-button type="primary" @click="$refs.formKajian.submitForm()"
-            class="bg-cyan-700">
+            class="bg-indigo-700">
             Simpan
           </el-button>
         </div>
@@ -104,8 +104,8 @@
       body-class="py-3 px-5"
       header="Statistik Sadaqah"
       header-class="py-3 font-bold text-[18px] text-center" >
-    <chart ref="kajianChartData" 
-      href="kajian/dashboard"
+    <chart ref="persyarikatanChartData" 
+      href="persyarikatan/dashboard"
       :add-options="{
         scales: {
           y: {
@@ -123,7 +123,7 @@
         },
       }"
       :id-anggota="idAnggota"
-        :key="'kajianChartData'+formKey">
+        :key="'persyarikatanChartData'+formKey">
       </chart>
     </el-card>
   </div>
@@ -137,7 +137,7 @@
   import { topMenu } from '@/helpers/menus.js'
   
   export default {
-    name: "kajian",
+    name: "persyarikatan",
     components: {
       Chart,
       ListData,
@@ -166,7 +166,7 @@
         showCreate:false,
         success:false,
         saving:false,
-        kajian: topMenu.kajian,
+        persyarikatan: topMenu.persyarikatan,
       };
     },
     watch: {
@@ -190,13 +190,13 @@
       getInitial: async function() {
         let vm = this
         this.loading = true;
-        // await this.$http.get('/kajian/get_last')
+        // await this.$http.get('/persyarikatan/get_last')
         //   .then(result => {
         //     var res = result.data;
         //     this.lastData = this.fillAndAddObjectValue(this.lastData, res)
         //   });
         
-        await this.$http.get('/kolom/preparation?table=mu_kajian&grouping=0&input=0')
+        await this.$http.get('/kolom/preparation?table=mu_kegiatan_persyarikatan&grouping=0&input=0')
           .then(result => {
             var res = result.data;
             this.dataId = -1
@@ -219,8 +219,8 @@
       },
       updateChart(){
         console.log('chart')
-        this.$refs.kajianListData?.getData?.(true)
-        this.$refs.kajianChartData?.getChart?.()
+        this.$refs.persyarikatanListData?.getData?.(true)
+        this.$refs.persyarikatanChartData?.getChart?.()
 
       }
     },

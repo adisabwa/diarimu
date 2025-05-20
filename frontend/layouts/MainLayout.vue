@@ -121,14 +121,14 @@ export default {
           route:'group-admin',
           function:'',
           icon:'mingcute:group-3-fill',
-          label:'Group',
+          label:'Kelompok',
           role:['admin','super-admin'],
         },
         'group-user':{
           route:'group-user',
           function:'',
           icon:'mingcute:group-3-fill',
-          label:'Group',
+          label:'Kelompok',
           role:['mentor','user']
         },
         account:{

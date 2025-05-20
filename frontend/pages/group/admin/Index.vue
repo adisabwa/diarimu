@@ -21,7 +21,7 @@
               getInitial()">
             <icons icon="mdi:plus" class="m-0"/>
           </el-button>
-          Data Group
+          Data Kelompok
         </div>
       </template>
       <div class="px-4">

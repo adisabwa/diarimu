@@ -128,7 +128,7 @@
                 class="p-7"
                 :close-on-click-modal="false"
                 width="500px">
-                <Form 
+                <form-comp 
                   :fields="field.addFields" 
                   ref="formAdd"
                   :key="'from'+field.nama_kolom"
@@ -212,7 +212,7 @@
                 <div v-for="(recData, ind) in form[field.nama_kolom]"
                   class="flex flex-col gap-y-0"
                   :style="{width:field.width_input + ' !important'}">
-                  <Form ref="formItem"
+                  <form-comp ref="formItem"
                     class="mb-0"
                     :key="'form-item-'+ ind"
                     :fields="field.fields"
@@ -226,7 +226,7 @@
                     form-item-class="w-full m-0"
                     input-class="[&_*]:rounded-[15px]"
                     :show-required-text="false">
-                  </Form>  
+                  </form-comp>  
                   <div class="ml-3 mt-1 mb-2 flex items-baseline">
                     <el-button text class="text-sky-500
                       p-0 h-auto text-[12px]"
@@ -391,9 +391,9 @@ export default {
     },
     dataId: function(val, oldVal) {
       this.$emit('update:id', val);
-      if (val > 0) {
+      // if (val > 0) {
         this.getData({id:val})
-      }
+      // }
     },
     form: {
       handler(newVal, oldVal) {
@@ -403,7 +403,7 @@ export default {
     },
     formValue: {
       handler(newVal, oldVal) {
-        // console.log(newVal)
+        console.log('form-value', newVal)
       },
       deep: false, // Watch nested properties
     },
@@ -447,6 +447,7 @@ export default {
       }   
     },
     getData(where, changeId){
+      this.settingFields();
       if (this.hrefGet == '') return
       this.saving = true
       this.$http.get(this.hrefGet,
@@ -456,8 +457,6 @@ export default {
       )
         .then(result => {
           this.saving = false;
-          // this.resetObjectValue(this.form)
-          // this.resetObjectValue(this.links)
           var psb = result.data;
           if (!this.isEmpty(psb)) {
             this.fillObjectValue(this.form, psb)
@@ -474,6 +473,7 @@ export default {
                 this.fields[d.nama_kolom].parentSelect = psb.parentSelect[d.nama_kolom]
               }
             })
+            // console.log(this.fields)
           }
         })
         .catch(err => {
@@ -556,6 +556,7 @@ export default {
         });
     },
     settingFields(){
+      console.log('setting')
       let vm = this
       let fieldsData = Object.values(this.fields)
       vm.form, vm.errors, vm.links, vm.original = {}
@@ -571,7 +572,7 @@ export default {
           }
         }
       })
-      // console.log('form isi', vm.form, vm.errors)
+      console.log('form isi', vm.fieldsData)
       vm.fillObjectValue(vm.form, vm.formValue)
       setTimeout(() => {
         vm.fillObjectValue(vm.form, vm.formValue)
@@ -580,7 +581,7 @@ export default {
   },
   mounted(){
     // console.log('mounted')
-    this.settingFields();
+    // this.settingFields();
     this.getData({id:this.dataId});
   }
 }

@@ -451,8 +451,7 @@ export default {
       } )
         .then(result => {
           // this.getData()
-          if (this.showData == 'chart') this.$refs.sunnahChartData?.getChart();
-          if (this.showData == 'list') this.$refs.sunnahListData?.getData(true);
+          this.updateChart()
         })
         .catch(err => {
           
@@ -558,8 +557,8 @@ export default {
       setTimeout(this.updateChart(), 500);
     },
     updateChart(){
-      if (this.showData == 'chart') this.$refs.sunnahChartData.getChart();
-      if (this.showData == 'list') this.$refs.sunnahListData.getData(true);
+      if (this.showData == 'chart') this.$refs.sunnahChartData?.getChart();
+      if (this.showData == 'list') this.$refs.sunnahListData?.getData(true);
     }
   },
   created: function() {
@@ -574,12 +573,7 @@ export default {
 
   mounted: function() {
     let vm = this
-    vm.sizeWindow = window.innerWidth
-
-    window.addEventListener('resize', () => {
-      vm.sizeWindow = window.innerWidth
-    });
-
+    this.updateChart()
     let scrollTimeout;
     jquery('#header-scroll').on('scroll', () => {      
       const scrollLeft = jquery('#header-scroll')[0].scrollLeft;
