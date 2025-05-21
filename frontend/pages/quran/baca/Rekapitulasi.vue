@@ -1,9 +1,9 @@
 <template>
     <div id="iqab" class="py-16">
       <el-card class="bg-white/[0.8] relative">
-				<div class="flex flex-col md:flex-row
+				<div class="flex flex-col sm:flex-row
           justify-start gap-2
-          md:items-center align-middle px-3">
+          sm:items-center align-middle px-3">
 					<div class="w-[180px] shrink-0">Nama Santri</div>
 					<el-select v-model="filter.santri" placeholder="Pilih Santri" class="w-full"
 						filterable clearable size="large" @change="getData">
@@ -24,7 +24,7 @@
 						:keyword="inputKeyword"
             :label-position="labelPosition"
 						class="mt-6 px-4
-              flex flex-col md:flex-row
+              flex flex-col sm:flex-row
               items-center
               gap-7 [&>*]:flex-0" 
 						label-width="180px"
@@ -37,7 +37,7 @@
               <!-- <div class="h-full w-1/2 flex-1 bg-contain bg-center bg-no-repeat"
                 :style="{ backgroundImage:`url('${form.foto}')` }"></div> -->
               <div 
-                class="w-[180px] h-[240px] text-center shrink-0 order-first md:order-last
+                class="w-[180px] h-[240px] text-center shrink-0 order-first sm:order-last
                   border-3 box-border border-solid border-teal-800 overflow-hidden">
                 <img v-if="!isEmpty(form.foto)" :src="form.foto" class="h-full object-cover
                   " />

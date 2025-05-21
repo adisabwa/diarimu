@@ -30,6 +30,7 @@
 					@saved="saving = false; showEdit = false;
             $store.dispatch('resetAccount')"  
 					@error="saving=false"
+          :pass-columns="['password','passwordconf','role']"
 					size="large"
 					submit-text="Simpan Data"
 					label-position="top"
@@ -44,7 +45,7 @@
 						label-position="top"
             v-model:form-value="viewValue"
 						label-width="80px"
-            :pass-columns="['photo']"
+            :pass-columns="['photo','password','passwordconf','role']"
 						href-get="/data/anggota/get_where"
 						:keyword="dataId"
 						:search-columns="['id']"
@@ -70,6 +71,7 @@
 import { mapGetters } from 'vuex';
 import ViewTable from '../../components/ViewTable.vue';
 import Form from '../../components/Form.vue';
+import { unset } from 'lodash';
 
 export default {
 	name: 'account-page',
@@ -83,20 +85,6 @@ export default {
 			showEdit: false,
 			showColumns:[],
 			fields:{},
-      fieldsAkun:{
-        id_anggota:{
-          nama_kolom:'id_anggota',default:'',
-        },
-        role:{
-          nama_kolom:'role',default:'user',
-        },
-        password:{
-          nama_kolom:'password',input:'password',label:'Password Baru'
-        },
-        passwordconf:{
-          nama_kolom:'passwordconf',input:'password',label:'Konfirmasi Password'
-        }
-      },
 			empty:false,
 			loading:false,
 			dataId:-1,
@@ -115,6 +103,8 @@ export default {
 			this.$http.get('/kolom/preparation?table=mu_anggota&grouping=0&input=0')
         .then(result => {
           var res = result.data;
+          delete res.password
+          delete res.passwordconf
           this.fields = res
           this.formKey++
           this.saving = false

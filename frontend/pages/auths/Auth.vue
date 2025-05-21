@@ -1,7 +1,7 @@
 <template>
-  <div id="auth" class="max-w-[1100px] mx-6 md:mx-auto bg-white bg-opacity-[0.9]
+  <div id="auth" class="max-w-[1100px] mx-6 sm:mx-auto bg-white bg-opacity-[0.9]
     border-solid border border-gray-300">
-    <div class="h-full md:px-10 pb-12">
+    <div class="h-full sm:px-10 pb-12">
       <div class="flex flex-col items-center align-middle">
         <div class="p-5 pt-36 
           text-center">
@@ -28,7 +28,7 @@
               placeholder="Nomor HP / Email"
               @keypress.enter.native="onEnter">
               <template #prefix>
-                <icons icon="line-md:phone" />
+                <icons icon="mdi:phone" />
               </template>
             </el-input>
             <el-input 
@@ -44,7 +44,7 @@
               </template>
             </el-input>    
             <el-checkbox v-model="saveAuth"
-              class="h-fit p-1 hidden md:flex">Ingat Saya</el-checkbox>     
+              class="h-fit p-1 hidden sm:flex">Ingat Saya</el-checkbox>     
             <el-button 
               type="primary" 
               size="large" 

@@ -5,52 +5,54 @@
       :size="size"
       @clear="clearData"
       @click="showModal = true"
-      input-style="color: lightgray;">
+      :input-style="{color: multiple ? 'lightgray' : 'black'}">
       <template #prepend v-if="prefix">
         {{ prefix }}
       </template>
     </el-input>
-    <el-dialog v-model="showModal"
-      :class="['min-w-[250px] max-w-[80%] p-0 py-4 mt-28',
-        type == 'scroll' ? 'mt-40' : '',
-      ]"
-      header-class="flex items-center"
-      body-class="relative px-0  text-[16px]">
-      <template #header v-if="filterable">
-        <el-input id="filterSelect" v-model="searchData" :placeholder="'Cari Data' + (allowCreate ? ' / Tambah Baru' : '')" clearable
-          class="px-5" size="large"/>
-      </template>
-      <div v-if="type =='select'"
-        class="max-h-[65vh] overflow-y-auto">
-        <div v-for="o in optionsFilter"
-          :class="[`px-5 py-1 active:bg-teal-100
-            border-0 border-b border-solid border-teal-700/[0.3]`,
-            (isClick(o.value) ? 'bg-teal-100' : '')
-          ]"
-          @click="clickData(o.value)">
-          <template v-if="$slots.prefix">
-            <slot name="prefix" />
-          </template>
-          {{ o.label }}
-        </div>
-        <div v-if="optionsFilter.length == 0"
-          class="text-center text-[14px]">
-          - Tidak ada data -
-        </div>
-        <template v-if="$slots.footer">
-          <el-divider class="my-2"/>
-          <slot name="footer" />
+    <teleport to="body">
+      <el-dialog v-model="showModal"
+        :class="['min-w-[250px] max-w-[80%] p-0 py-4 mt-28',
+          type == 'scroll' ? 'mt-40' : '',
+        ]"
+        header-class="flex items-center"
+        body-class="relative px-0  text-[16px]">
+        <template #header v-if="filterable">
+          <el-input id="filterSelect" v-model="searchData" :placeholder="'Cari Data' + (allowCreate ? ' / Tambah Baru' : '')" clearable
+            class="px-5" size="large"/>
         </template>
-      </div>
-      <div v-else-if="type=='scroll'"
-      :class="['flex justify-center items-center gap-4 p-4 rounded-xl ']">
-        <div class="relative h-[130px] w-[150px] mx-auto">
-          <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
-          <ScrollPicker :options="listOptions" v-model:modelValue="vModel" />
-          <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
+        <div v-if="type =='select'"
+          class="max-h-[65vh] overflow-y-auto">
+          <div v-for="o in optionsFilter"
+            :class="[`cursor-pointer px-5 py-1 active:bg-teal-100
+              border-0 border-b border-solid border-teal-700/[0.3]`,
+              (isClick(o.value) ? 'bg-teal-100' : '')
+            ]"
+            @click="clickData(o.value)">
+            <template v-if="$slots.prefix">
+              <slot name="prefix" />
+            </template>
+            {{ o.label }}
+          </div>
+          <div v-if="optionsFilter.length == 0"
+            class="text-center text-[14px]">
+            - Tidak ada data -
+          </div>
+          <template v-if="$slots.footer">
+            <el-divider class="my-2"/>
+            <slot name="footer" />
+          </template>
         </div>
-      </div>
-    </el-dialog>
+        <div v-else-if="type=='scroll'"
+        :class="['flex justify-center items-center gap-4 p-4 rounded-xl ']">
+          <div class="cursor-pointer relative h-[130px] w-[150px] mx-auto">
+            <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
+            <ScrollPicker :options="listOptions" v-model:modelValue="vModel" />
+            <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
+          </div>
+        </div>
+      </el-dialog>
+    </teleport>
   </div>
 </template>
 
@@ -66,6 +68,7 @@ export default {
   },
   emits:['update:value','change'],
   props:{
+    dataInput:{type:[String, Number, Array], default:'',},
     value:{type:[String, Number, Array], default:'',},
     placeholder:{type:[String], default:'',},
     size:{type:[String], default:'',},
@@ -120,12 +123,19 @@ export default {
             vm.jquery('#filterSelect.el-input__inner')[0]?.focus();
           }, 500)
           vm.searchData = ''
-          if (vm.isEmpty(vm.vModel))
+          if (vm.isEmpty(vm.vModel)) {
             vm.clickData(vm.listOptions[0]?.value)
+          }
         } else {
           vm.changedValue(vm.vModel)
         }
       },
+    },
+    dataInput(val){
+      if (val) {
+        this.vModel = val
+        // this.changedValue(val)
+      }
     },
     vModel:{
       deep: true,
@@ -201,7 +211,7 @@ export default {
       if (this.multiple) {
         return this.vModel.indexOf(val) > -1
       } else {
-        return this.vModel =- val
+        return this.vModel == val
       }
     },
     clearData(){

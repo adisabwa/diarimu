@@ -4,14 +4,14 @@
   }
 </style>
 <template>
-	<div class="mt-[50px]">
-		<div class="absolute w-screen h-[190px] left-0 top-[0px] z-[0]
+	<div class="mt-[50px] sm:mt-0">
+		<div class="sm:hidden absolute w-screen h-[190px] left-0 top-[0px] z-[0]
 			bg-[length:345px] bg-repeat bg-bottom"
 			:style="{
 				backgroundImage:`url('${$baseUrl}/assets/images/dashboard.png')`,
 			}"/>
-		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 md:mx-auto pb-20">
-			<div class="w-full h-[40px] px-2 mt-0 z-[1]
+		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 sm:mx-auto pb-20">
+			<div class="sm:hidden w-full h-[40px] px-2 mt-0 z-[1]
 				text-white leading-[1.3]">
 				Assalamu'alaikum,<br/>
 				<div class="text-xl font-semibold">{{ user.nama }}</div>
@@ -51,10 +51,11 @@
 			</div>
 			<div class="bg-white rounded-xl shadow-md shadow-emerald-700/[0.2]
 				overflow-hidden
-				mb-3 pt-0 
-				flex flex-col items-center
-				h-[205px] w-full">
+				mb-3 pt-0 pb-2
+				flex flex-col md:flex-row items-center
+				w-full">
 				<div class="font-montserrat px-10 py-3 pt-[70px] *:w-fit
+          sm:pt-4 md:w-full
 					rounded-xl
 					flex flex-col items-center
 					bg-emerald-100/[0.3]">
@@ -102,7 +103,7 @@
 					</template>
 					<div class="grid grid-cols-[repeat(auto-fit,_65px)] gap-[25px] gap-y-[15px]
 						justify-center
-						px-1 md:max-w-[80%] mx-auto pb-5">
+						px-1 sm:max-w-[80%] mx-auto pb-5">
 						<template v-for="(menu, ind) in topMenu">
 							<div class="grid-item h-[110px] cursor-pointer"
 								@click="$router.push({name:menu.route})">

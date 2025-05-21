@@ -40,7 +40,12 @@ class GroupController extends BaseDataController
         $id = $this->request->getGet('id');
         $data = $this->model->find($id);
         if (!empty($data))
-        $data->mu_group_anggota = $this->modelAnggota->getAll(['id_group' => $id]);
+        $data->mu_group_anggota = array_map(function($val){
+            return (object)[
+                'id_anggota'    => $val->id_anggota,
+                'type'    => $val->type,
+            ];
+        }, $this->modelAnggota->getAll(['id_group' => $id]) );
 
         return $this->respondCreated(($data));
     }

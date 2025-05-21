@@ -86,7 +86,21 @@ let topMenu = {
 }
 
 
+let adminMenu = {
+  account: {
+    url:'data/pengguna',
+    label:"Daftar Pengguna",
+    route:'account-list',
+    color:'bg-emerald-200',
+    shadowColor:'shadow-emerald-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/account.png',
+  },
+}
+
+export { adminMenu }
 export { topMenu }
 export default {
-  topMenu
+  topMenu,
+  adminMenu,
 }

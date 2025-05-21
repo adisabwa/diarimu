@@ -5,7 +5,7 @@
         <div id="top" class="add-play bg-cover bg-bottom
           h-[80px] w-[1600px] absolute z-[101] top-[1px]
           scale-x-[0.5]
-          translate-x-[calc(50vw-50%)] md:-translate-x-[675px]"
+          translate-x-[calc(50vw-50%)] sm:-translate-x-[675px]"
             :style="`background-image:url('${$baseUrl}assets/images/top.png')`"></div>
         <img id="logo" :src="$baseUrl + 'assets/images/logo-kecil.png'" height="80px" 
           @click="$router.push({name:defaultRoute})"
@@ -13,7 +13,7 @@
           absolute z-[103] top-[-10px]
           mt-5
           translate-x-[calc(50vw-50%)]
-          md:-translate-x-[calc(50%-125px)]"/>
+          sm:-translate-x-[calc(50%-125px)]"/>
         <div class="absolute w-full h-full top-0
             border-0 border-b-[5px] border-solid border-orange-300">
           <el-menu :default-active="activeMenu"
@@ -81,7 +81,7 @@
         default:'',
       },
       menus:{
-        type:Array,
+        type:[Array, Object],
         default:[],
       }
     },

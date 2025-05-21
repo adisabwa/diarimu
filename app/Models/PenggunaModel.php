@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class PenggunaModel extends Model
 {
-    protected $table         = 'mu_pengguna';
+    protected $table         = 'mu_anggota';
     protected $primaryKey = 'id';
 
     protected $useAutoIncrement = true;
@@ -26,40 +26,6 @@ class PenggunaModel extends Model
         // $this->db = $this->builder();
     }
     
-    public function getTableName()
-    {
-        return $this->table;
-    }
-
-    public function login($email = '', $no_hp = '', $password = '')
-    {
-        $data = $this->db->table('mu_pengguna p')
-                    ->select("ang.*, p.*, uk.unit_kerja, uk.bidang, ga.id_group, IF(ga.id IS NULL,'0','1') is_mentor")
-                    ->join("mu_anggota ang","ang.id=p.id_anggota")
-                    ->join("mu_group_anggota ga","ga.id_anggota=ang.id AND ga.type='mentor'","left")
-                    ->join("mu__unit_kerja uk","uk.id=ang.id_unit","left")
-                    ->groupStart()
-                      ->where('ang.no_hp', $no_hp)
-                      ->orWhere('ang.email', $email)
-                    ->groupEnd()
-                    ->where('p.password', $password)
-                    ->groupBy('p.id')
-                    ->get()
-                    ->getRow();
-        
-        if (!empty($data)) {
-          $allowed_roles = ['user'];
-          if ($data->role == 'super-admin')
-              $allowed_roles[] = 'super-admin';
-          if ($data->role == 'admin')
-              $allowed_roles[] = 'admin';
-          if ($data->is_mentor == '1')
-              $allowed_roles[] = 'mentor';
-          $data->allowed_roles = $allowed_roles;
-        }
-      // var_dump($this->db->getLastQuery(), $data);        
-        return $data;
-    }
     
     public function getOptions($where = [])
     {
@@ -77,35 +43,4 @@ class PenggunaModel extends Model
       return $options;
     }
 
-    public function getAll($where = [], $order = '')
-    {
-      $data = $this->db->table('mu_pengguna p')
-                    ->select("ang.*, p.*, uk.unit_kerja, uk.bidang, IF(ga.id IS NULL,'0','1') is_mentor")
-                    ->join("mu_anggota ang","ang.id=p.id_anggota")
-                    ->join("mu_group_anggota ga","ga.id_anggota=ang.id AND ga.type='mentor'","left")
-                    ->join("mu__unit_kerja uk","uk.id=ang.id_unit","left")
-                    ->where($where)
-                    ->groupBy('p.id')
-                    ->orderBy($order)
-                    ->get()
-                    ->getResult();
-
-      return $data;
-    }
-
-    
-    public function getData($id)
-    {
-      $data = $this->db->table('mu_pengguna p')
-                  ->select("ang.*, p.*, uk.unit_kerja, uk.bidang, IF(ga.id IS NULL,'0','1') is_mentor")
-                  ->join("mu_anggota ang","ang.id=p.id_anggota")
-                  ->join("mu_group_anggota ga","ga.id_anggota=ang.id AND ga.type='mentor'","left")
-                    ->join("mu__unit_kerja uk","uk.id=ang.id_unit","left")
-                  ->where("p.id", $id)
-                  ->groupBy('p.id')
-                  ->get()
-                  ->getRow();
-                  
-      return $data;
-    }
 }

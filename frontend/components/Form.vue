@@ -529,7 +529,7 @@ export default {
         })
         .catch(err => {
           this.saving = false;
-          // console.log(err)
+          console.log(err)
           var res = err.response;
           var code = res.status;
           this.$emit('error', false);

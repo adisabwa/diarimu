@@ -1,20 +1,21 @@
 <template>
   <div id="data-list" class="py-6">
     <table-data ref="tableData" :fields="fields" :href="data.href"
-      :checked="data.checked" :upload="data.upload" :pass-columns="[...coalesce([data.pass,[]]), ...(type == 'ang' ? ['foto'] : []) ]"
+      :checked="data.checked" :upload="data.upload" :pass-columns="[...coalesce([data.pass,[]]), ...(type == 'pengguna' ? ['photo'] : []) ]"
+      :params="{offset:0, limit:0}"
       :title="data.title">
-      <el-table-column v-if="type == 'ang'" label="Foto Anggota" width="200px">
+      <el-table-column v-if="type == 'pengguna'" label="Foto Anggota" width="200px">
         <template #default="scope">
-          <div v-if="isEmpty(scope.row.foto)"
+          <div v-if="isEmpty(scope.row.photo)"
             class="text-center">
-            <el-button type="primary" @click="$refs.tableData.handleActionClick({action:'edit', id:scope.row.id}, ['foto'])"
+            <el-button type="primary" @click="$refs.tableData.handleActionClick({action:'edit', id:scope.row.id}, ['photo'])"
               size="small">
               Upload Foto
             </el-button>
           </div>
           <div v-else
             class="text-center">
-            <img :src="scope.row.foto" height="40px" />
+            <img :src="scope.row.photo" height="40px" />
           </div>
         </template>
       </el-table-column>

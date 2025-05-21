@@ -9,7 +9,7 @@ class Auth extends BaseController
     public function __construct()
     {
         
-        $this->penggunaModel = model('PenggunaModel');
+        $this->penggunaModel = model('AnggotaModel');
         // helper('auth');
     }
 

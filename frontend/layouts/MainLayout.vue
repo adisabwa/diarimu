@@ -9,14 +9,17 @@
         enter-to-class="translate-x-0"
         leave-to-class="translate-x-[-100%]"
         leave-from-class="translate-x-0">
-        <component :is="MenuComponent" :key="MenuComponent" 
+        <component :is="MenuComponent" :key="MenuComponent"
+          @function="(func) => {
+            this[func]?.();
+          }"
           :active-menu="activeMenu" :menus="menus" @action="handleActionClick" @toggle="toggleMenu"/>
       </transition>
       <el-button v-if="$route.name != 'dashboard' "
         class="fixed z-[200] top-6 left-4
         rounded-full
         w-[40px] h-[40px] p-3
-        md:hidden flex justify-center items-center
+        sm:hidden flex justify-center items-center
         opacity-[0.7]
         bg-yellow-50/[0.7]"  
         @click="$router.back()">
@@ -24,14 +27,15 @@
       </el-button>
       <!-- <el-button class="fixed z-[200] bottom-7 right-7 rounded-full
         w-[70px] h-[70px] p-3
-        md:hidden flex justify-center items-center
+        sm:hidden flex justify-center items-center
         bg-yellow-50/[0.7]"  
         @click="toggleClass('#menu-vertical','-translate-x-full')">
         <icons icon="mdi:menu" class="m-0 text-4xl text-teal-700"/>
       </el-button> -->
     </div>
     <el-container>
-      <el-main class="p-0 px-3 md:px-10 pb-12 overflow-visible
+      <el-main class="p-0 px-3 pb-12 overflow-visible
+        sm:px-5 sm:mt-[20px]
         min-h-[calc(100vh-110px)] 
         relative
         flex flex-col">
@@ -41,7 +45,7 @@
           bg-cover bg-no-repeat bg-left-center bg-fixed" 
           :style="`background-image:url('${$baseUrl}assets/images/back-sketch.png')`">
         </div>
-        <div :class="`${user.vertical == '1' ? 'md:ml-[--width-menu]' : 'ml-0' } h-full flex-1 bg-transparent z-[1]`">
+        <div :class="`${user.vertical == '1' ? 'sm:ml-[--width-menu]' : 'ml-0' } h-full flex-1 bg-transparent z-[0]`">
           <router-view v-slot="{ Component , route}" >
             <transition name="slide-in" mode="out-in"
               enter-active-class="transition-all ease-in-out duration-500"
@@ -70,6 +74,7 @@
     </el-container>
     
 		<div class="fixed left-0 bottom-0
+      sm:hidden
 			w-screen z-[20]
 			bg-white"
       v-if="[...Object.keys(mainMenus), ...['unauthorized']].includes($route.name)">
@@ -166,40 +171,42 @@ export default {
       let index = ''
       // console.log(index, this.menus)
       this.menus.forEach(m => {
-        if (m.type == 'menu') {
-          if (!index)
-            index = vm.checkIndex(vm.$route, m)
-        } else {
-          m.children.forEach(c => {
+        if (m.type == 'submenu') {
+          m?.children?.forEach(c => {
             if (!index)
               index = vm.checkIndex(vm.$route, c)
           })
+        } else {
+          if (!index)
+            index = vm.checkIndex(vm.$route, m)
         }
       })
+      console.log(index)
       if (!index) index = ''
       
       this.activeMenu = index
     },
     async getMenus(){
-      let vm = this
-      let index = vm.coalesce([vm.$route.meta.app, 'default'])
-      await import(`@/helpers/menus/management.js`)
+      // let index = vm.coalesce([vm.$route.meta.app, 'default'])
+      await import(`@/helpers/menus/admin.js`)
         .then(res => {
           // console.log(res.default)
-          vm.menus = res.default
+          this.menus = res.default
           this.setActiveMenu()
         })
-        .catch( () => {
-          vm.menus = []
+        .catch( (err) => {
+          console.log(err)
+          this.menus = []
         })
     },
     checkIndex(route, menu){
-      let _route = menu.route
-      if (route.name == _route.name) {
-        if (this.isEmpty(_route.params))
+      // console.log(route, menu)
+      if (route.name == menu.route) {
+        console.log(route.params, menu.params)
+        if (this.isEmpty(menu.params))
           return menu.index
         else {
-          if (JSON.stringify(_route.params) == JSON.stringify(route.params) )
+          if (JSON.stringify(route.params) == JSON.stringify(menu.params) )
             return menu.index
         }
       }

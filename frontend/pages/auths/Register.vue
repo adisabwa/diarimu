@@ -1,7 +1,7 @@
 <template>
-    <div id="register" class="max-w-[1100px] mx-6 md:mx-auto bg-white bg-opacity-[0.9]
+    <div id="register" class="max-w-[1100px] mx-6 sm:mx-auto bg-white bg-opacity-[0.9]
       border-solid border border-gray-300">
-      <div class="h-full md:px-10">
+      <div class="h-full sm:px-10">
         <div class="flex flex-col items-center align-middle
            pt-[90px] px-5 pb-20">
           <div class="w-full
@@ -20,25 +20,8 @@
                 v-model:form-value="formValue"
                 href="data/anggota/store"
                 href-get="data/anggota/get"
-                :pass-columns="['tempat_lahir','tanggal_lahir','photo']"
+                :pass-columns="['tempat_lahir','tanggal_lahir','photo','role']"
                 @saved="submittedAnggota"  
-                @error="saving=false"
-                size="large"
-                :show-submit="false"
-                :show-label="false"
-                label-position="top"
-                :show-required-text="false"
-              ></form-comp>  
-              <el-divider class="m-0 mb-5 "/>
-              <form-comp ref="formAkun"
-                class="[&_*]:text-center"
-                :key="'form-akun-'+formKeyAkun"
-                :fields="fieldsAkun" 
-                :id="dataIdAkun"
-                :pass-columns="['id_anggota','role']"
-                v-model:form-value="formAkun"
-                href="pengguna/store"
-                @saved="submittedAkun"  
                 @error="saving=false"
                 size="large"
                 :show-submit="false"
@@ -75,24 +58,9 @@ export default {
       formKey:1,
       formKeyAkun:1,
       fields:{},
-      fieldsAkun:{
-        id_anggota:{
-          nama_kolom:'id_anggota',default:'',
-        },
-        role:{
-          nama_kolom:'role',default:'user',
-        },
-        password:{
-          nama_kolom:'password',input:'password',label:'Password Baru'
-        },
-        passwordconf:{
-          nama_kolom:'passwordconf',input:'password',label:'Konfirmasi Password'
-        }
-      },
-      dataId:-1,
+      dataId:20,
       dataIdAkun:-1,
       formValue:{},
-      formAkun:{},
     };
   },
   methods: {
@@ -113,18 +81,13 @@ export default {
         });
     },
      submittedAnggota(data){
+      console.log(data)
       this.saving = false
-      this.$refs.formAkun.changeData('id_anggota', data.id)
-      this.$refs.formAkun.submitForm();
-    },
-    submittedAkun(data){
-      this.saving = false
-      // console.log(this.formValue, this.formAkun)
       let payload = {
         no_hp: this.formValue.no_hp,
-        password: this.formAkun.password,
+        password: this.formValue.password,
       }
-      console.log(payload)
+      // console.log(payload)
       this.$store.dispatch('login',payload, true)
         .then(() => {
           this.$router.push({name:'dashboard'})
@@ -132,7 +95,7 @@ export default {
     },
   },
   updated(){
-    console.log(this.formValue, this.formAkun)
+    // console.log(this.formValue, this.formAkun)
   },
   created() {
     this.getInitial();

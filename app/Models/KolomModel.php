@@ -23,13 +23,14 @@ class KolomModel extends Model
 
     }
 
-    public function getAll($nama_tabel, $input = TRUE)
+    public function getAll($nama_tabel, $input = TRUE, $output = TRUE)
     {
         return $this->db->table('mu_nama_kolom n')
                     ->select('gk.*, n.*')
                     ->join('mu_nama_tabel gk','gk.id=n.id_group')
                     ->where('nama_tabel',$nama_tabel)
                     ->where($input ? "from_user='1'" : "1=1")
+                    ->where($output ? "input_only='0'" : "1=1")
                     ->orderBy('n.order')
                     ->get()
                     ->getResult();

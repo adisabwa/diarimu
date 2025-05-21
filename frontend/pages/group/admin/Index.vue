@@ -110,7 +110,7 @@
               :prop="`mu_group_anggota.${tipe}`">
               <floating-select
                 class="w-full"
-                v-model="form[tipe]"
+                :data-input="form['mu_group_anggota']?.filter(d => d.type == tipe)?.map(data => data.id_anggota)"
                 :options="fields['mu_group_anggota']?.fields?.id_anggota?.options"
                 :placeholder="`Pilih ${ucFirst(tipe)}`"
                 :clearable="true"
@@ -133,9 +133,10 @@
                     }
                   })
                 }"/>
-              <ol class="text-[14px] italic pl-6 m-0 leading-[1.5] mt-1">
+              <ol class="text-[15px] italic pl-6 m-0 leading-[1.5] mt-2">
                 <template v-for="(i, key) in form['mu_group_anggota']">
-                  <li v-if="i?.type == tipe">
+                  <li v-if="i?.type == tipe"
+                    class="pl-1">
                     <div>
                       {{ runFunction(null, i?.id_anggota, fields['mu_group_anggota']?.fields?.id_anggota?.options) }}
                     </div>

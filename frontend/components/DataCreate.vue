@@ -3,7 +3,7 @@
       <el-dialog 
         :title="(type == 'create' ? 'Tambah' : 'Edit') + ' ' + title" 
         v-model="showDialog"
-        class="w-auto md:max-w-[50%] mx-10 md:mx-auto"
+        class="w-auto sm:max-w-[50%] mx-10 sm:mx-auto"
         :close-on-click-modal="false">
         <form-comp ref="form"
           :fields="fields" 

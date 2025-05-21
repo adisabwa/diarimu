@@ -1,12 +1,12 @@
 <template>
   <div id="table-data">
     <div v-if="showCreate || showSearch"
-      class="flex flex-col md:flex-row mb-6 gap-4
-      mt-7 md:mt-2">
+      class="flex flex-col sm:flex-row mb-6 gap-4
+      mt-7 sm:mt-2">
       <div v-if="showCreate" class="w-full
         grid grid-cols-2 [&_*]:m-0
         gap-x-3 gap-y-2
-        md:block md:[&_*]:mr-3">
+        sm:block sm:[&_*]:mr-3">
         <el-button class="py-[15px]" type="primary" size="small" v-if="upload" @click="showUpload = true">
           <icons icon="mdi:upload"/>
           Upload Excel</el-button>
@@ -21,7 +21,7 @@
           Delete Checklist</el-button>
         <slot name="menu" :action="handleActionClick"></slot>
       </div>
-      <div v-if="showSearch" class="w-full md:w-1/3 flex">
+      <div v-if="showSearch" class="w-full sm:w-1/3 flex">
         <el-select v-model="searchField" placeholder="Kolom"
           :empty-values="[null, undefined]"
           :value-on-clear="null"
