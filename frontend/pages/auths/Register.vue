@@ -58,7 +58,7 @@ export default {
       formKey:1,
       formKeyAkun:1,
       fields:{},
-      dataId:20,
+      dataId:-1,
       dataIdAkun:-1,
       formValue:{},
     };

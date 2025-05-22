@@ -1,9 +1,11 @@
 <template>
+  <teleport to="body">
     <div class="data-create-dialog">
       <el-dialog 
         :title="(type == 'create' ? 'Tambah' : 'Edit') + ' ' + title" 
         v-model="showDialog"
-        class="w-auto sm:max-w-[50%] mx-10 sm:mx-auto"
+        class="w-auto sm:max-w-[50%] mx-10 sm:mx-auto
+          px-6"
         :close-on-click-modal="false">
         <form-comp ref="form"
           :fields="fields" 
@@ -28,6 +30,7 @@
         </template>
       </el-dialog>
     </div>
+  </teleport>
 </template>
   
 <script>

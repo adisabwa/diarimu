@@ -1,7 +1,7 @@
 <template>
   <div id="table-data">
     <div v-if="showCreate || showSearch"
-      class="flex flex-col sm:flex-row mb-6 gap-4
+      class="flex flex-col sm:flex-row mb-3 gap-4
       mt-7 sm:mt-2">
       <div v-if="showCreate" class="w-full
         grid grid-cols-2 [&_*]:m-0
@@ -43,7 +43,7 @@
         stripe fit>
         <el-table-column
           v-if="checked"
-          width="30">
+          width="30" align="center">
           <template #header>
             <el-checkbox  
               v-model="checkAll"
@@ -57,7 +57,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="60" label="No">
+          width="60" label="No" align="center">
           <template #default="scope">
             {{ scope.$index + 1 + paging.offset }}
           </template>
@@ -263,19 +263,19 @@
     },
     computed: {
       datasFilter: function() {
-        var q = this.searchKeyword.toLowerCase();
+        var q = this.searchKeyword?.toLowerCase();
         if (q.length > 0) {
           let fields = this.fields
           let keys = Object.keys(fields)
           let vm = this
-          return vm.datas.filter(data => {
+          return vm.datas?.filter(data => {
               let exist = false
               if (vm.isEmpty(vm.searchField)) {
                 for (var i = 0; i < keys.length; i++) {
                   let ind = keys[i]
                   let field = fields[ind]
                   let text = vm.runFunction(field.function, data[field.nama_kolom])
-                  if (text.toLowerCase().includes(q)) {
+                  if (text?.toLowerCase()?.includes(q)) {
                     exist = true
                     break
                   }
@@ -283,7 +283,7 @@
               } else {
                 let field = fields[vm.searchField]
                 let text = vm.runFunction(field.function, data[field.nama_kolom])
-                if (text.toLowerCase().includes(q))
+                if (text?.toLowerCase()?.includes(q))
                   exist = true
               }
               return exist
@@ -379,10 +379,18 @@
             });
           });
       },
-      handleActionClick: function(obj, cols = []) {
-        var action = obj.action;
-        var id = obj.id;
+      handleActionClick: function(obj) {
+        var action = obj?.action;
+        var id = obj?.id;
+        var cols = obj?.cols ?? [];
+        var pass = obj?.pass ?? [];
+        
+        if (!action) {
+          return
+        }
+        // console.log(obj, cols)
         if (cols.length > 0) {
+          this.fieldsCreate = []
           for (let index = 0; index < cols.length; index++) {
             const element = cols[index];
             this.fieldsCreate[element] = this.fields[element]
@@ -391,6 +399,13 @@
           this.fieldsCreate = JSON.parse(JSON.stringify(this.fields));
         }
 
+        if (pass.length > 0) {
+          for (let index = 0; index < pass.length; index++) {
+            const element = pass[index];
+            delete this.fieldsCreate[element]
+          }
+        }
+        // console.log(obj, this.fieldsCreate)
         if (action == 'add') {
           this.showAdd = true;
           this.dataType = 'create';

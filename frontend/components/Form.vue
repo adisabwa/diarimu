@@ -5,7 +5,7 @@
       <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
       <template  v-for="(field, ind) in fieldsData">
         <el-form-item :class="['grow-0',  formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
-          v-if="showColumns.length > 0 ? showColumns.includes(field.nama_kolom) : !passColumns.includes(field.nama_kolom)"
+          v-if="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
           :error="field.input == 'array' ? '' : errors[field.nama_kolom]">
           <template #label v-if="showLabel">
             <span :class="[field.required == '1' ? 'required' : '','leading-[1.5] mt-2', labelClass]"> {{ field.label }} </span>
@@ -365,6 +365,7 @@ export default {
       default:'',
     }
   },
+  inject: ['sharedState'],
   emits:['update:id','saved','error','changeId','update:formValue','changedValue','update:errorValue'],
   data: function() {
     return {
@@ -422,7 +423,24 @@ export default {
     },
   },
   computed: {
-    
+    resolvedPassColumns(){
+      if (Array.isArray(this.passColumns) && this.passColumns.length > 0)
+        return this.passColumns 
+      
+      if (Array.isArray(this?.sharedState?.passColumns) && this?.sharedState?.passColumns?.length > 0)
+        return this?.sharedState?.passColumns
+      
+       return []
+    },
+    resolvedShowColumns(){
+      if (Array.isArray(this.showColumns) && this.showColumns.length > 0)
+        return this.showColumns 
+      
+      if (Array.isArray(this?.sharedState?.showColumns) && this?.sharedState?.showColumns?.length > 0)
+        return this?.sharedState?.showColumns
+      
+       return []
+    }
   },
   methods: {
     changeData(field, val, dest = 'form'){
@@ -475,6 +493,7 @@ export default {
             })
             // console.log(this.fields)
           }
+          // console.log(psb, this.form)
         })
         .catch(err => {
           // console.log(err)
@@ -515,7 +534,7 @@ export default {
           delete form[ind]
       });
       form.id = this.dataId
-      // console.log(form)
+      form = this.convertNullToEmptyString(form)
       var formData = window.jsonToFormData(form); 
 
       this.$http.post(this.href, formData, {
@@ -563,7 +582,7 @@ export default {
       fieldsData.forEach(d => {
         if (d.from_user == '1' || d.from_user == undefined) {
           vm.fieldsData[d.nama_kolom] = d
-          vm.form[d.nama_kolom] = d.input == 'array' ? [] : vm.coalesce([d.default,''])
+          vm.form[d.nama_kolom] = d.input == 'array' ? [] : ''
           vm.errors[d.nama_kolom] = d.input == 'array' ? [] : ''
           vm.original[d.nama_kolom] = false
           if (d.input == 'file') {
@@ -572,7 +591,7 @@ export default {
           }
         }
       })
-      console.log('form isi', vm.fieldsData)
+      // console.log('form isi', vm.form)
       vm.fillObjectValue(vm.form, vm.formValue)
       setTimeout(() => {
         vm.fillObjectValue(vm.form, vm.formValue)

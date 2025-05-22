@@ -76,11 +76,11 @@
           <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
             px-7 w-full
             relative
-            grid grid-cols-1"
+            grid grid-cols-1 sm:grid-cols-3"
             v-loading="loadings[ind]">
             <template v-for="(sholat, key) in _data">
               <div :class="`${ sholat.do ? 'bg-emerald-200 text-emerald-900  [&_*]:bg-emerald-200 [&_*]:text-emerald-900 ' : 'bg-white text-gray-400 [&_*]:bg-white [&_*]:text-gray-400 active:scale-90' }
-                pt-4 pb-3 mb-4 px-5
+                pt-4 pb-3 mb-4 px-5 mx-auto
                 rounded-[15px] min-w-[240px] max-w-[300px]
                 shadow-md
                 relative flex gap-x-2 items-start
@@ -119,7 +119,6 @@
                       rounded-[5px] leading-[1]"> 
                       <el-input-number v-model="sholat.rakaat" controls-position="right"
                         class="h-full border-0 w-[83px]"
-                        @change="saveData(ind, key)"
                         :min="sholat.min" step="2">
                         <template #decrease-icon>
                           <icons icon="mdi:minus" class="text-sm"/>
@@ -130,7 +129,7 @@
                         <template #prefix>
                           <icons icon="mdi:check" class="text-[16px] m-0
                             px-1 active:scale-75"
-                            @click="sholat.edit = false"/>  
+                            @click="saveData(ind, key); sholat.edit = false"/>  
                         </template>
                       </el-input-number> 
                       <div class="text-[12px] mt-1 font-semibold">Raka'at</div>     
@@ -138,7 +137,7 @@
               </div>
             </template>
             <div class="text-center text-slate-400
-                pt-4 pb-3 mb-4 px-5
+                pt-4 pb-3 mb-4 px-5 mx-auto
                 rounded-[15px] min-w-[240px] max-w-[300px]
                 shadow-md
                 relative flex items-center justify-center
@@ -324,7 +323,7 @@ export default {
       showInput:false,
       sunnahAdd:'',
       sunnahInput:'',
-      collapseInput:true,
+      collapseInput:false,
     };
   },
   watch: {

@@ -55,19 +55,6 @@ let routes = [
               leaveToClass : "translate-y-full opacity-0",
             }
           },
-          {
-            name: 'data-list',
-            path: 'datas/:type?',
-            props: true,
-            component: () => import('@/pages/data/DataList.vue'),
-            meta: {
-              requiresAuth: true,
-              enterFromClass : "-translate-y-full opacity-0",
-              enterToClass : "opacity-50",
-              leaveFromClass : "opacity-50",
-              leaveToClass : "translate-y-full opacity-0",
-            }
-          }
         ]
       },
     ],

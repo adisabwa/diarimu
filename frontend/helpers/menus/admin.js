@@ -8,13 +8,28 @@ let admin = [
   },
   {
     index:'data-list',
-    route:'data-list',
+    type:'submenu',
     function:'',
-    icon:'garden:user-list-fill-16',
-    label:'Data Pengguna',
-    params:{
-      type:'pengguna',
-    }
+    icon:'bxs:data',
+    label:'Pengolahan Data',
+    roles:['admin','super-admin','admin-bidang'],
+    children:[
+      {
+        index:'unit-list',
+        route:'unit-list',
+        function:'',
+        icon:'ph:building-office-fill',
+        label:'Data Unit Kerja',
+        roles:['super-admin','admin-bidang'],
+      },
+      {
+        index:'pengguna-list',
+        route:'pengguna-list',
+        function:'',
+        icon:'garden:user-list-fill-16',
+        label:'Data Pengguna',
+      },
+    ]
   },
   {
     index:'group-admin',

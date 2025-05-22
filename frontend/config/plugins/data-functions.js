@@ -127,6 +127,19 @@ let listFunction = {
     },
     deleteCookie(name) {
       document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    },
+    convertNullToEmptyString(obj) {
+      if (Array.isArray(obj)) {
+        return obj.map(item => this.convertNullToEmptyString(item));
+      } else if (obj !== null && typeof obj === 'object') {
+        const result = {};
+        for (const key in obj) {
+          result[key] = this.convertNullToEmptyString(obj[key]);
+        }
+        return result;
+      } else {
+        return obj === null ? '' : obj;
+      }
     }
   }
   

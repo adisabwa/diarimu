@@ -7,7 +7,7 @@ const clickOutsideDirective = {
       // Only trigger if the element is visible AND the click was outside
       const clickedOutside = !el.contains(event.target);
 
-      console.log(isVisible, clickedOutside)
+      // console.log(isVisible, clickedOutside)
       if (isVisible && clickedOutside) {
         // console.log(binding.value)
         binding.value(event);

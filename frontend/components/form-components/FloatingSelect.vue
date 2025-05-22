@@ -28,7 +28,7 @@
               border-0 border-b border-solid border-teal-700/[0.3]`,
               (isClick(o.value) ? 'bg-teal-100' : '')
             ]"
-            @click="clickData(o.value)">
+            @click="clickData(o.value, multiple)">
             <template v-if="$slots.prefix">
               <slot name="prefix" />
             </template>
@@ -117,6 +117,7 @@ export default {
     showModal:{
       immediate: true,
         async handler(val) {
+        // console.log(val)
         let vm = this
         if (val) {
           setTimeout(() => {
@@ -124,7 +125,7 @@ export default {
           }, 500)
           vm.searchData = ''
           if (vm.isEmpty(vm.vModel)) {
-            vm.clickData(vm.listOptions[0]?.value)
+            vm.clickData(vm.listOptions[0]?.value, true)
           }
         } else {
           vm.changedValue(vm.vModel)
@@ -140,7 +141,7 @@ export default {
     vModel:{
       deep: true,
       handler(val) {
-        console.log('model', val)
+        // console.log('model', val)
         this.selectOption(val)
         this.$emit('update:value', val)
       },
@@ -174,7 +175,7 @@ export default {
       this.$emit('change',val)
     },
     selectOption(val){
-      console.log('selectOption', val)
+      // console.log('selectOption', val)
       let array = []
       if (Array.isArray(val)) {
         array = val
@@ -192,7 +193,7 @@ export default {
       }
       // console.log('selectOption', this.labelModel)
     },
-    clickData(val){
+    clickData(val, show = false){
       // console.log('clickData', val)
       if (this.multiple) {
         let index = this.vModel.indexOf(val)
@@ -203,8 +204,8 @@ export default {
         }
       } else {
         this.vModel = val
-        this.showModal = false
       }
+      this.showModal = show
     },
     isClick(val){
       // console.log('isClick', val)
@@ -226,7 +227,7 @@ export default {
     }
   },
   mounted(){
-    console.log('mounted', this.vModel)
+    // console.log('mounted', this.vModel)
     if (this.multiple && !Array.isArray(this.vModel)) {
       this.vModel = []
     }

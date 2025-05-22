@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="z-[99] h-[40px]">
-      <div class="absolute sm:fixed z-[10] top-0 overflow-hidden w-full h-[100px]"> 
+      <div class="absolute sm:fixed z-[10] top-0 overflow-visible w-full h-[30px]"> 
         <el-header class="bg-orange-300 h-[40px] w-full relative"></el-header>
         <div id="top" class="add-play bg-cover bg-bottom
           h-[70px] w-[1400px] absolute z-[51] top-[1px]
@@ -77,22 +77,23 @@
           w-full h-full
           pt-11 ">
         <template v-for="menu in menus">
-          <template v-if="menu.type == 'submenu'">
+          <template v-if="menu.type == 'submenu' && (isEmpty(menu.roles) || menu?.roles?.includes(user.role))">
             <el-sub-menu :index="menu.index" class="pl-5 [&>*]:p-0 text-left menu-item-custom title">
               <template #title>
                 <icons v-if="!isEmpty(menu.icon)" class="mr-2" :icon="menu.icon" />
-                <span class="">{{ menu.title }}</span>
+                <span class="">{{ menu.label }}</span>
               </template>
               <template v-for="child in menu.children">
                 <el-menu-item @click="$router.push({name:child.route})"
+                  v-if="(isEmpty(child.roles) || child?.roles?.includes(user.role))"
                   :index="child.index" class="pl-6 menu-item-custom title">
                   <icons v-if="!isEmpty(child.icon)" class="mr-2" :icon="child.icon" />
-                  <span class="">{{ child.title }}</span>
+                  <span class="">{{ child.label }}</span>
                 </el-menu-item>
               </template>
             </el-sub-menu>
           </template>
-          <template v-else>
+          <template v-else-if="(isEmpty(menu.roles) || menu?.roles?.includes(user.role))">
             <el-menu-item @click="isEmpty(menu.route) ?
               $emit('function', menu.function) :
               $router.push({name:menu.route, params: menu.params})"
@@ -170,7 +171,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-   .menu-item-custom{
+  :deep(.menu-item-custom) {
 		@apply 
       transition-all ease-in-out duration-300
       bg-gradient-to-l from-transparent from-50% to-teal-700 to-50%
@@ -178,20 +179,34 @@ export default {
       text-[15px]
       leading-[0]
       border-0
-      [--el-menu-item-height:45px]
-      [--el-menu-sub-item-height:45px]
+      [--el-menu-item-height:40px]
+      [--el-menu-sub-item-height:40px]
       hover:bg-left-top
 		!important;
 	}
-  .menu-item-custom.is-active {
+  :deep(.menu-item-custom.is-active) {
     @apply
       bg-teal-100
     !important;
   }
-  .menu-item-custom.title {
-    @apply 
-      [&>*]:text-teal-700
-      [&>*]:hover:text-white
+  :deep(.menu-item-custom) {
+    li, span, div {
+      @apply 
+        text-teal-700
       !important;
+    }
+    svg {
+      @apply fill-current text-teal-700 !important;
+    }
+  }
+  :deep(.menu-item-custom):hover {
+    > li, > span, > div * {
+      @apply 
+        text-white
+      !important;
+    }
+    > svg {
+      @apply fill-white text-white !important;
+    }
   }
 </style>

@@ -45,15 +45,20 @@ class AnggotaModel extends Model
                     ->getRow();
         
         if (!empty($data)) {
-          $allowed_roles = ['user'];
           if ($data->role == 'super-admin')
-              $allowed_roles[] = 'super-admin';
-          if ($data->role == 'admin')
-              $allowed_roles[] = 'admin';
+            $allowed_roles = ['super-admin','admin-bidang','admin'];
+          else if ($data->role == 'admin-bidang')
+            $allowed_roles = ['admin-bidang'];
+          else if ($data->role == 'admin')
+            $allowed_roles = ['admin'];
           if ($data->is_mentor == '1')
-              $allowed_roles[] = 'mentor';
+            $allowed_roles[] = 'mentor';
+          $allowed_roles[] = 'user';
+
           $data->allowed_roles = $allowed_roles;
         }
+
+        $data->role = 'user';
       // var_dump($this->db->getLastQuery(), $data);        
         return $data;
     }

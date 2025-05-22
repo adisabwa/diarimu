@@ -34,6 +34,12 @@ $routes->group('data/anggota', static function ($routes) {
 //----------------------------------Data Unit-------------------------------------
 $routes->group('data/unit', static function ($routes) {
     $routes->add('/', [Unit::class, 'index']);
+    $routes->add('/', [Unit::class, 'index']);
+    $routes->add('get', [Unit::class, 'get']);
+    $routes->add('store', [Unit::class, 'store'], [ 'filter' => 'api-validation:mu__unit_kerja']);
+    $routes->add('delete/(:any)', [Unit::class, 'delete/$1']);
+    $routes->add('delete_many', [Unit::class, 'delete_many']);
+    $routes->add('options', [Unit::class, 'options']);
 });
         
 $routes->group('data', [

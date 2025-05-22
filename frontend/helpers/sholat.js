@@ -45,6 +45,14 @@ let options  = [
 
 export { options };
 
+export function getCount(value){
+  if (value >= 100) return 3
+  else if (value >= 75) return 2
+  else if (value >= 50) return 1
+  else if (value >= 25) return 0
+  else return -1
+}
+
 export function getLabel(value){
   let op = options.find( o => o.value == value )
   if (op)

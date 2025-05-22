@@ -68,7 +68,7 @@
             v-loading="loadings[ind]">
             <template v-for="sholat in _data.sholats">
               <div :class="`${setStatusColor(sholat.value)}
-                pt-4 pb-3 mb-4 px-7
+                pt-4 pb-3 mb-4 px-7 mx-auto
                 rounded-[15px] min-w-[240px] max-w-[300px]
                 shadow-md
                 relative flex gap-x-3 items-center`">
@@ -79,9 +79,7 @@
                   </div>
                 </div>
                 <div class="flex gap-x-1 mx-3">
-                  <star :id="'1star'+ind+tanggals[ind]+sholat.nama_kolom" />
-                  <star :id="'2star'+ind+tanggals[ind]+sholat.nama_kolom" />
-                  <star :id="'3star'+ind+tanggals[ind]+sholat.nama_kolom" />
+                  <star :count="getCount(sholat.value)"/>
                 </div>
                 <el-dropdown v-if="user.role == 'user'"
                   trigger="click"
@@ -217,7 +215,7 @@
 </template>
 
 <script setup>
-  import { setStatusColor, options, getLabel } from '@/helpers/sholat.js'
+  import { setStatusColor, options, getLabel, getCount } from '@/helpers/sholat.js'
 </script>
 
 <script>

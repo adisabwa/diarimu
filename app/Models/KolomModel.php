@@ -23,7 +23,7 @@ class KolomModel extends Model
 
     }
 
-    public function getAll($nama_tabel, $input = TRUE, $output = TRUE)
+    public function getAll($nama_tabel, $input = TRUE, $output = FALSE)
     {
         return $this->db->table('mu_nama_kolom n')
                     ->select('gk.*, n.*')

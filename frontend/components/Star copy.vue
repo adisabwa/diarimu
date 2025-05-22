@@ -2,7 +2,10 @@
 	<img :id="id" 
 		:src="`${$baseUrl}assets/images/star.png`"
 		:width="width"
-		class="animate scale-0" />
+		class="animate scale-0" 
+		:style="{
+			maskImage:`${$baseUrl}assets/images/star.png`,
+		}"/>
 </template>
 
 <script>
