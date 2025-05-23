@@ -1,11 +1,11 @@
 <template>
 	<div class="">
     <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving" :inline="inline"
-      :class="[formClass]">
+      :class="['grid grid-cols-2',formClass]">
       <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
       <template  v-for="(field, ind) in fieldsData">
         <el-form-item :class="['grow-0',  formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
-          v-if="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
+          v-show="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
           :error="field.input == 'array' ? '' : errors[field.nama_kolom]">
           <template #label v-if="showLabel">
             <span :class="[field.required == '1' ? 'required' : '','leading-[1.5] mt-2', labelClass]"> {{ field.label }} </span>
@@ -450,10 +450,17 @@ export default {
         this.fields[field].parentSelect = val
     },
     changedValue(field){
+      let value = this.form[field]
+      let parent = this.fields[field]?.parentSelect
+      let options = this.fields[field]?.options ?? []
+      if (Array.isArray(options)) {
+        options = Object.values(options)
+      }
       this.$emit('changedValue', {
         field: field,
-        value: this.form[field],
-        parent: this.fields[field]?.parentSelect
+        value: value,
+        parent: parent,
+        option: options?.filter?.(d => d.value == value)?.[0]
       })
     },
     searchData(ind){
@@ -582,7 +589,7 @@ export default {
       fieldsData.forEach(d => {
         if (d.from_user == '1' || d.from_user == undefined) {
           vm.fieldsData[d.nama_kolom] = d
-          vm.form[d.nama_kolom] = d.input == 'array' ? [] : ''
+          vm.form[d.nama_kolom] = vm.isEmpty(d.default) ? (d.input == 'array' ? [] : '') : d.default
           vm.errors[d.nama_kolom] = d.input == 'array' ? [] : ''
           vm.original[d.nama_kolom] = false
           if (d.input == 'file') {
@@ -591,7 +598,7 @@ export default {
           }
         }
       })
-      // console.log('form isi', vm.form)
+      console.log('form isi', vm.form)
       vm.fillObjectValue(vm.form, vm.formValue)
       setTimeout(() => {
         vm.fillObjectValue(vm.form, vm.formValue)

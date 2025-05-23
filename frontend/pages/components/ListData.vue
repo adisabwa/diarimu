@@ -2,7 +2,7 @@
 	<div 
     ref="scrollContainer"
 		v-infinite-scroll="loadingData"
-		class="min-h-[200px] max-h-[50vh] overflow-auto px-6 "
+		class="min-h-[200px] max-h-[50vh] overflow-y-auto px-6 "
 		:infinite-scroll-disabled="disabledScroll"
 		infinite-scroll-delay="1000"
 		infinite-scroll-distance="10">
@@ -16,7 +16,8 @@
         bg-[var(--bg-color)] border border-solid border-[var(--border-color)]
         text-[var(--text-color)]
         flex items-center justify-between
-        relative overflow-hidden`,
+        relative overflow-hidden
+        cursor-pointer`,
         boxClass]"
 				draggable="true"
 				@click="(event) => editData(event, key)"

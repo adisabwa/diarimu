@@ -1,6 +1,6 @@
 
 <template>
-  <div id="sholat relative" class="pt-[50px]">
+  <div id="sholat relative" class="pt-[50px] sm:pt-5">
     <FilterAnggota v-if="user.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="reloadData"/>
     <el-card v-show="['user','super-admin'].includes(user.role)"
@@ -129,9 +129,8 @@
               <div class="mb-2  text-gray-500  text-[13px]"><b>( {{ dateShortIndo(data.tanggal) }} )</b></div>
               <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ data.total_score }}</div>
               <div class="flex items-start justify-center">
-                <star :id="'1star'+ind+'data'" width="28px"/>
-                <star :id="'2star'+ind+'data'" width="33px"/>
-                <star :id="'3star'+ind+'data'" width="28px"/>
+                <star width="28px" :count="getCount(data.total_score / 5)"
+                  class="gap-0 *:mx-[-3px] [&>*:not(:first-child):not(:last-child)>*]:w-[34px]"/>
               </div>
             </template>
             <template v-else>
@@ -200,12 +199,13 @@
             class="pl-[30px] italic mt-0 mb-1">
             <li v-for="ind in ['shubuh','dhuhur','asar','maghrib','isya']"
               class="pl-1">
-              Sholat {{ ucFirst(ind) }} ( {{ getLabel(data[ind]) }} ) 
-              <template v-if="data[ind] >= 25">
-                <star :id="'3star'+ind+'data'" :class="['scale-100', data[ind] == 100 ? '' : 'grayscale']" width="10px"/>
-                <star :id="'3star'+ind+'data'" :class="['scale-100', data[ind] >= 75 ? '' : 'grayscale']" width="10px"/>
-                <star :id="'3star'+ind+'data'" :class="['scale-100', data[ind] >= 50 ? '' : 'grayscale']" width="10px"/>
-              </template>
+              <div class="flex items-center gap-x-3">
+                Sholat {{ ucFirst(ind) }} ( {{ getLabel(data[ind]) }} ) 
+                <template v-if="data[ind] >= 25">
+                  <star :count="getCount(data[ind])" width="12px"
+                    class="gap-x-[2px]"/>
+                </template>
+              </div>
             </li>
           </ol>
         </template>

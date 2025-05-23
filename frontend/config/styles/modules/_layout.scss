@@ -3,27 +3,25 @@ Icon {
   margin-right: 10px;
 }
 
-.custom-scrollbar-vertical {
+.overflow-y-auto, .overflow-y-scroll {
   &::-webkit-scrollbar {
-    width: 6px;
-    background-color: #FFFFFF;
-    outline: 2px solid white;
+    width: 4px;
+    background-color:   white;
   }
   &::-webkit-scrollbar-thumb {
-    height: 100px;
-    background-color: #d0d0d0;
+    height: 1px;
+    background-color: #c6dbdb;
     border-radius: 5px;
   }
 }
-.custom-scrollbar-horizontal {
+.overflow-x-auto, .overflow-x-scroll {
   &::-webkit-scrollbar {
-    height: 6px;
-    background-color: #FFFFFF;
-    outline: 2px solid white;
+    height: 4px;
+    background-color:   white;
   }
   &::-webkit-scrollbar-thumb {
     width: 100px;
-    background-color: #d0d0d0;
+    background-color: #c6dbdb;
     border-radius: 5px;
   }
 }

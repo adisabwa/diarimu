@@ -4,7 +4,7 @@
       v-model:id-anggota="idAnggota" @change="submittedData"/>
     <lazismu v-model:show="showLazismu"/>
     <teleport to="body">
-      <div class="fixed z-[99] scale-x-[1.1] top-[70px] right-[20px]
+      <div class="fixed z-[99] scale-x-[1.1] top-[70px] left-[20px]
           opacity-[0.4]
           w-[45px] h-[45px]
             active:scale-90 active:opacity-[0.8]

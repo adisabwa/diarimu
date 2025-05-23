@@ -1,12 +1,14 @@
 <template>
   <div class="">
     <div class="z-[99] h-[40px]">
-      <div class="absolute sm:fixed z-[10] top-0 overflow-visible w-full h-[30px]"> 
-        <el-header class="bg-orange-300 h-[40px] w-full relative"></el-header>
-        <div id="top" class="add-play bg-cover bg-bottom
-          h-[70px] w-[1400px] absolute z-[51] top-[1px]
-          translate-x-[calc(50vw-50%)] sm:-translate-x-[calc(575px)]"
-            :style="`background-image:url('${$baseUrl}assets/images/top.png')`"></div>
+      <div class="absolute sm:fixed z-[10] top-0 overflow-visible w-full max-w-[100vw] h-[30px]"> 
+        <div class="relative overflow-hidden h-[100px]">
+          <el-header class="bg-orange-300 h-[40px] w-full relative"></el-header>
+          <div id="top" class="add-play bg-cover bg-bottom
+            h-[70px] w-[1400px] absolute z-[51] top-[1px]
+            translate-x-[calc(50vw-50%)] sm:-translate-x-[calc(575px)]"
+              :style="`background-image:url('${$baseUrl}assets/images/top.png')`"></div>
+        </div>
         <img id="logo" :src="$baseUrl + 'assets/images/logo-kecil.png'" height="90px" 
           @click="$router.push({name:defaultRoute})"
           class="pointer animate hover:scale-[0.8]

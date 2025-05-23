@@ -57,7 +57,7 @@
           v-model:form-value="formValue" 
           href="quran/baca/store"
           href-get="quran/baca/get"
-          :show-columns="['tanggal','surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']"
+          :show-columns="showColumns"
           @saved="submittedData" 
           @changed-value="changedValue"
           @error="saving=false"
@@ -181,7 +181,7 @@ export default {
       sizeWindow:window.innerWidth,
       setStatusText: setStatusText,
       setStatusType: setStatusType,
-      showCreate:false,
+      showCreate:true,
       success:false,
       saving:false,
       quran: topMenu.quranBaca,
@@ -199,7 +199,15 @@ export default {
     labelPosition(){
       return this.sizeWindow < 800 ? 'top' : 'left'
     },
-    
+    showColumns(){
+      let show = ['tanggal','jenis_input']
+      if (this.formValue.jenis_input == 'ayat') {
+        show = [...show,...['surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']]
+      } else {
+        show = [...show,...['juz_mulai','juz_selesai']]
+      }
+      return show
+    }
   },
   methods: {
     getInitial: async function() {
@@ -226,13 +234,26 @@ export default {
           this.loading = false
         });
     },
-    changedValue({ field, parent, value}){
+    changedValue({ field, parent, value, option}){
       // console.log(field, parent, value)
       if (field == 'surat_mulai-ayat_mulai') {
       // console.log(field)
         let changedField = 'surat_selesai-ayat_selesai'
         this.$refs.formBaca.changeData(changedField, parent, 'parent')
         this.$refs.formBaca.changeData(changedField, value)
+
+      } else if (field == 'juz_mulai') {
+        this.$refs.formBaca.changeData('juz_selesai', value)
+        this.$refs.formBaca.changedValue('juz_selesai')
+
+        let changedField = 'surat_mulai-ayat_mulai'
+        this.$refs.formBaca.changeData(changedField, option?.surat_mulai, 'parent')
+        this.$refs.formBaca.changeData(changedField, option?.surat_mulai+'-'+option?.ayat_mulai)
+        
+      } else if (field == 'juz_selesai') {
+        let changedField = 'surat_selesai-ayat_selesai'
+        this.$refs.formBaca.changeData(changedField, option?.surat_selesai, 'parent')
+        this.$refs.formBaca.changeData(changedField, option?.surat_selesai+'-'+option?.ayat_selesai)
       }
     },
     submittedData(){

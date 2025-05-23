@@ -13,20 +13,20 @@
 }
 </style>
 <template>
-  <div id="sholat" class="pt-[50px]">
+  <div id="sholat" class="pt-[50px] sm:pt-5">
     <FilterAnggota v-if="user.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="reloadData"/>
     <el-card v-show="['user','super-admin'].includes(user.role)"
       class="rounded-[10px]
       bg-gradient-to-tl from-white/[0.8] from-50% to-rose-200/[0.5] 
       mb-3 p-0"
-      :body-class="[collapseInput ? 'max-h-[30px] py-0' : 'max-h-[calc(100vh-200px)] pt-0 pb-2', 'animate overflow-y-auto overflow-x-hidden relative p-0']"
+      body-class="animate relative p-0"
       header-class="relative p-0">
       <template #header>
         <img :src="sholat.image" height="90px" width="90px"
             class="absolute z-[0] top-[0px] right-[-15px]
               opacity-[0.5]"/>
-        <div id="header-scroll" class="relative px-0 py-3 font-bold text-[18px] overflow-x-scroll
+        <div id="header-scroll" class="relative px-0 py-3 font-bold text-[18px] overflow-x-scroll custom-scrollbar-horizontal
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
             <el-date-picker
@@ -62,94 +62,106 @@
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
-      <div class="mt-1 text-center active:scale-90"
+      <div class="mt-1 text-center active:scale-90 pointer sticky top-0 z-[10]"
         @click="collapseInput = !collapseInput">
         <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
         <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
       </div>
-      <div id="body-scroll" :class="[`pb-6 relative px-0 
-        animate
-        flex    
-        overflow-x-scroll
-        snap-x snap-mandatory`]">
-        <template v-for="(_data, ind) in datas">
-          <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
-            px-7 w-full
-            relative
-            grid grid-cols-1 sm:grid-cols-3"
-            v-loading="loadings[ind]">
-            <template v-for="(sholat, key) in _data">
-              <div :class="`${ sholat.do ? 'bg-emerald-200 text-emerald-900  [&_*]:bg-emerald-200 [&_*]:text-emerald-900 ' : 'bg-white text-gray-400 [&_*]:bg-white [&_*]:text-gray-400 active:scale-90' }
-                pt-4 pb-3 mb-4 px-5 mx-auto
-                rounded-[15px] min-w-[240px] max-w-[300px]
-                shadow-md
-                relative flex gap-x-2 items-start
-                animate [--duration:0.5s]`">
-                <div class="w-full">
-                  <div class="text-[18px] font-semibold w-full
-                    flex gap-2 items-center"
-                      @click="sholat.do = !sholat.do;
-                      sholat.edit = false;
-                      saveData(ind, key)">
-                    <icons v-if="sholat.do"
-                      class="m-0 text-[30px]"
-                      icon="material-symbols:check-circle-outline"/>
-                    <div v-else
-                      class="w-[20px] h-[20px] rounded-full shrink-0
-                      border border-solid border-gray-400 leading-0
-                      "/>
-                    <div class="leading-[1.2]"
-                      >{{ ucFirst(sholat.nama_sholat) }}
+      <div :class="[collapseInput ? 'max-h-[0px] py-0' : 'max-h-[calc(100vh-200px)] pt-0 pb-2',
+        'overflow-y-auto overflow-x-hidden'
+        ]">
+        <div id="body-scroll" :class="[`pb-6 px-0 
+          animate
+          flex    
+          overflow-x-scroll
+          snap-x snap-mandatory`]">
+          <template v-for="(_data, ind) in datas">
+            <el-container :id="'body'+ind" class="font-montserrat shrink-0 snap-center
+              px-7 w-full
+              relative
+              grid grid-cols-1 sm:grid-cols-2"
+              v-loading="loadings[ind]">
+              <template v-for="(sholat, key) in _data">
+                <div :class="`${ sholat.do ? 'bg-emerald-200 text-emerald-900  [&_*]:bg-emerald-200 [&_*]:text-emerald-900 ' : 'bg-white text-gray-400 [&_*]:bg-white [&_*]:text-gray-400 active:scale-90' }
+                  pt-4 pb-3 mb-4 px-5 mx-auto
+                  rounded-[15px] min-w-[240px] max-w-[300px]
+                  shadow-md
+                  relative flex gap-x-2 items-center
+                  animate [--duration:0.5s]
+                  cursor-pointer`">
+                  <div class="w-full">
+                    <div class="text-[18px] font-semibold w-full
+                      flex gap-2 items-center"
+                        @click="sholat.do = !sholat.do;
+                        sholat.edit = false;
+                        saveData(ind, key)">
+                      <icons v-if="sholat.do"
+                        class="m-0 text-[30px]"
+                        icon="material-symbols:check-circle-outline"/>
+                      <div v-else
+                        class="w-[20px] h-[20px] rounded-full shrink-0
+                        border border-solid border-gray-400 leading-0
+                        "/>
+                      <div class="leading-[1.2]"
+                        >{{ ucFirst(sholat.nama_sholat) }}
+                      </div>
+                    </div>
+                    <div v-if="sholat.do"
+                      class="ml-10 font-bold leading-[1]
+                        text-sm w-fit">
+                      <div v-if="!sholat.edit"
+                        @click="sholat.edit = true"
+                        class="flex items-center translate-y-[-3px]">
+                        <span class="mr-1 text-[13px] translate-y-[1px]"> {{ sholat.rakaat }} Rakaat</span>
+                        <icons 
+                          icon="flowbite:edit-solid" class="text-[20px] mr-1"/>
+                      </div>
                     </div>
                   </div>
-                  <div v-if="sholat.do"
-                    class="ml-10 font-bold leading-[1]
-                      text-sm w-fit">
-                    <div v-if="!sholat.edit"
-                      @click="sholat.edit = true"
-                      class="flex items-center translate-y-[-3px]">
-                      <span class="mr-1 text-[13px] translate-y-[1px]"> {{ sholat.rakaat }} Rakaat</span>
-                      <icons 
-                        icon="flowbite:edit-solid" class="text-[20px] mr-1"/>
-                    </div>
-                  </div>
+                    <div v-if="sholat.edit"
+                      class="flex flex-col items-center grow-0
+                        rounded-[5px] leading-[1]"> 
+                        <el-input-number v-model="sholat.rakaat" controls-position="right"
+                          class="h-full border-0 w-[83px]"
+                          :min="sholat.min" step="2">
+                          <template #decrease-icon>
+                            <icons icon="mdi:minus" class="text-sm"/>
+                          </template>
+                          <template #increase-icon>
+                            <icons icon="mdi:plus" class="text-sm"/>
+                          </template>
+                          <template #prefix>
+                            <icons icon="mdi:check" class="text-[16px] m-0
+                              px-1 active:scale-75"
+                              @click="saveData(ind, key); sholat.edit = false"/>  
+                          </template>
+                        </el-input-number> 
+                        <div class="text-[12px] mt-1 font-semibold">Raka'at</div>     
+                    </div>                  
                 </div>
-                  <div v-if="sholat.edit"
-                    class="flex flex-col items-center grow-0
-                      rounded-[5px] leading-[1]"> 
-                      <el-input-number v-model="sholat.rakaat" controls-position="right"
-                        class="h-full border-0 w-[83px]"
-                        :min="sholat.min" step="2">
-                        <template #decrease-icon>
-                          <icons icon="mdi:minus" class="text-sm"/>
-                        </template>
-                        <template #increase-icon>
-                          <icons icon="mdi:plus" class="text-sm"/>
-                        </template>
-                        <template #prefix>
-                          <icons icon="mdi:check" class="text-[16px] m-0
-                            px-1 active:scale-75"
-                            @click="saveData(ind, key); sholat.edit = false"/>  
-                        </template>
-                      </el-input-number> 
-                      <div class="text-[12px] mt-1 font-semibold">Raka'at</div>     
-                  </div>                  
+              </template>
+              <div class="text-center text-slate-400
+                  pt-4 pb-3 px-5 mx-auto
+                  rounded-[15px] min-w-[240px] max-w-[300px]
+                  shadow-md
+                  relative flex items-center justify-center
+                  animate [--duration:0.5s]
+                  cursor-pointer
+                  active:scale-75"
+                  @click="showAdd = true">
+                  <icons icon="mdi:plus" class="text-[18px]" />
+                  <span class="font-semibold">Sholat Lainnya</span>
               </div>
-            </template>
-            <div class="text-center text-slate-400
-                pt-4 pb-3 mb-4 px-5 mx-auto
-                rounded-[15px] min-w-[240px] max-w-[300px]
-                shadow-md
-                relative flex items-center justify-center
-                animate [--duration:0.5s]
-                active:scale-75"
-                @click="showAdd = true">
-                <icons icon="mdi:plus" class="text-[18px]" />
-                <span class="font-semibold">Sholat Lainnya</span>
-              </div>
-          </el-container>
-        </template>
+            </el-container>
+          </template>
+        </div>
       </div>
+      <div class="flex items-center gap-x-4 px-4 my-2">
+        <div class="h-[2px] bg-slate-400 w-full"/>
+        <div class="text-md font-montserrat text-center min-w-1/2 shrink-0">Penilaian Sholat Sunnah</div>
+        <div class="h-[2px] bg-slate-400 w-full"/>
+      </div>
+      <star class="mx-auto mt-0 mb-5 relative gap-x-2" width="40px" :count="getCount(totals[1])" />
     </el-card>
     <el-dialog v-model="showAdd"
       width="80%" 
@@ -166,9 +178,9 @@
       <div class="relative flex flex-col
         max-h-[250px] overflow-auto">
         <template v-for="so in sholatSunnah.filter((res) => {
-          let q = filterSunnah.toLowerCase()
-          return res.nama_sholat.toLowerCase().includes(q)
-        })">
+            let q = filterSunnah.toLowerCase()
+            return res.nama_sholat.toLowerCase().includes(q)
+          })">
           <div :class="[`px-4 py-2 mb-2
             text-center text-[16px]
             border border-solid border-slate-200
@@ -284,6 +296,7 @@
 </template>
 
 <script setup>
+ import { getCount } from '@/helpers/sholat.js'
 </script>
 
 <script>
@@ -333,16 +346,23 @@ export default {
         vm.setHeaderToCenter()
       }, 50);
     },
+    afterScroll(val){
+      console.log('after-scroll', val)
+    },
   },  
   computed: {
     ...mapGetters({
       user: 'loggedUser',
-      anggotas:'data/anggotas'
     }),
-    labelPosition(){
-      return this.sizeWindow < 800 ? 'top' : 'left'
+    totals(){
+      let total = []
+      this.datas.forEach((data, i) => {
+        // console.log(data)
+        total[i]= Object.values(data)?.reduce((sum, item) => sum + (item.do ? item.rakaat : 0) * 3.75, 0) + 25
+      })
+      // console.log(total)
+      return total
     },
-    
   },
   methods: {
     getLabelSholat(sholat){
@@ -470,14 +490,17 @@ export default {
       let body = vm.jquery('#body-scroll');
       let bcenter = vm.jquery('#body1');
       body[0].scrollLeft = bcenter[0].offsetLeft
+      console.log('body', body[0].scrollLeft, bcenter[0].offsetLeft)
 
       if (vm.editTanggal) return
       let header = vm.jquery('#header-scroll');
       let center = vm.jquery('#header1');
       header[0].scrollLeft = center[0].offsetLeft
 
+      console.log('headar', header[0].scrollLeft, center[0].offsetLeft)
       setTimeout(() => {
         console.log('bypass-handle')
+        console.log(header[0].scrollLeft, center[0].offsetLeft)
         vm.afterScroll = true
       }, 700);
     },
@@ -492,6 +515,7 @@ export default {
         vm.scrollElement('#header-scroll','#header2',duration)
       }
       setTimeout(() => {
+        console.log('scroll-header')
         vm.addClass('#header-scroll','snap-x snap-mandatory')
       }, duration * 1000 + 100);
     },
@@ -510,7 +534,7 @@ export default {
       }
     },
     changeTanggalData(course = -1){
-      console.log(course)
+      console.log('crs', course)
       let vm = this
       vm.tanggal = vm.addDay(vm.tanggal, course)
       for (let i = 0; i < vm.tanggals.length; i++) {
@@ -528,6 +552,7 @@ export default {
         vm.datas.push(n_data)
         vm.getData(2)
       }
+      // this.setHeaderToCenter()
     },
     handleAfterScroll(){
       if (!this.afterScroll) return
@@ -537,7 +562,7 @@ export default {
         return
       let header = this.jquery('#header-scroll')[0]
       let right = this.jquery('#header2')[0]
-      // console.log(header.scrollLeft)
+      console.log(header.scrollLeft, right?.offsetLeft)
       if (header.scrollLeft == 0) {
         this.changeTanggalData(-1)
         this.setHeaderToCenter()
@@ -576,7 +601,7 @@ export default {
     let scrollTimeout;
     jquery('#header-scroll').on('scroll', () => {      
       const scrollLeft = jquery('#header-scroll')[0].scrollLeft;
-      // console.log('header-scroll')
+      console.log('header-scroll')
       vm.removeClass('#body-scroll','snap-x snap-mandatory')
       jquery('#body-scroll').scrollLeft(scrollLeft);
       vm.following = 'body'
@@ -591,7 +616,7 @@ export default {
           vm.addClass('#header-scroll','snap-x snap-mandatory')
           vm.addClass('#body-scroll','snap-x snap-mandatory')
           vm.handleAfterScroll()
-        }, 500);
+        }, 300);
         // Your code here
       }, 200); // Adjust timeout duration as needed
     });
