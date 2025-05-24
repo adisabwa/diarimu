@@ -457,7 +457,7 @@ export default {
       else
         return 'col-span-' + span
     },
-    changeData({field, value, dest = 'form', func = null}){
+    changeData({field, value, parent, func = null}){
       if (typeof func == 'function') {
         value = func({
           field:field,
@@ -466,10 +466,9 @@ export default {
         })
       }
       
-      if (dest == 'form')
-        this.form[field] = value
-      else if (dest == 'parent')
-        this.fields[field].parentSelect = value
+      this.form[field] = value
+      if (!this.isEmpty(parent))
+        this.fields[field].parentSelect = parent
     },
     changedValue(field){
       let value = this.form[field]

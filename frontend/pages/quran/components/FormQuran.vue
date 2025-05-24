@@ -124,124 +124,52 @@ export default {
           console.log(err)
         })
     },
+    updateField(field, value, parent, func = null) {
+      const payload = { field, value, parent };
+      if (func) payload.func = func;
+      this.$refs.formQuran.changeData(payload);
+    },
+    updateSuratAyat(type, surat, ayat) {
+      const field = `surat_${type}-ayat_${type}`;
+      this.updateField(field, `${surat}-${ayat}`, surat);
+    },
     changedValue({ field, parent, value, option}){
-      // console.log(field, parent, value)
-      if (field == 'surat_mulai-ayat_mulai') {
-      // console.log(field)
-        let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:parent, 
-          dest:'parent'
-        })
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:value
-        })
-        this.$refs.formQuran.changeData({
-          field:'juz_mulai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
-        this.$refs.formQuran.changeData({
-          field:'halaman_mulai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
+      switch (field) {
+        case 'surat_mulai-ayat_mulai':
+          this.updateField('surat_selesai-ayat_selesai', value, parent, null);
+          this.$refs.formQuran.changedValue('surat_selesai-ayat_selesai');
+          this.updateField('juz_mulai', value, this.searchFromAyat);
+          this.updateField('halaman_mulai', value, this.searchFromAyat);
+          break;
 
-      } else  if (field == 'surat_selesai-ayat_selesai') {
-      // console.log(field)
-        this.$refs.formQuran.changeData({
-          field:'juz_selesai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
-        this.$refs.formQuran.changeData({
-          field:'halaman_selesai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
+        case 'surat_selesai-ayat_selesai':
+          this.updateField('juz_selesai', value, this.searchFromAyat);
+          this.updateField('halaman_selesai', value, this.searchFromAyat);
+          break;
 
-      } else if (field == 'juz_mulai') {
-        this.$refs.formQuran.changeData({
-          field:'juz_selesai', 
-          value:value
-        })
-        this.$refs.formQuran.changedValue('juz_selesai')
-        this.$refs.formQuran.changeData({
-          field:'halaman_mulai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
+        case 'juz_mulai':
+          this.updateField('juz_selesai', value);
+          this.$refs.formQuran.changedValue('juz_selesai');
+          this.updateField('halaman_mulai', value, this.searchFromAyat);
+          this.updateSuratAyat('mulai', option?.surat_mulai, option?.ayat_mulai);
+          break;
 
-        let changedField = 'surat_mulai-ayat_mulai'
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_mulai, 
-          dest:'parent'
-        })
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_mulai+'-'+option?.ayat_mulai
-        })
-        
-      } else if (field == 'juz_selesai') {
-        this.$refs.formQuran.changeData({
-          field:'halaman_selesai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
-        let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_selesai, 
-          dest:'parent'
-        })
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_selesai+'-'+option?.ayat_selesai
-        })
-      } else if (field == 'halaman_mulai') {
-        this.$refs.formQuran.changeData({
-          field:'halaman_selesai', 
-          value:value
-        })
-        this.$refs.formQuran.changedValue('halaman_selesai')
+        case 'juz_selesai':
+          this.updateField('halaman_selesai', value, this.searchFromAyat);
+          this.updateSuratAyat('selesai', option?.surat_selesai, option?.ayat_selesai);
+          break;
 
-        this.$refs.formQuran.changeData({
-          field:'juz_mulai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
-        let changedField = 'surat_mulai-ayat_mulai'
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_mulai, 
-          dest:'parent'
-        })
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_mulai+'-'+option?.ayat_mulai
-        })
-        
-      } else if (field == 'halaman_selesai') {
-        
-        this.$refs.formQuran.changeData({
-          field:'halaman_mulai', 
-          value:value,
-          func:this.searchFromAyat,
-        })
+        case 'halaman_mulai':
+          this.updateField('halaman_selesai', value);
+          this.$refs.formQuran.changedValue('halaman_selesai');
+          this.updateField('juz_mulai', value, this.searchFromAyat);
+          this.updateSuratAyat('mulai', option?.surat_mulai, option?.ayat_mulai);
+          break;
 
-        let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_selesai, 
-          dest:'parent'
-        })
-        this.$refs.formQuran.changeData({
-          field:changedField, 
-          value:option?.surat_selesai+'-'+option?.ayat_selesai
-        })
+        case 'halaman_selesai':
+          this.updateField('juz_mulai', value, this.searchFromAyat);
+          this.updateSuratAyat('selesai', option?.surat_selesai, option?.ayat_selesai);
+          break;
       }
     },
     searchFromAyat({field, fieldData, value}){
