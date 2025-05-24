@@ -44,6 +44,7 @@ class Kolom extends BaseController
                     $methods = explode('::',$data->pilihan);
                     $model = $methods[0];
                     $method = $methods[1] ?? 'getOptions';
+                    // var_dump($model);
                     $model = model($model);
                     $options = $model->$method() ?? [];
                 }

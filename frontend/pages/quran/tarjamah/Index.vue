@@ -228,8 +228,15 @@ export default {
       if (field == 'surat_mulai-ayat_mulai') {
       console.log(field)
         let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formTarjamah.changeData(changedField, parent, 'parent')
-        this.$refs.formTarjamah.changeData(changedField, value)
+        this.$refs.formTarjamah.changeData({
+          field:changedField, 
+          value:option?.surat_mulai, 
+          dest:'parent'
+        })
+        this.$refs.formTarjamah.changeData({
+          field:changedField, 
+          value:option?.surat_mulai+'-'+option?.ayat_mulai
+        })
       }
     },
     submittedData(){

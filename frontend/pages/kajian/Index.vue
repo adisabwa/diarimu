@@ -174,7 +174,10 @@
         if (val) {
           // console.log(val, this.idAnggota)
           this.$nextTick(() => {
-            this.$refs.formKajian.changeData('id_anggota', this.idAnggota)
+            this.$refs.formKajian.changeData({
+              field:'id_anggota', 
+              value:this.idAnggota
+            })
           })
         }
       }

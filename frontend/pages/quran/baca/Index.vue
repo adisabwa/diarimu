@@ -24,62 +24,15 @@
           class="absolute z-[0] top-[-10px] right-[-15px]
             opacity-[0.5]"/>
     </el-card>
-    <el-card v-if="['user','super-admin'].includes(user.role)"
-      class="bg-white/[0.9] rounded-[10px]
-      mb-3 p-0"
-      body-class="py-3 px-5 text-[14px]"
-      header-class="py-3 font-bold text-[16px]">
+    <form-quran v-if="['user','super-admin'].includes(user.role)"
+      href="quran/baca/store"
+      href-get="quran/baca/get"
+      table="mu_quran_baca"
+      @saved="submittedData">
       <template #header>
-        <div>Bacaan Quran hari ini</div>
+        Bacaan Al-Qur'an Hari Ini
       </template>
-      <template v-if="!showCreate">
-        <div v-if="success"
-          class="text-center text-green-500 
-            mb-5
-            flex items-center justify-center">
-          <icons icon="mdi:check-circle" />
-          <span>Anda berhasil menyimpan data baru</span>
-        </div>
-        <el-button size="large" type="primary"
-          class="rounded-full w-full font-bold text-[13px]
-          py-2"
-          @click="showCreate = true">
-          <icons icon="mdi:plus"/>
-          Tambah Catatan
-        </el-button>
-      </template>
-      <template v-else>
-        <form-comp ref="formBaca"
-          class="[&_.el-form-item\_\_label]:mb-1 mb-2"
-          :key="'form-baca-'+formKey"
-          :fields="fields" 
-          v-model:id="dataId"
-          v-model:form-value="formValue" 
-          href="quran/baca/store"
-          href-get="quran/baca/get"
-          :show-columns="showColumns"
-          @saved="submittedData" 
-          @changed-value="changedValue"
-          @error="saving=false"
-          size="large"
-          :show-submit="false"
-          label-position="top"
-          form-item-class="mb-2"
-          input-class=""
-          :show-required-text="false">
-        </form-comp>  
-        <el-button size="large" type="success"
-          class="rounded-full w-full font-bold text-[13px]
-          py-2"
-          :loading="saving" :disable="saving"
-          @click="() => {
-            $refs.formBaca.submitForm();
-            saving=false
-          }">
-          Simpan Data
-        </el-button>
-      </template>
-    </el-card>
+    </form-quran>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-0"
       header-class="py-3 font-bold text-[16px]
@@ -147,6 +100,7 @@ import { setStatusText, setStatusType } from '@/helpers/quran'
 import FilterAnggota from '../../components/FilterAnggota.vue';
 import ListData from '@/pages/components/ListData.vue';
 import Chart from '@/pages/components/DataChart.vue'
+import FormQuran from '@/pages/quran/components/FormQuran.vue';
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
@@ -155,13 +109,13 @@ export default {
     Chart,
     ListData,
     FilterAnggota,
+    FormQuran,
   },
   data: function() {
     return {
       loading: false,
       showAdd: false,
       formKey:1,
-      dataId:-1,
       idAnggota:null,
       lastData:{
         tanggal:'',
@@ -172,18 +126,8 @@ export default {
         ayat_mulai:'',
         ayat_selesai:'',
       },
-      fields:{
-        tanggal:'',
-        surat_selesai:'',
-        ayat_selesai:'',
-      },
-      formValue:{},
-      sizeWindow:window.innerWidth,
       setStatusText: setStatusText,
       setStatusType: setStatusType,
-      showCreate:true,
-      success:false,
-      saving:false,
       quran: topMenu.quranBaca,
       showData:'list',
     };
@@ -196,18 +140,6 @@ export default {
       user: 'loggedUser',
       anggotas:'data/anggotas'
     }),
-    labelPosition(){
-      return this.sizeWindow < 800 ? 'top' : 'left'
-    },
-    showColumns(){
-      let show = ['tanggal','jenis_input']
-      if (this.formValue.jenis_input == 'ayat') {
-        show = [...show,...['surat_mulai-ayat_mulai','surat_selesai-ayat_selesai']]
-      } else {
-        show = [...show,...['juz_mulai','juz_selesai']]
-      }
-      return show
-    }
   },
   methods: {
     getInitial: async function() {
@@ -222,49 +154,9 @@ export default {
           var res = result.data;
           this.fillAndAddObjectValue(this.lastData, res)
         });
-
-      await this.$http.get('/kolom/preparation?table=mu_quran_baca&grouping=0&input=0')
-        .then(result => {
-          var res = result.data;
-          this.dataId = -1
-          this.fields = this.fillAndAddObjectValue(this.fields, res)
-          this.fields.tanggal.default = this.dateNow()
-          this.fields.id_anggota.default = this.idAnggota
-          this.formKey++
-          this.loading = false
-        });
-    },
-    changedValue({ field, parent, value, option}){
-      // console.log(field, parent, value)
-      if (field == 'surat_mulai-ayat_mulai') {
-      // console.log(field)
-        let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formBaca.changeData(changedField, parent, 'parent')
-        this.$refs.formBaca.changeData(changedField, value)
-
-      } else if (field == 'juz_mulai') {
-        this.$refs.formBaca.changeData('juz_selesai', value)
-        this.$refs.formBaca.changedValue('juz_selesai')
-
-        let changedField = 'surat_mulai-ayat_mulai'
-        this.$refs.formBaca.changeData(changedField, option?.surat_mulai, 'parent')
-        this.$refs.formBaca.changeData(changedField, option?.surat_mulai+'-'+option?.ayat_mulai)
-        
-      } else if (field == 'juz_selesai') {
-        let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formBaca.changeData(changedField, option?.surat_selesai, 'parent')
-        this.$refs.formBaca.changeData(changedField, option?.surat_selesai+'-'+option?.ayat_selesai)
-      }
     },
     submittedData(){
-      this.saving = false;
-      this.showCreate = false
-      this.success = true
-      this.getInitial();
-      setTimeout(() => {
-        this.updateChart();
-      }, 400);
-      // this.formKey++
+      this.updateChart();
     },
     updateChart(){
       if (this.showData == 'chart') this.$refs.quranChartData?.getChart();
@@ -272,21 +164,9 @@ export default {
     }
   },
   created: function() {
-    // let filter = this.$store.getters.filter
-    // this.filter.nama = this.isEmpty(filter.nama) ? '' : filter.nama
-    // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
     this.getInitial()
     this.$store.dispatch('data/getAllAnggotaInGroup')
     this.idAnggota = this.$store.getters.loggedUser.id_anggota
-    // console.log(this.$router);
-  },
-  mounted: function() {
-    let vm = this
-    vm.sizeWindow = window.innerWidth
-    window.addEventListener('resize', () => {
-      vm.sizeWindow = window.innerWidth
-    });
-    // this.searchData()
   },
 }
 </script>

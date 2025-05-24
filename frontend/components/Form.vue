@@ -1,10 +1,10 @@
 <template>
 	<div class="">
     <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving" :inline="inline"
-      :class="['grid grid-cols-2',formClass]">
+      :class="[gridClass,formClass]">
       <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
       <template  v-for="(field, ind) in fieldsData">
-        <el-form-item :class="['grow-0',  formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
+        <el-form-item :class="['grow-0', gridItemClass(field?.span), formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
           v-show="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
           :error="field.input == 'array' ? '' : errors[field.nama_kolom]">
           <template #label v-if="showLabel">
@@ -60,7 +60,7 @@
                 :size="size"
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
-            <template v-else-if="field.input == 'select' || field.input == 'select-multiple'">
+            <template v-else-if="['select','select-multiple','scroll'].includes(field.input)">
               <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
                 filterable clearable
                 :allow-create="field.allow_create"
@@ -68,6 +68,7 @@
                 :size="size"
                 @change="changedValue(field.nama_kolom)"
                 :style="{width:(field.width_input.split('-')[1] ?? '') + ' !important'}"  
+                :type="field.input.split('-')[0]"
                 :options="field.options"
                 :prefix="field.prepend">
                 <template v-if="field.allow_add" #footer>
@@ -363,6 +364,10 @@ export default {
     inputClass:{
       type:String,
       default:'',
+    },
+    cols:{
+      type:[String, Number],
+      default:'6',
     }
   },
   inject: ['sharedState'],
@@ -440,19 +445,37 @@ export default {
         return this?.sharedState?.showColumns
       
        return []
-    }
+    },
+    gridClass(){
+      return 'gap-x-4 grid grid-cols-' + this.cols
+    },
   },
   methods: {
-    changeData(field, val, dest = 'form'){
+    gridItemClass(span){
+      if (this.isEmpty(span))
+        return 'col-span-' + this.cols
+      else
+        return 'col-span-' + span
+    },
+    changeData({field, value, dest = 'form', func = null}){
+      if (typeof func == 'function') {
+        value = func({
+          field:field,
+          fieldData:this.fields[field],
+          value:value,
+        })
+      }
+      
       if (dest == 'form')
-        this.form[field] = val
+        this.form[field] = value
       else if (dest == 'parent')
-        this.fields[field].parentSelect = val
+        this.fields[field].parentSelect = value
     },
     changedValue(field){
       let value = this.form[field]
       let parent = this.fields[field]?.parentSelect
       let options = this.fields[field]?.options ?? []
+      // console.log(field, value, parent, options)
       if (Array.isArray(options)) {
         options = Object.values(options)
       }

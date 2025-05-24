@@ -260,8 +260,15 @@ export default {
       if (field == 'surat_mulai-ayat_mulai') {
       // console.log(field)
         let changedField = 'surat_selesai-ayat_selesai'
-        this.$refs.formHafal.changeData(changedField, parent, 'parent')
-        this.$refs.formHafal.changeData(changedField, value)
+        this.$refs.formHafal.changeData({
+          field:changedField, 
+          value:option?.surat_mulai, 
+          dest:'parent'
+        })
+        this.$refs.formHafal.changeData({
+          field:changedField, 
+          value:option?.surat_mulai+'-'+option?.ayat_mulai
+        })
       }
     },
   },

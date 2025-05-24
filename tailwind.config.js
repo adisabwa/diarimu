@@ -11,6 +11,10 @@ module.exports = {
     './index.html',
     './frontend/**/*.{vue,js,ts,jsx,tsx}'
   ],
+  safelist: [
+    { pattern: /grid-cols-\d+/ },
+    { pattern: /col-span-\d+/ },
+  ],
   important: true,
   theme: {
     extend: {
