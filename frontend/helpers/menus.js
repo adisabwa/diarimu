@@ -56,6 +56,9 @@ let topMenu = {
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/infaq.png',
   },
+}
+
+let organizationMenu = {
   group: {
     url:'group',
     label:"Data Kelompok",
@@ -85,6 +88,26 @@ let topMenu = {
   },
 }
 
+let facilityMenu = {
+  bacaanSholat: {
+    url:'facility/sholat',
+    label:"Bacaan Sholat",
+    route:'facility-sholat',
+    color:'bg-fuchsia-200',
+    shadowColor:'shadow-fuchsia-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/praying.png',
+  },
+  bacaanDoa: {
+    url:'facility/doa',
+    label:"Doa Harian",
+    route:'facility-doa',
+    color:'bg-amber-200',
+    shadowColor:'shadow-amber-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/pray.png',
+  },
+}
 
 let adminMenu = {
   account: {
@@ -99,8 +122,12 @@ let adminMenu = {
 }
 
 export { adminMenu }
+export { facilityMenu }
 export { topMenu }
+export { organizationMenu }
 export default {
   topMenu,
   adminMenu,
+  facilityMenu,
+  organizationMenu,
 }

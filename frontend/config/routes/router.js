@@ -11,6 +11,7 @@ import sholatRoute from './routes/sholat'
 import persyarikatanRoute from './routes/persyarikatan'
 import kajianRoute from './routes/kajian'
 import dataRoute from './routes/data'
+import facilityRoute from './routes/facility'
 // Vue router
 const routes = new createRouter({
   history: createWebHistory(),
@@ -23,6 +24,7 @@ const routes = new createRouter({
     ...dataRoute,
     ...kajianRoute,
     ...persyarikatanRoute,
+    ...facilityRoute,
     ...sholatRoute,
 	],
   scrollBehavior: function(to, from, savedPosition) {

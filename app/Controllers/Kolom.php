@@ -45,7 +45,7 @@ class Kolom extends BaseController
                     $model = $methods[0];
                     $method = $methods[1] ?? 'getOptions';
                     $model = model($model);
-                    $options = $model->$method() ?? [];
+                    $options = $model?->$method() ?? [];
                 }
             }
             $data->options = $options;

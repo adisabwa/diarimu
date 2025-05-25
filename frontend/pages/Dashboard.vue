@@ -93,18 +93,21 @@
 						class="grow-0 text-xl text-emerald-50"/>
 				</div>
 			</el-button>
-			<el-card class="relative h-auto w-full
+			<el-card v-for="_menu in menus"
+				class="relative h-auto w-full
 				bg-white/[0.8] shadow-md
 				rounded-[20px]
 				mb-4"
 				header-class="pt-4 pb-3">
 					<template #header>
-						<div class="font-montserrat font-bold text-xl text-emerald-900">Catatan Ibadah Pribadi</div>
+						<div class="font-montserrat font-bold text-xl text-emerald-900">
+							{{ _menu.title }}
+						</div>
 					</template>
 					<div class="grid grid-cols-[repeat(auto-fit,_65px)] gap-[25px] gap-y-[15px]
 						justify-center
 						px-1 sm:max-w-[80%] mx-auto pb-5">
-						<template v-for="(menu, ind) in topMenu">
+						<template v-for="(menu, ind) in _menu.menu">
 							<div class="grid-item h-[110px] cursor-pointer"
 								@click="$router.push({name:menu.route})">
 								<div class="animate pointer duration-500 group/app
@@ -185,7 +188,8 @@ async function installApp() {
 
 <script>
 import { mapGetters } from 'vuex';
-import { topMenu } from '@/helpers/menus.js'
+import { organizationMenu, facilityMenu, topMenu } from '@/helpers/menus.js'
+import { meanBy } from 'lodash';
 
 export default {
   name: "default",
@@ -193,10 +197,23 @@ export default {
   },
   data: function() {
     return {
-			topMenu:topMenu,
 			beforeMax:-1,
       showRole:false,
       role:'',
+			menus: [
+				{
+					title: 'Catatan Ibadah',
+					menu: topMenu,
+				},
+				{
+					title: 'Kajian / Organisasi',
+					menu: organizationMenu,
+				},
+				{
+					title: 'Fasilitas Ibadah',
+					menu: facilityMenu,
+				},
+			],
 			information:{
 
 			}
@@ -210,18 +227,21 @@ export default {
 	methods:{
 		getBefore(){
 			this.beforeMax = 0
-			let keys = Object.keys(topMenu)
-			for (let i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				const d = this.topMenu[key]
-				this.$http.get(d.url+'/get_before')
-					.then(res => {
-						d.before = res?.data
-						if (this.beforeMax < d.before)
-							this.beforeMax = d.before
-					})
-			}
-		},
+			this.menus.forEach(menu => {
+				let keys = Object.keys(menu.menu)
+				for (let i = 0; i < keys.length; i++) {
+					const key = keys[i];
+					const d = menu.menu[key]
+					if (!d?.url || !d?.before) continue
+					this.$http.get(d.url+'/get_before')
+						.then(res => {
+							d.before = res?.data
+							if (this.beforeMax < d?.before)
+								this.beforeMax = d?.before
+						})
+				}
+			});
+		}
 	},
 	mounted(){
 		this.getBefore()
