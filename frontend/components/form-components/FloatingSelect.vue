@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="floatingSelect">
     <el-input v-model="labelModel" :placeholder="placeholder" 
       :clearable="clearable"
       :size="size"
@@ -22,8 +22,9 @@
             class="px-5" size="large"/>
         </template>
         <div v-if="type =='select'"
-          class="max-h-[65vh] overflow-y-auto">
+          ref="floatingScroll" class="relative max-h-[65vh] overflow-y-auto">
           <div v-for="o in optionsFilter"
+            :data-id="o.value"
             :class="[`cursor-pointer px-5 py-1 active:bg-teal-100
               border-0 border-b border-solid border-teal-700/[0.3]`,
               (isClick(o.value) ? 'bg-teal-100' : '')
@@ -47,7 +48,7 @@
         :class="['flex justify-center items-center gap-4 p-4 rounded-xl ']">
           <div class="cursor-pointer relative h-[130px] w-[150px] mx-auto">
             <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
-            <ScrollPicker :options="listOptions" v-model:modelValue="vModel" />
+            <ScrollPicker :options="optionsFilter" v-model:modelValue="vModel" />
             <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
           </div>
         </div>
@@ -117,11 +118,13 @@ export default {
     showModal:{
       immediate: true,
         async handler(val) {
-        // console.log(val)
+        // console.log(val, this.vModel)
         let vm = this
         if (val) {
           setTimeout(() => {
             vm.jquery('#filterSelect.el-input__inner')[0]?.focus();
+            // console.log(jquery(this.$refs.floatingScroll))
+            this.scrollElement(jquery(this.$refs.floatingScroll),`[data-id="${vm.vModel}"]`,1,'top', false)
           }, 500)
           vm.searchData = ''
           if (vm.isEmpty(vm.vModel)) {

@@ -25,6 +25,9 @@
             opacity-[0.5]"/>
     </el-card>
     <form-quran v-if="['user','super-admin'].includes(user.role)"
+      :id-anggota="idAnggota"
+      v-model:show="showCreate"
+      v-model:id="dataId"
       href="quran/baca/store"
       href-get="quran/baca/get"
       table="mu_quran_baca"
@@ -128,6 +131,8 @@ export default {
       },
       setStatusText: setStatusText,
       setStatusType: setStatusType,
+      showCreate:true,
+      dataId:-1,
       quran: topMenu.quranBaca,
       showData:'list',
     };

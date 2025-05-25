@@ -64,6 +64,8 @@ class DataJuzModel extends Model
           'ayat_mulai' => "$d->ayat_mulai",
           'surat_selesai' => "$d->surat_selesai",
           'ayat_selesai' => "$d->ayat_selesai",
+          'halaman_mulai' => "$d->halaman_mulai",
+          'halaman_selesai' => "$d->halaman_selesai",
         ];
       }
       return $options;

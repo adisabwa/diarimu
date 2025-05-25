@@ -37,6 +37,7 @@
           :show-columns="showColumns"
           @saved="submittedData" 
           @changed-value="changedValue"
+          @get="getData"
           @error="saving=false"
           size="large"
           :show-submit="false"
@@ -64,11 +65,14 @@
 
 export default {
   name: "form-quran",
+  emits:['update:show','update:id','saved'],
   props:{
+    id:{type:[String, Number],default:'-1'},
     idAnggota:{type:[String, Number],default:'-1'},
     href:{type:String,default:''},
     hrefGet:{type:String,default:''},
     table:{type:String,default:''},
+    show:{type:Boolean,default:false},
   },
   components: {
   },
@@ -77,19 +81,37 @@ export default {
       loading: false,
       formKey:1,
       dataId:-1,
-      fields:{
-        tanggal:'',
-        surat_selesai:'',
-        ayat_selesai:'',
-      },
+      fields:{},
       formValue:{},
-      showCreate:true,
+      showCreate:false,
       success:false,
       saving:false,
+      initial:true,
     };
   },
   watch: {
-   
+    show: {
+      immediate: true,
+      handler(val){
+        this.initial = true
+        // console.log(val)
+        this.showCreate = val
+      }
+    },
+    showCreate(val){
+      this.$emit('update:show', val)
+    },
+    id: {
+      immediate: true,
+      handler(val){
+        // console.log(val)
+        this.initial = true
+        this.dataId = val
+      }
+    },
+    dataId(val){
+      this.$emit('update:id', val)
+    }
   },  
   computed: {
     showColumns(){
@@ -112,7 +134,7 @@ export default {
           var res = result.data;
           this.dataId = -1
           this.fields = this.fillAndAddObjectValue(this.fields, res)
-          console.log(res, this.fields)
+          // console.log(res, this.fields)
           this.fields.tanggal.default = this.dateNow()
           this.fields.id_anggota.default = this.idAnggota
           this.fields.juz_mulai.span = 3
@@ -127,47 +149,51 @@ export default {
     updateField(field, value, parent, func = null) {
       const payload = { field, value, parent };
       if (func) payload.func = func;
+      // console.log(payload)
       this.$refs.formQuran.changeData(payload);
     },
     updateSuratAyat(type, surat, ayat) {
       const field = `surat_${type}-ayat_${type}`;
+      console.log(this.initial)
+      if (this.initial)
+        return
       this.updateField(field, `${surat}-${ayat}`, surat);
     },
     changedValue({ field, parent, value, option}){
+      console.log('value', field)
       switch (field) {
         case 'surat_mulai-ayat_mulai':
-          this.updateField('surat_selesai-ayat_selesai', value, parent, null);
-          this.$refs.formQuran.changedValue('surat_selesai-ayat_selesai');
-          this.updateField('juz_mulai', value, this.searchFromAyat);
-          this.updateField('halaman_mulai', value, this.searchFromAyat);
+          this.updateField('juz_mulai', value, parent, this.searchFromAyat);
+          this.updateField('halaman_mulai', value, parent, this.searchFromAyat);
+          this.updateSuratAyat('selesai', value?.split('-')?.[0],  value?.split('-')?.[1]);
           break;
 
         case 'surat_selesai-ayat_selesai':
-          this.updateField('juz_selesai', value, this.searchFromAyat);
-          this.updateField('halaman_selesai', value, this.searchFromAyat);
+          this.updateField('juz_selesai', value, parent, this.searchFromAyat);
+          this.updateField('halaman_selesai', value, parent, this.searchFromAyat);
           break;
 
         case 'juz_mulai':
           this.updateField('juz_selesai', value);
           this.$refs.formQuran.changedValue('juz_selesai');
-          this.updateField('halaman_mulai', value, this.searchFromAyat);
+          this.updateField('halaman_mulai', option?.halaman_mulai);
           this.updateSuratAyat('mulai', option?.surat_mulai, option?.ayat_mulai);
           break;
 
         case 'juz_selesai':
-          this.updateField('halaman_selesai', value, this.searchFromAyat);
+          this.updateField('halaman_selesai', option?.halaman_selesai);
           this.updateSuratAyat('selesai', option?.surat_selesai, option?.ayat_selesai);
           break;
 
         case 'halaman_mulai':
           this.updateField('halaman_selesai', value);
           this.$refs.formQuran.changedValue('halaman_selesai');
-          this.updateField('juz_mulai', value, this.searchFromAyat);
+          this.updateField('juz_mulai', value, parent, this.searchFromHalaman);
           this.updateSuratAyat('mulai', option?.surat_mulai, option?.ayat_mulai);
           break;
 
         case 'halaman_selesai':
-          this.updateField('juz_mulai', value, this.searchFromAyat);
+          this.updateField('juz_selesai', value, parent, this.searchFromHalaman);
           this.updateSuratAyat('selesai', option?.surat_selesai, option?.ayat_selesai);
           break;
       }
@@ -183,12 +209,31 @@ export default {
         let selesai = parseInt(d.surat_selesai) * 1000 + parseInt(d.ayat_selesai)
         return number >= mulai && number <= selesai
       })
+      // console.log(data)
       return data?.value
+    },
+    searchFromHalaman({field, fieldData, value}){
+      let opt = fieldData?.options ?? []
+      let data = opt.find(d => {
+        let mulai = parseInt(d?.halaman_mulai) ?? 99999
+        let selesai = parseInt(d?.halaman_selesai) ?? -1
+        return value >= mulai && value <= selesai
+      })
+      // console.log(value, data)
+      return data?.value
+    },
+    getData(){
+      let vm = this
+      this.$refs.formQuran.changedValue('surat_mulai-ayat_mulai');
+      this.$refs.formQuran.changedValue('surat_selesai-ayat_selesai');
+      setTimeout(() => this.initial = false,500)
+          
     },
     submittedData(){
       this.saving = false;
       this.showCreate = false
       this.success = true
+      this.$emit('saved')
       this.getInitial();
       setTimeout(() => {
         this.$emit('saved')

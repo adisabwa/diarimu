@@ -64,6 +64,7 @@ class DataHalamanModel extends Model
           'ayat_mulai' => "$d->ayat_mulai",
           'surat_selesai' => "$d->surat_selesai",
           'ayat_selesai' => "$d->ayat_selesai",
+          'juz' => "$d->juz",
         ];
       }
       return $options;

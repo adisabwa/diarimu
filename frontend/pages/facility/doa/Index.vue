@@ -52,11 +52,11 @@
             enter-to-class="opacity-100 translate-x-0"
             leave-from-class=" opacity-100 translate-x-0"
             :leave-to-class="'absolute opacity-0 ' + (direction == 'right' ? '-translate-x-full' : ' translate-x-full')">
-            <div :key="dataKey">
-            <div class="relative text-center text-[16px] font-bold mb-2">
-              <div>{{ data.judul }}</div>
-            </div>
-            <el-divider class="my-3"></el-divider>
+              <div :key="dataKey">
+              <div class="relative text-center text-[16px] font-bold mb-2">
+                <div>{{ data.judul }}</div>
+              </div>
+              <el-divider class="my-3"></el-divider>
               <div class="">
                 <div class="italic font-semibold">
                   Lafaz Doa :

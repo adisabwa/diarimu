@@ -19,7 +19,8 @@
         enter-from-class="opacity-50 -translate-y-full"
         enter-to-class="opacity-100"
         leave-from-class="opacity-100"
-        leave-to-class="opacity-50 translate-y-full">
+        leave-to-class="opacity-50 translate-y-full"
+        @after-leave="scrollToCoordinate('.body-data', 0, 1, 'top')">
         <div v-if="showList">
           <template v-for="(item, key) in datas">
             <div class="text-center bg-white text-fuchsia-800 rounded-[15px]  shadow-md
@@ -35,13 +36,13 @@
             px-4 py-4 mb-4  text-left
             leading-[1.5]
             relative">
-          <div class="flex justify-between text-[16px] font-bold mb-2
-            absolute w-full top-[16px] left-0">
+          <div class="text-[16px] font-bold mb-2
+            absolute w-full top-[16px] left-0 z-[3]">
             <icons v-show="dataKey > 0" icon="fe:arrow-left" 
-                class="cursor-pointer text-[20px] text-fuchsia-700 ml-3 z-[2]"
+                class="cursor-pointer text-[20px] text-fuchsia-700 ml-3 z-[2] float-left"
               @click="dataKey--;direction='left'"/>
             <icons v-show="dataKey < (datas.length - 1)" icon="fe:arrow-right" 
-              class="cursor-pointer text-[20px] text-fuchsia-700 mr-3 z-[2]"
+              class="cursor-pointer text-[20px] text-fuchsia-700 mr-3 z-[2] float-right"
               @click="dataKey++;direction='right'"/>
           </div>
           <transition name="fade"
@@ -52,10 +53,10 @@
             leave-from-class=" opacity-100 translate-x-0"
             :leave-to-class="'absolute opacity-0 ' + (direction == 'right' ? '-translate-x-full' : ' translate-x-full')">
             <div :key="dataKey">
-            <div class="relative text-center text-[16px] font-bold mb-2">
-              <div>{{ data.nama }}</div>
-            </div>
-            <el-divider class="my-3"></el-divider>
+              <div class="relative text-center text-[16px] font-bold mb-2">
+                <div>{{ data.nama }}</div>
+              </div>
+              <el-divider class="my-3"></el-divider>
               <div class="">
                 <div class="italic font-semibold">
                   Lafaz Doa :

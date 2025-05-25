@@ -110,7 +110,7 @@
                 :prefix="field.prepend1">
               </floating-select>
               <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
-                :filterable="false" clearable
+                filterable clearable
                 :class="['w-full',inputClass]" 
                 @change="changedValue(field.nama_kolom)"
                 :size="size"
@@ -371,7 +371,7 @@ export default {
     }
   },
   inject: ['sharedState'],
-  emits:['update:id','saved','error','changeId','update:formValue','changedValue','update:errorValue'],
+  emits:['update:id','saved','error','get','changeId','update:formValue','changedValue','update:errorValue'],
   data: function() {
     return {
       saving: false,
@@ -382,6 +382,7 @@ export default {
       original:{},
       fieldsData:{},
       dataId:null,
+      initial:true,
     };
   },
   watch: {
@@ -397,7 +398,8 @@ export default {
     },
     dataId: function(val, oldVal) {
       this.$emit('update:id', val);
-      // if (val > 0) {
+        this.initial = val <= 0
+
         this.getData({id:val})
       // }
     },
@@ -458,6 +460,8 @@ export default {
         return 'col-span-' + span
     },
     changeData({field, value, parent, func = null}){
+      // if (this.initial) return
+      // console.log('change')
       if (typeof func == 'function') {
         value = func({
           field:field,
@@ -471,6 +475,7 @@ export default {
         this.fields[field].parentSelect = parent
     },
     changedValue(field){
+      if (this.initial) return
       let value = this.form[field]
       let parent = this.fields[field]?.parentSelect
       let options = this.fields[field]?.options ?? []
@@ -493,11 +498,13 @@ export default {
         this.getData(where, true)
       }   
     },
-    getData(where, changeId){
-      this.settingFields();
-      if (this.hrefGet == '') return
+    async getData(where, changeId){
+      console.log('get-data', this.initial)
+      await this.settingFields();
+      if (this.hrefGet == '') 
+        return
       this.saving = true
-      this.$http.get(this.hrefGet,
+      await this.$http.get(this.hrefGet,
         {
           params:where
         }
@@ -506,6 +513,8 @@ export default {
           this.saving = false;
           var psb = result.data;
           if (!this.isEmpty(psb)) {
+            console.log('psb:', psb);
+            console.log('form keys:', Object.keys(this.form));
             this.fillObjectValue(this.form, psb)
             this.fillObjectValue(this.links, psb)
             if (changeId) {
@@ -522,10 +531,12 @@ export default {
             })
             // console.log(this.fields)
           }
+          this.$emit('get')
+          this.initial = false
           // console.log(psb, this.form)
         })
         .catch(err => {
-          // console.log(err)
+          console.log(err)
           this.saving = false;
           var res = err.response;
           var code = res.status;
@@ -603,28 +614,35 @@ export default {
           this.form = backUpForm;
         });
     },
-    settingFields(){
-      console.log('setting')
-      let vm = this
-      let fieldsData = Object.values(this.fields)
-      vm.form, vm.errors, vm.links, vm.original = {}
-      fieldsData.forEach(d => {
-        if (d.from_user == '1' || d.from_user == undefined) {
-          vm.fieldsData[d.nama_kolom] = d
-          vm.form[d.nama_kolom] = vm.isEmpty(d.default) ? (d.input == 'array' ? [] : '') : d.default
-          vm.errors[d.nama_kolom] = d.input == 'array' ? [] : ''
-          vm.original[d.nama_kolom] = false
-          if (d.input == 'file') {
-            // delete vm.form[d.nama_kolom]
-            vm.links[d.nama_kolom] = ''
+    settingFields() {
+      return new Promise((resolve) => {
+        let vm = this;
+
+        vm.form = {};
+        vm.errors = {};
+        vm.links = {};
+        vm.original = {};
+        vm.fieldsData = {};
+
+        Object.values(vm.fields).forEach(d => {
+          if (d.from_user == '1' || d.from_user == undefined) {
+            vm.fieldsData[d.nama_kolom] = d;
+            vm.form[d.nama_kolom] = d.default ?? (d.input == 'array' ? [] : '');
+            vm.errors[d.nama_kolom] = d.input == 'array' ? [] : '';
+            vm.original[d.nama_kolom] = false;
+            if (d.input == 'file') {
+              vm.links[d.nama_kolom] = '';
+            }
           }
-        }
-      })
-      console.log('form isi', vm.form)
+        });
+
+        console.log('form isi', vm.form);
       vm.fillObjectValue(vm.form, vm.formValue)
       setTimeout(() => {
         vm.fillObjectValue(vm.form, vm.formValue)
       },500)
+        resolve();
+      });
     }
   },
   mounted(){

@@ -13,7 +13,7 @@ let listFunction = {
         // key = key + '.coba'
         if (this.getObjectValueByPath(src, key) !== undefined) {
           // src[key] = data[key];
-          // console.log('run')
+          // console.log(key, data[key])
           let res = this.setObjectValueByPath(src, key, data[key])
           // console.log('res', res, src)
         }
