@@ -134,7 +134,7 @@
   import FilterAnggota from '@/pages/components/FilterAnggota.vue';
   import ListData from '@/pages/components/ListData.vue';
   import Chart from '@/pages/components/DataChart.vue'
-  import { topMenu } from '@/helpers/menus.js'
+  import { organizationMenu } from '@/helpers/menus.js'
   
   export default {
     name: "persyarikatan",
@@ -166,7 +166,7 @@
         showCreate:false,
         success:false,
         saving:false,
-        persyarikatan: topMenu.persyarikatan,
+        persyarikatan: organizationMenu.persyarikatan,
       };
     },
     watch: {

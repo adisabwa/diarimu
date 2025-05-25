@@ -174,8 +174,9 @@ let listFunction = {
       scrollToCoordinate(parent, coordinate, duration, scroll, rerun)
     }
   },
-  scrollToCoordinate(element, coordinate, duration, scroll = 'left', rerun = true){
+  scrollToCoordinate(element, coordinate, duration, scroll = 'left', rerun = false){
     element = jquery(element)[0];
+    // console.log(element)
     scrollToCoordinate(element, coordinate, duration, scroll, rerun)
   },
   toggleClass(el, cls, delay = 0){
