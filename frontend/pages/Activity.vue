@@ -137,11 +137,7 @@
                     {{ ucFirst(i) }}
                   </div>
                   <div class="text-[12px]">{{ getLabelWajib(sholatWajib[i]) }}</div>
-                  <template v-if="sholatWajib[i] >= 25">
-                    <star :id="'3star'+i+'data'" :class="['scale-100', sholatWajib[i] == 100 ? '' : 'bg-transparent grayscale']" width="13px"/>
-                    <star :id="'3star'+i+'data'" :class="['scale-100', sholatWajib[i] >= 75 ? '' : 'bg-transparent grayscale']" width="13px"/>
-                    <star :id="'3star'+i+'data'" :class="['scale-100', sholatWajib[i] >= 50 ? '' : 'bg-transparent grayscale']" width="13px"/>
-                  </template>
+                  <star :count="getCount(sholatWajib[i])" width="13px"/>
                 </div>
               </div>
             </template>
@@ -176,6 +172,7 @@
                   col-start-2 row-start-1 row-span-3">
                 <div class="text-4xl">{{ sholatSunnah.total_rakaat }}</div>
                 <div>Raka'at</div>
+                <star class="mt-2 *:m-[-2px]" :count="getCountSunnah(sholatSunnah.total_rakaat)" width="20px"/>
               </div>
 							<li v-for="(j) in (sholatSunnah.daftar_sholat ?? '').split('/').map(n => n.split('-'))"
 								class="ml-2 pl-2 [&::marker]:content-['-']">
@@ -235,18 +232,16 @@
 </template>
 
 <script setup>
-  import { setStatusColor as statusWajib, options as optionsWajib, getLabel as getLabelWajib} from '@/helpers/sholat.js'
+  import { setStatusColor as statusWajib, options as optionsWajib, getLabel as getLabelWajib, getCount, getCountSunnah} from '@/helpers/sholat.js'
 </script>
 
 <script>
 import { mapGetters } from 'vuex';
-import Star from './sholat/components/Star.vue'
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
   name: "quran",
   components: {
-    Star,
   },
   data: function() {
     return {

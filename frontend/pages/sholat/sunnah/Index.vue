@@ -161,7 +161,7 @@
         <div class="text-md font-montserrat text-center min-w-1/2 shrink-0">Penilaian Sholat Sunnah</div>
         <div class="h-[2px] bg-slate-400 w-full"/>
       </div>
-      <star class="mx-auto mt-0 mb-5 relative gap-x-2" width="40px" :count="getCount(totals[1])" />
+      <star class="mx-auto mt-0 mb-5 relative gap-x-2" width="40px" :count="getCountSunnah(totals[1])" />
     </el-card>
     <el-dialog v-model="showAdd"
       width="80%" 
@@ -281,6 +281,8 @@
             <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
             <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
             Sholat Sunnah {{ data.total_rakaat }} Raka'at
+            <star :count="getCountSunnah(data.total_rakaat)" width="12px"
+              class="ml-3 gap-x-[2px]"/>
           </div>
           <ol v-show="data.show_detail"
             class="pl-[30px] italic mt-0 mb-1">
@@ -296,7 +298,7 @@
 </template>
 
 <script setup>
- import { getCount } from '@/helpers/sholat.js'
+ import { getCountSunnah } from '@/helpers/sholat.js'
 </script>
 
 <script>
@@ -358,7 +360,7 @@ export default {
       let total = []
       this.datas.forEach((data, i) => {
         // console.log(data)
-        total[i]= Object.values(data)?.reduce((sum, item) => sum + (item.do ? item.rakaat : 0) * 3.75, 0) + 25
+        total[i]= Object.values(data)?.reduce((sum, item) => sum + (item.do ? item.rakaat : 0), 0)
       })
       // console.log(total)
       return total

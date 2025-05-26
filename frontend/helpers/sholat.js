@@ -53,6 +53,14 @@ export function getCount(value){
   else return -1
 }
 
+export function getCountSunnah(value){
+  if (value >= 20) return 3
+  else if (value >= 15) return 2
+  else if (value >= 10) return 1
+  else if (value >= 5) return 0
+  else return -1
+}
+
 export function getLabel(value){
   let op = options.find( o => o.value == value )
   if (op)

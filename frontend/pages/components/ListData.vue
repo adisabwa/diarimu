@@ -47,7 +47,7 @@
 						class="rounded-full h-[40px] w-[40px]
 						border border-solid border-[var(--border-color)]
 						bg-[var(--button-color)]"
-						@click="$emit('editData',{id:s.id, tanggal:s.tanggal})">
+						@click="$emit('editData',s)">
 						<icons icon="mdi:edit" class="m-0 text-[20px] text-[var(--text-color)]" />
 					</el-button>
 					<el-button

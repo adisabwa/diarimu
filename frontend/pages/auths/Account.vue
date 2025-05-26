@@ -17,6 +17,22 @@
 				<el-divider class="w-full [&>*]:w-[max-content] my-4">
 					<div class="text-xl text-center font-bold">Profil Anggota</div>
 				</el-divider>
+				<div class="mt-6 flex items-center justify-center gap-2">
+					<el-button class="mt-1 flex items-center
+						w-full rounded-[10px] mx-0 bg-teal-700 
+						text-teal-100 font-bold"
+						@click="showEdit = true;showColumns=[]">
+						<icons icon="mdi:edit"/>
+						Data Profil
+					</el-button>
+					<el-button class="mt-1 flex items-center
+						w-full rounded-[10px] mx-0 bg-teal-700 
+						text-teal-100 font-bold"
+						@click="showEdit = true;showColumns=['password','passwordconf']">
+						<icons icon="mdi:edit"/>
+						Kata Sandi
+					</el-button>
+				</div>
 				<form-comp v-if="showEdit"
 					ref="formRegistrasi"
 					class="mt-3 px-1"
@@ -53,13 +69,6 @@
 						v-model:loading="loading"
 						v-model:id="dataId"
 						/>
-					<el-button class="mt-1 flex items-center
-						w-full rounded-full bg-teal-700 
-						text-teal-100 font-bold"
-						@click="showEdit = true;showColumns=[]">
-						<icons icon="mdi:edit"/>
-						Ubah Profil
-					</el-button>
 				</template>
 			</div>
 		</el-card>

@@ -67,10 +67,10 @@ export default {
   name: "form-quran",
   emits:['update:show','update:id','saved'],
   props:{
-    id:{type:[String, Number],default:'-1'},
-    idAnggota:{type:[String, Number],default:'-1'},
-    href:{type:String,default:''},
-    hrefGet:{type:String,default:''},
+      id:{type:[String, Number],default:'-1'},
+      idAnggota:{type:[String, Number],default:'-1'},
+      href:{type:String,default:''},
+      hrefGet:{type:String,default:''},
     table:{type:String,default:''},
     show:{type:Boolean,default:false},
   },
@@ -139,6 +139,8 @@ export default {
           this.fields.id_anggota.default = this.idAnggota
           this.fields.juz_mulai.span = 3
           this.fields.juz_selesai.span = 3
+          this.fields.halaman_mulai.span = 3
+          this.fields.halaman_selesai.span = 3
           this.formKey++
           this.loading = false
         }).

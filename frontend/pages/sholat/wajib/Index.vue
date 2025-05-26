@@ -9,10 +9,10 @@
       mb-3 p-0"
       body-class="relative p-0"
       header-class="relative p-0">
-      <img :src="sholat.image" height="90px" width="90px"
-          class="absolute z-[0] top-[-60px] right-[-20px]
-            opacity-[0.5]"/>
       <template #header>
+        <img :src="sholat.image" height="90px" width="90px"
+            class="absolute z-[0] top-[0px] right-[-20px]
+              opacity-[0.5]"/>
         <div id="header-scroll" class="relative px-0 py-4 font-bold text-[18px] overflow-x-scroll
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
@@ -85,7 +85,6 @@
                   trigger="click"
                   @command="(res) => {
                     sholat.value = res
-                    showStar()
                     saveData(ind, sholat.nama_kolom)
                   }"
                   :popper-class="`${setStatusColor(sholat.value)}`"
@@ -179,10 +178,7 @@
         href="sholat/wajib"
         href-delete="sholat/wajib/delete"
         v-if="showData =='list'"
-        @edit-data="(({id}) => {
-          dataId = id
-          showCreate = true
-        })">
+        @edit-data="editData">
         <template #title="{ data }">
           {{ dateDayIndo(data.tanggal)}}
         </template>
@@ -225,6 +221,7 @@ import { topMenu } from '@/helpers/menus.js'
 import FilterAnggota from '../../components/FilterAnggota.vue';
 import ListData from '@/pages/components/ListData.vue';
 import { set } from 'lodash';
+import { data } from 'jquery';
 
 export default {
   name: "sholat",
@@ -246,6 +243,7 @@ export default {
       loadings:[false, false, false],
       dataSholat: {
         id:'-1',
+        tanggal:'',
         sholats:{
           shubuh:{
             nama_kolom: 'shubuh',
@@ -279,9 +277,8 @@ export default {
         tanggal:'',
         total_score:'',
       },
-      sizeWindow:window.innerWidth,
       sholat: topMenu.sholatWajib,
-      showData:'chart',
+      showData:'list',
       collapseInput:false,
     };
   },
@@ -292,16 +289,15 @@ export default {
         vm.setHeaderToCenter()
       }, 50);
     },
+    dataId(val){
+
+    }
   },  
   computed: {
     ...mapGetters({
       user: 'loggedUser',
       anggotas:'data/anggotas'
-    }),
-    labelPosition(){
-      return this.sizeWindow < 800 ? 'top' : 'left'
-    },
-    
+    }),    
   },
   methods: {
     getLast(){
@@ -316,26 +312,31 @@ export default {
           let data = res.data
           this.fillObjectValue(this.lastData, data?.last)
           this.fillObjectValue(this.bestData, data?.best)
-          this.toggleStarClass('starlastdata',data?.last?.total_score / 5)
-          this.toggleStarClass('starbestdata',data?.best?.total_score / 5)
         })
     },
-    getData: async function(index) {
+    getData: async function(index, id = -1) {
       let vm = this
       vm.loading = true;
       vm.loadings[index] = true;
+      let where = {
+        id_anggota: vm.idAnggota,
+      }
+      if (id != -1) {
+        where.id = id
+      } else {
+        where.tanggal = vm.tanggals[index]
+      }
       // setTimeout(() => {
         vm.$http.get('sholat/wajib/get_where', {
             params: {
-              where: {
-                id_anggota:vm.idAnggota,
-                tanggal:vm.tanggals[index],
-              }
+              where: where
             }
           })
             .then(res => {
               let data = res.data
               vm.datas[index].id = this.coalesce([data?.id,-1])
+              vm.datas[index].tanggal = this.coalesce([data?.tanggal,''])
+              vm.tanggals[index] = vm.datas[index].tanggal
               let keys = Object.keys(vm.dataSholat.sholats)
               keys.forEach(( k, ind) => {
                 if (data[k] !== null) {
@@ -345,7 +346,6 @@ export default {
                   vm.datas[index].sholats[k].value = null
                 }
                 // console.log(index, k, vm.datas[index][k])
-                vm.showStar()
               })
               setTimeout(() => {
                 vm.loading = false
@@ -365,50 +365,6 @@ export default {
             })
       // }, 1000)
     },
-    showStar(){
-      let vm = this
-      vm.datas.forEach((d, ind)=> {
-        let array = Object.keys(d.sholats)
-        for (let i = 0; i < array.length; i++) {
-          const key = array[i];
-          let sholat = d.sholats[key]
-          let value = sholat.value
-          let id = 'star' + ind + vm.tanggals[ind] + key;
-          this.toggleStarClass(id, value)
-        }
-      })
-    },
-    toggleStarClass(id, value){
-      let vm = this
-      if (value >= 25) {
-        vm.removeClass('#1' + id,'scale-0')
-        vm.removeClass('#2' + id,'scale-0')
-        vm.removeClass('#3' + id,'scale-0')
-      } else {
-        vm.addClass('#1' + id,'scale-0')
-        vm.addClass('#2' + id,'scale-0')
-        vm.addClass('#3' + id,'scale-0')
-      }
-
-      
-      if (value == 100) {
-        vm.removeClass('#1' + id,'grayscale')
-        vm.removeClass('#2' + id,'grayscale')
-        vm.removeClass('#3' + id,'grayscale')
-      } else if (value >= 75) {
-        vm.addClass('#1' + id,'grayscale')
-        vm.removeClass('#2' + id,'grayscale')
-        vm.removeClass('#3' + id,'grayscale')
-      } else if (value >= 50) {
-        vm.addClass('#1' + id,'grayscale')
-        vm.addClass('#2' + id,'grayscale')
-        vm.removeClass('#3' + id,'grayscale')
-      } else if (value >= 25) {
-        vm.addClass('#1' + id,'grayscale')
-        vm.addClass('#2' + id,'grayscale')
-        vm.addClass('#3' + id,'grayscale')
-      } 
-    },
     saveData(ind, kolom){
       let data = this.datas[ind]
       let form = {
@@ -423,7 +379,8 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' }
       } )
         .then(result => {
-          // this.getData()
+          let res = result.data
+          this.datas[1].id = res.id
           this.getLast()
         })
         .catch(err => {
@@ -470,6 +427,11 @@ export default {
       setTimeout(() => {
         vm.addClass('#header-scroll','snap-x snap-mandatory')
       }, duration * 1000 + 100);
+    },
+    async editData({tanggal}){
+      this.tanggal = tanggal
+      this.setTanggalInitial();
+      this.setDataInitial();
     },
     setTanggalInitial(){
       this.tanggals = [
@@ -551,11 +513,6 @@ export default {
   },
   mounted: function() {
     let vm = this
-    vm.sizeWindow = window.innerWidth
-
-    window.addEventListener('resize', () => {
-      vm.sizeWindow = window.innerWidth
-    });
 
     let scrollTimeout;
     jquery('#header-scroll').on('scroll', () => {      

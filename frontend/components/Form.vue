@@ -5,6 +5,7 @@
       <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
       <template  v-for="(field, ind) in fieldsData">
         <el-form-item :class="['grow-0', gridItemClass(field?.span), formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
+        {{ resolvedShowColumns }}
           v-show="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
           :error="field.input == 'array' ? '' : errors[field.nama_kolom]">
           <template #label v-if="showLabel">
@@ -382,7 +383,7 @@ export default {
       original:{},
       fieldsData:{},
       dataId:null,
-      initial:true,
+      // initial:true,
     };
   },
   watch: {
@@ -398,7 +399,7 @@ export default {
     },
     dataId: function(val, oldVal) {
       this.$emit('update:id', val);
-        this.initial = val <= 0
+        // this.initial = val <= 0
 
         this.getData({id:val})
       // }
@@ -475,7 +476,7 @@ export default {
         this.fields[field].parentSelect = parent
     },
     changedValue(field){
-      if (this.initial) return
+      // if (this.initial) return
       let value = this.form[field]
       let parent = this.fields[field]?.parentSelect
       let options = this.fields[field]?.options ?? []
@@ -513,8 +514,8 @@ export default {
           this.saving = false;
           var psb = result.data;
           if (!this.isEmpty(psb)) {
-            console.log('psb:', psb);
-            console.log('form keys:', Object.keys(this.form));
+            // console.log('psb:', psb);
+            // console.log('form keys:', Object.keys(this.form));
             this.fillObjectValue(this.form, psb)
             this.fillObjectValue(this.links, psb)
             if (changeId) {
@@ -532,7 +533,9 @@ export default {
             // console.log(this.fields)
           }
           this.$emit('get')
-          this.initial = false
+          // setTimeout(() => {
+          //   this.initial = false
+          // }, 500)
           // console.log(psb, this.form)
         })
         .catch(err => {

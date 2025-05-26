@@ -1,7 +1,7 @@
 <template>
   <div id="quran" class="pt-[50px]">
     <FilterAnggota v-if="user.role != 'user'" 
-      v-model:id-anggota="idAnggota" @change="submittedData"/>
+      v-model:id-anggota="idAnggota"/>
     <el-card v-if="['user','super-admin'].includes(user.role)"
        class="relative overflow-hidden
        bg-gradient-to-tr from-yellow-50/[0.8] from-50% to-lime-200/[0.7] rounded-[10px]
@@ -31,93 +31,51 @@
       href="quran/baca/store"
       href-get="quran/baca/get"
       table="mu_quran_baca"
-      @saved="submittedData">
+      @saved="$refs.statisticDataQuran.updateChart()">
       <template #header>
         Bacaan Al-Qur'an Hari Ini
       </template>
     </form-quran>
-    <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-0"
-      header-class="py-3 font-bold text-[16px]
-        text-lime-800
-        flex justify-between items-center" >
+    <statistic-data ref="statisticDataQuran"
+      class="[--text-color:theme(colors.lime.900)]
+        [--bg-color:theme(colors.lime.50)]
+        [--border-color:theme(colors.lime.400)]
+        [--bg-button-color:theme(colors.lime.100)]
+        [--button-color:theme(colors.lime.200)]"
+      :id-anggota="idAnggota"
+      href-dashboard="quran/baca/dashboard"
+      href="quran/baca"
+      href-delete="quran/baca/delete"
+      @edit-data="(({id}) => {
+        console.log('edit data', id)
+        dataId = id;
+        showCreate = true;
+      })"
+      >
       <template #header>
         <div>Data Membaca Al-Qur'an</div>
-        <div class="flex items-center gap-1
-          [&_*]:text-[20px] text-emerald-900/[0.4]">
-          <icons icon="fa6-solid:chart-line" 
-            @click="showData='chart'"
-            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
-          <icons icon="material-symbols:view-list" 
-            @click="showData='list'"
-            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
-        </div>
       </template>
-      <chart v-if="showData == 'chart'" 
-        ref="quranChartData" 
-        href="quran/baca/dashboard"
-        :id-anggota="idAnggota"
-        :add-options="{scales:{y:{
-          title:{display:true, text:'Jumlah Ayat'},
-          ticks: {stepSize:50},
-        }}}"
-        class="px-4"/>
-      <ListData ref="quranListData"
-        class="[--text-color:theme(colors.lime.900)]
-          [--bg-color:theme(colors.lime.50)]
-          [--border-color:theme(colors.lime.400)]
-          [--bg-button-color:theme(colors.lime.100)]
-          [--button-color:theme(colors.lime.200)]
-        "
-        :id-anggota="idAnggota"
-        href="quran/baca"
-        href-delete="quran/baca/delete"
-        v-if="showData =='list'"
-        @edit-data="(({id}) => {
-          dataId = id
-          showCreate = true
-        })">
-        <template #subtitle="{ data }">
-          {{ dateDayIndo(data.tanggal)}}
-        </template>
-        <template #title="{ data }">
-          <div class="mt-1 text-[16px] leading-[1]">Dari : 
-						<span class="font-bold">
-						{{ data.nama_surat_mulai }} ({{ data.surat_mulai }}) : {{ data.ayat_mulai }}
-						</span>
-					</div>
-					<div class="text-[16px]">Sampai : 
-						<span class="font-bold">
-						{{ data.nama_surat_selesai }} ({{ data.surat_selesai }}) : {{ data.ayat_selesai }}
-						</span>
-					</div>
-        </template>
-      </ListData>
-    </el-card>
+    </statistic-data>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import { setStatusText, setStatusType } from '@/helpers/quran'
 import FilterAnggota from '../../components/FilterAnggota.vue';
-import ListData from '@/pages/components/ListData.vue';
-import Chart from '@/pages/components/DataChart.vue'
 import FormQuran from '@/pages/quran/components/FormQuran.vue';
+import StatisticData from '@/pages/quran/components/StatisticData.vue';
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
   name: "quran",
   components: {
-    Chart,
-    ListData,
+    StatisticData,
     FilterAnggota,
     FormQuran,
   },
   data: function() {
     return {
       loading: false,
-      showAdd: false,
       formKey:1,
       idAnggota:null,
       lastData:{
@@ -129,12 +87,9 @@ export default {
         ayat_mulai:'',
         ayat_selesai:'',
       },
-      setStatusText: setStatusText,
-      setStatusType: setStatusType,
-      showCreate:true,
+      showCreate:false,
       dataId:-1,
       quran: topMenu.quranBaca,
-      showData:'list',
     };
   },
   watch: {
@@ -160,13 +115,6 @@ export default {
           this.fillAndAddObjectValue(this.lastData, res)
         });
     },
-    submittedData(){
-      this.updateChart();
-    },
-    updateChart(){
-      if (this.showData == 'chart') this.$refs.quranChartData?.getChart();
-      if (this.showData == 'list') this.$refs.quranListData?.getData(true);
-    }
   },
   created: function() {
     this.getInitial()
