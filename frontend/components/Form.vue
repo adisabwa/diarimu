@@ -2,10 +2,9 @@
 	<div class="">
     <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving" :inline="inline"
       :class="[gridClass,formClass]">
-      <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
+    <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
       <template  v-for="(field, ind) in fieldsData">
         <el-form-item :class="['grow-0', gridItemClass(field?.span), formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
-        {{ resolvedShowColumns }}
           v-show="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
           :error="field.input == 'array' ? '' : errors[field.nama_kolom]">
           <template #label v-if="showLabel">

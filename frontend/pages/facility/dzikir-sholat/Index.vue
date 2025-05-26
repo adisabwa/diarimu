@@ -1,33 +1,34 @@
 <template>
-  <div id="bacaan-doa" class="pt-[55px] translate-y-[-10px] px-0">
+  <div id="bacaan-dzikir-sholat" class="pt-[55px] translate-y-[-10px] px-0">
     <el-card class="relative overflow-hidden
-        bg-gradient-to-tr from-white/[0.8] from-40% to-amber-100/[0.7] rounded-[10px]
+        bg-gradient-to-tr from-white/[0.8] from-40% to-emerald-100/[0.7] rounded-[10px]
       z-[0]
         font-montserrat
       mb-3 p-0" 
-      header-class="relative px-4 pt-6 pb-2 text-[18px] font-bold text-left text-center"
+      header-class="relative px-4 pt-6 pb-2 text-[16px] font-bold text-left text-center"
       body-class="body-data py-3 px-4 max-h-[calc(100vh-200px)] overflow-y-auto">
       <template #header>
         <div @click="showList = true">Bacaan Doa</div>
-        <img :src="doa.image" height="90px" width="90px"
+        <img :src="dzikir.image" height="90px" width="90px"
             class="absolute z-[-1] top-[0px] left-[-15px]
               opacity-[0.5]"/>
       </template>
       <transition-group name="fade"
         enter-active-class="animate"
         leave-active-class="animate"
-        enter-from-class="opacity-50 -translate-y-full"
-        enter-to-class="opacity-100"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-50 translate-y-full"
+        enter-from-class="opacity-0 -scale-[2]"
+        enter-to-class="opacity-100 scale-100"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-[2]"
         @after-leave="scrollToCoordinate('.body-data', 0, 1, 'top')">
-        <div v-if="showList" class="grid grid-cols-2 gap-x-4">
+        <div v-if="showList" class="grid grid-cols-1 gap-x-4 text-[14px]">
           <template v-for="(item, key) in datas">
-            <div class="text-center bg-white text-amber-800 rounded-[15px]  shadow-md
-              mb-3 z-[0]
+            <div class="text-center bg-white text-emerald-800 rounded-[15px]  shadow-md
+              mb-4 z-[0]
               relative overflow-hidden
+              flex justify-end items-center
               cursor-pointer active:scale-90">
-              <div class="text-left h-full py-3 mx-5
+              <div class="text-right py-3 mx-5
                  bg-white/[0.7] z-[2]"
               @click="showList = false, dataKey = key">{{ item.judul }}</div>
               <img :src="$baseUrl + '/assets/images/icons/' + item.icon" 
@@ -44,10 +45,10 @@
           <div class="text-[16px] font-bold mb-2
             absolute w-full top-[16px] left-0 z-[3]">
             <icons v-show="dataKey > 0" icon="fe:arrow-left" 
-                class="cursor-pointer text-[20px] text-amber-700 ml-3 z-[2] float-left"
+                class="cursor-pointer text-[20px] text-emerald-700 ml-3 z-[2] float-left"
               @click="dataKey--;direction='left'"/>
             <icons v-show="dataKey < (datas.length - 1)" icon="fe:arrow-right" 
-              class="cursor-pointer text-[20px] text-amber-700 mr-3 z-[2] float-right"
+              class="cursor-pointer text-[20px] text-emerald-700 mr-3 z-[2] float-right"
               @click="dataKey++;direction='right'"/>
           </div>
           <transition name="fade"
@@ -58,14 +59,10 @@
             leave-from-class=" opacity-100 translate-x-0"
             :leave-to-class="'absolute opacity-0 ' + (direction == 'right' ? '-translate-x-full' : ' translate-x-full')">
               <div :key="dataKey">
-              <div class="relative text-center text-[16px] font-bold mb-2">
+              <div class="relative text-center text-[16px] font-bold mb-2 px-4">
                 <div>{{ data.judul }}</div>
               </div>
               <el-divider class="my-3"></el-divider>
-              <div class="text-center">
-                <img :src="$baseUrl + '/assets/images/icons/' + data.icon" 
-                  class="h-[150px] my-6 "/>
-              </div>
               <div class="">
                 <div class="italic font-semibold">
                   Lafaz Doa :
@@ -98,10 +95,9 @@
   <script>
   import { mapGetters } from 'vuex';
   import { facilityMenu } from '@/helpers/menus.js'
-import { data } from 'jquery';
   
   export default {
-    name: "bacaan-doa",
+    name: "bacaan-dzikir-sholat",
     components: {
       
     },
@@ -111,7 +107,7 @@ import { data } from 'jquery';
         loading: false,
         dataKey: 0,
         datas: [],
-        doa: facilityMenu.bacaanDoa,
+        dzikir: facilityMenu.bacaanDzikirSholat,
         showList: true,
         direction: 'right',
       };
@@ -130,7 +126,7 @@ import { data } from 'jquery';
     methods: {
       getInitial: async function() {
         this.loading = true;
-        await this.$http.get('/data/bacaan/doa',{
+        await this.$http.get('/data/bacaan/dzikir-sholat',{
             params: {
               limit:0 
             }

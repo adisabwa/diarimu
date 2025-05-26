@@ -31,6 +31,14 @@ let routes = [
             }
           },
           {
+            path: 'dzikir-sholat',
+            name: 'facility-dzikir-sholat', 
+            component: () => import('@/pages/facility/dzikir-sholat/Index.vue'),
+            meta: {
+                pageTitle: "<b>Daftar Bacaan Doa Harian</b>",
+            }
+          },
+          {
             path: 'doa',
             name: 'facility-doa', 
             component: () => import('@/pages/facility/doa/Index.vue'),

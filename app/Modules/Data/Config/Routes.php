@@ -7,6 +7,7 @@ use Modules\Data\Controllers\AnggotaController as Anggota;
 use Modules\Data\Controllers\SholatSunnahController as SholatSunnah;
 use Modules\Data\Controllers\Bacaan\SholatController as BacaanSholat;
 use Modules\Data\Controllers\Bacaan\DoaController as BacaanDoa;
+use Modules\Data\Controllers\Bacaan\DzikirSholatController as BacaanDzikirSholat;
 
 //----------------------------------Section Data-------------------------------------
 
@@ -83,12 +84,20 @@ $routes->group('bacaan', static function ($routes) {
         $routes->add('search', [BacaanSholat::class, 'search']);
     });
 
-//----------------------------------Bacaan Doa-------------------------------------
-    $routes->group('doa', static function ($routes) {
-        $routes->add('/', [BacaanDoa::class, 'index']);
-        $routes->add('options', [BacaanDoa::class, 'options']);
-        $routes->add('search', [BacaanDoa::class, 'search']);
+//----------------------------------Bacaan Dzikir Sholat-------------------------------------
+    $routes->group('dzikir-sholat', static function ($routes) {
+        $routes->add('/', [BacaanDzikirSholat::class, 'index']);
+        $routes->add('options', [BacaanDzikirSholat::class, 'options']);
+        $routes->add('search', [BacaanDzikirSholat::class, 'search']);
     });
+
+    
+//----------------------------------Bacaan Doa-------------------------------------
+$routes->group('doa', static function ($routes) {
+    $routes->add('/', [BacaanDoa::class, 'index']);
+    $routes->add('options', [BacaanDoa::class, 'options']);
+    $routes->add('search', [BacaanDoa::class, 'search']);
+});
 });
 
 //----------------------------------Data Group Activity-------------------------------------

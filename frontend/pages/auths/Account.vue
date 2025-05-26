@@ -21,14 +21,21 @@
 					<el-button class="mt-1 flex items-center
 						w-full rounded-[10px] mx-0 bg-teal-700 
 						text-teal-100 font-bold"
-						@click="showEdit = true;showColumns=[]">
+						@click="showEdit = true;
+              showColumns=[];
+              getInitial();">
 						<icons icon="mdi:edit"/>
 						Data Profil
 					</el-button>
 					<el-button class="mt-1 flex items-center
 						w-full rounded-[10px] mx-0 bg-teal-700 
 						text-teal-100 font-bold"
-						@click="showEdit = true;showColumns=['password','passwordconf']">
+						@click="showEdit = true;
+              showColumns = ['password','passwordconf'];
+              fields = {
+                password: {input:'password',nama_kolom:'password',default:'',label:'Password Baru'},
+                passwordconf: {input:'password',nama_kolom:'passwordconf',default:'',label:'Konfirmasi Password Baru'}
+              };">
 						<icons icon="mdi:edit"/>
 						Kata Sandi
 					</el-button>
@@ -44,7 +51,7 @@
 					href="data/anggota/store"
 					href-get="data/anggota/get"
 					@saved="saving = false; showEdit = false;
-            $store.dispatch('resetAccount')"  
+            $store.dispatch('resetAccount'); getInitial()"  
 					@error="saving=false"
           :pass-columns="['password','passwordconf','role']"
 					size="large"
@@ -90,6 +97,7 @@ export default {
 	},
 	data: function() {
 		return {
+      formKey:1,
 			saving: false,
 			showEdit: false,
 			showColumns:[],
@@ -107,16 +115,25 @@ export default {
 			// pegawai: 'data/employee',
 		}),
 	},
+  watch: {
+    fields:{
+      deep:true,
+      handler(val){
+        this.formKey++;
+      }
+    }
+  },
 	methods: {
 		getInitial(){
+      this.fields = {}
 			this.$http.get('/kolom/preparation?table=mu_anggota&grouping=0&input=0')
         .then(result => {
           var res = result.data;
           delete res.password
           delete res.passwordconf
           this.fields = res
-          this.formKey++
           this.saving = false
+          console.log(this.fields)
         });
 		}
 		
