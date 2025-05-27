@@ -1,5 +1,6 @@
 import { type } from "jquery";
 import { isArray } from "lodash";
+import { ref, watch } from 'vue';
 
 let listFunction = {
     fillObjectValue(src, data) {
@@ -140,6 +141,32 @@ let listFunction = {
       } else {
         return obj === null ? '' : obj;
       }
+    },
+    saveToStorage(index, value){
+      let old_data = this.getDataFormStorage(index) ?? []
+      localStorage.setItem(index,JSON.stringify([...new Set([...old_data, ...[value]])]))
+      console.log('save',this.getDataFormStorage(index))
+    },
+    removeFromStorage(index, value){
+      let old_data = this.getDataFormStorage(index) ?? []
+      let new_data = old_data.filter(d => d !== value)
+      localStorage.setItem(index,JSON.stringify(new_data))
+      console.log('save',this.getDataFormStorage(index))
+    },
+    getDataFormStorage(index){
+      let data = localStorage.getItem(index)
+      return JSON.parse(data)
+    },
+    useLocalStorage(index, defaultValue) {
+      const storedValue = localStorage.getItem(index);
+      const data = ref(storedValue ? JSON.parse(storedValue) : defaultValue);
+    
+      // Watch for changes and update localStorage
+      watch(data, (newVal) => {
+        localStorage.setItem(index, JSON.stringify(newVal));
+      }, { deep: true });
+    
+      return data;
     }
   }
   

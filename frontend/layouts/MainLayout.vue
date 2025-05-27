@@ -34,7 +34,7 @@
       </el-button> -->
     </div>
     <el-container>
-      <el-main class="p-0 px-3 pb-12 overflow-visible
+      <el-main class="p-0 px-3 pb-3 overflow-visible
         sm:px-5 sm:mt-[20px]
         min-h-[calc(100vh-110px)] 
         relative

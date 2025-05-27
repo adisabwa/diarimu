@@ -6,7 +6,7 @@
         font-montserrat
       mb-3 p-0" 
       header-class="relative px-4 pt-6 pb-2 text-[18px] font-bold text-left text-center"
-      body-class="body-data py-3 px-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+      body-class="body-data py-3 px-4 max-h-[calc(100vh-210px)] overflow-y-auto">
       <template #header>
         <div @click="showList = true">Bacaan Doa</div>
         <img :src="doa.image" height="90px" width="90px"
@@ -22,18 +22,29 @@
         leave-to-class="opacity-50 translate-y-full"
         @after-leave="scrollToCoordinate('.body-data', 0, 1, 'top')">
         <div v-if="showList" class="grid grid-cols-2 gap-x-4">
-          <template v-for="(item, key) in datas">
-            <div class="text-center bg-white text-amber-800 rounded-[15px]  shadow-md
-              mb-3 z-[0]
-              relative overflow-hidden
-              cursor-pointer active:scale-90">
-              <div class="text-left h-full py-3 mx-5
-                 bg-white/[0.7] z-[2]"
-              @click="showList = false, dataKey = key">{{ item.judul }}</div>
-              <img :src="$baseUrl + '/assets/images/icons/' + item.icon" 
-                class="absolute bottom-[-10px] right-[-15px] w-[70px] z-[-1]
-                  opacity-50"/>
+          <template v-for="(_datas, key) in [dataFavorites,dataNormal]">
+            <div class="col-span-2 sticky top-0 z-[10]
+              text-center bg-white text-slate-500 mt-4 mb-2 py-3
+              ">
+              <span>{{ key == 0 ? 'Doa Favorit' : 'Data Doa Lengkap' }}</span>
             </div>
+            <template v-for="(item, key) in _datas">
+              <div class="text-center bg-white text-amber-800 rounded-[15px]  shadow-md
+                mb-3 z-[0]
+                relative overflow-hidden
+                cursor-pointer active:scale-90">
+                <div class="text-left h-full py-3 mx-5
+                  bg-white/[0.7] z-[2]"
+                @click="showList = false;
+                  dataKey = datas.findIndex(d => d.id == item.id);
+                ">
+                  {{ item.judul }}
+                </div>
+                <img :src="$baseUrl + '/assets/images/icons/' + item.icon" 
+                  class="absolute bottom-[-10px] right-[-15px] w-[70px] z-[-1]
+                    opacity-50"/>
+              </div>
+            </template>
           </template>
         </div>
         <div v-if="!showList"
@@ -62,6 +73,14 @@
                 <div>{{ data.judul }}</div>
               </div>
               <el-divider class="my-3"></el-divider>
+              <div :class="[
+                data.fav ? 'text-yellow-800 ' : 'text-slate-400',
+                'flex items-center justify-center text-[13px]'
+              ]"
+                @click="clickFavorite(data)">
+                <icons icon="mdi:star" :class="[data.fav ? 'text-yellow-400 ' : 'text-slate-400', 'mb-[1px]']"/> 
+                  {{ data.fav ? 'Doa ' : 'Tambah ke ' }} Favorit
+              </div>
               <div class="text-center">
                 <img :src="$baseUrl + '/assets/images/icons/' + data.icon" 
                   class="h-[150px] my-6 "/>
@@ -114,6 +133,7 @@ import { data } from 'jquery';
         doa: facilityMenu.bacaanDoa,
         showList: true,
         direction: 'right',
+        favorites:[],
       };
     },
     watch: {
@@ -125,7 +145,13 @@ import { data } from 'jquery';
       }),    
       data : function() {
         return this.datas[this.dataKey] || {};
-      },  
+      }, 
+      dataFavorites() {
+        return this.datas.filter(d => d.fav)
+      },
+      dataNormal() {
+        return this.datas.filter(d => !d.fav)
+      } 
     },
     methods: {
       getInitial: async function() {
@@ -137,15 +163,42 @@ import { data } from 'jquery';
         })
           .then(result => {
             var res = result.data;
+            let favorites = this.getDataFormStorage('data-favorites')
+            res.forEach(d => {
+              d.fav = favorites.includes(d.id);
+            });
             this.datas = res;
+            this.favorites = favorites
+            this.orderData()
+            // console.log( this.favorites,res)
           });
       },
+      orderData(){
+        this.datas = this.datas.sort((a, b) => {
+          if (a.fav && !b.fav) return -1
+          if (!a.fav && b.fav) return 1
+          return a.id - b.id
+        })
+      },
+      clickFavorite(data){
+        if (data.fav)
+          this.removeFromStorage('data-favorites', data.id)
+        else
+          this.saveToStorage('data-favorites', data.id)
+        this.favorites = this.getDataFormStorage('data-favorites')
+        data.fav = this.favorites.includes(data.id)
+        this.orderData()
+        setTimeout(() => {
+          this.dataKey = this.datas.findIndex(d => d.id == data.id)
+        }, 300)
+      }
     },
     created: function() {
       this.getInitial();
     },
-    mounted: function() {
-      
+    updated: function() {
+      this.favorites = this.getDataFormStorage('doa-favorites')
+      console.log(this.favorites)
     },
   }
   </script>
