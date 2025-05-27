@@ -6,42 +6,20 @@
         font-montserrat
       mb-3 p-0" 
       header-class="relative px-4 pt-6 pb-2 text-[16px] font-bold text-left text-center"
-      body-class="body-data py-3 px-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+      body-class="p-0">
       <template #header>
-        <div @click="showList = true">Bacaan Doa</div>
+        <div @click="showList = true">Dzikir Ba'da Sholat</div>
         <img :src="dzikir.image" height="90px" width="90px"
             class="absolute z-[-1] top-[0px] left-[-15px]
               opacity-[0.5]"/>
       </template>
-      <transition-group name="fade"
-        enter-active-class="animate"
-        leave-active-class="animate"
-        enter-from-class="opacity-0 -scale-[2]"
-        enter-to-class="opacity-100 scale-100"
-        leave-from-class="opacity-100 scale-100"
-        leave-to-class="opacity-0 scale-[2]"
-        @after-leave="scrollToCoordinate('.body-data', 0, 1, 'top')">
-        <div v-if="showList" class="grid grid-cols-1 gap-x-4 text-[14px]">
-          <template v-for="(item, key) in datas">
-            <div class="text-center bg-white text-emerald-800 rounded-[15px]  shadow-md
-              mb-4 z-[0]
-              relative overflow-hidden
-              flex justify-end items-center
-              cursor-pointer active:scale-90">
-              <div class="text-right py-3 mx-5
-                 bg-white/[0.7] z-[2]"
-              @click="showList = false, dataKey = key">{{ item.judul }}</div>
-              <img :src="$baseUrl + '/assets/images/icons/' + item.icon" 
-                class="absolute bottom-[-10px] right-[-15px] w-[70px] z-[-1]
-                  opacity-50"/>
-            </div>
-          </template>
-        </div>
-        <div v-if="!showList"
+      <div class="max-h-[calc(100vh-250px)] overflow-y-auto py-3 px-4 ">
+        <div
           class="bg-white rounded-[15px] 
             px-4 py-4 mb-4  text-left
             leading-[1.5]
-            relative">
+            relative
+            font-roboto text-[14px]">
           <div class="text-[16px] font-bold mb-2
             absolute w-full top-[16px] left-0 z-[3]">
             <icons v-show="dataKey > 0" icon="fe:arrow-left" 
@@ -64,11 +42,8 @@
               </div>
               <el-divider class="my-3"></el-divider>
               <div class="">
-                <div class="italic font-semibold">
-                  Lafaz Doa :
-                </div>
-                <div class="mt-1
-                  whitespace-pre-line text-right rtl font-arabic text-[24px] leading-loose">{{ data.arab }}</div>
+                <div class="mt-1 font-noto
+                  whitespace-pre-line text-right rtl font-arabic text-[22px] leading-loose">{{ data.arab }}</div>
               </div>
               <div class="mt-5">
                 <div class="underline underline-offset-4 italic font-semibold">
@@ -87,7 +62,12 @@
             </div>
           </transition>
         </div>
-      </transition-group>
+      </div>
+      <div class="my-3 mx-auto w-fit text-center
+        bg-teal-100 px-3 py-1 rounded-[10px]
+        shadow-md shadow-teal-800/[0.2]">
+        {{ dataKey + 1 }} / {{ datas.length }}
+      </div>
     </el-card>
   </div>
 </template>
