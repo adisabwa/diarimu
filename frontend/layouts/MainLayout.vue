@@ -1,7 +1,7 @@
 <template>
   <div id="main-layout" class="bg-white 
     [--width-menu:250px]">
-    <div class="z-[10] w-full">
+    <div class="z-[20] w-full">
       <transition name="slide-in" mode="out-in"
         enter-active-class="transition-all ease-in-out duration-500"
         leave-active-class="transition-all ease-in-out duration-500"
@@ -148,7 +148,8 @@ export default {
           icon:'mdi:logout',
           label:'Keluar',
         },
-      }
+      },
+      isVertical:'1',
     };
   },
   components: {
@@ -162,8 +163,8 @@ export default {
       pageSubTitle: 'pageSubTitle',
     }),
     MenuComponent(){
-      return VerticalMenu
-    }
+      return this.isVertical == '1' ? VerticalMenu : HorizontalMenu
+    },
   },
   methods: {
     setActiveMenu: function() {
@@ -235,17 +236,15 @@ export default {
     },
     toggleMenu(to){
       let id = this.user.id
-      this.$store.dispatch('pengguna/store', {id : id, vertical: to})
-				.then(res => {
-					this.$store.dispatch('pengguna/get',{id:id});
-					this.$store.dispatch('resetAccount');
-				})
+      this.saveToStorage('vertical-menu',to);
+      this.isVertical = to == '1'
     }
   },
   created: async function() {
     this.getMenus()
     this.scrollPosition = window.scrollY;
     this.mainMenus.logout.function = this.doLogout
+    this.isVertical = this.getDataFormStorage('vertical-menu') ?? '1';
   },
   mounted(){
    

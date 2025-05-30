@@ -1,7 +1,9 @@
+@use './variables' as v;
+
 body {
-  background-color: $colorBackground;
-  font-family: $fontDefault;
-  font-weight: $fontWeightDefault;
+  background-color: v.$colorBackground;
+  font-family: v.$fontDefault;
+  font-weight: v.$fontWeightDefault;
   line-height: 1.5;
   min-height: 100vh;
   margin: 0px;
@@ -10,44 +12,44 @@ body {
   cursor: pointer;
 }
 .text-danger {
-  color: $colorDanger !important;
+  color: v.$colorDanger !important;
 }
 .text-success {
-  color: $colorSuccess !important;
+  color: v.$colorSuccess !important;
 }
 .text-warning {
-  color: $colorWarning !important;
+  color: v.$colorWarning !important;
 }
 .text-primary {
-  color: $colorPrimary !important;
+  color: v.$colorPrimary !important;
 }
 .text-muted {
-  color: $colorGray !important;
+  color: v.$colorGray !important;
 }
 .text-tip {
   color: #606266 !important;
 }
 .bg-danger {
-  background-color: $colorDanger !important;
+  background-color: v.$colorDanger !important;
   color: #fff;
 }
 .bg-success {
-  background-color: $colorSuccess !important;
+  background-color: v.$colorSuccess !important;
   color: #fff;
 }
 .bg-warning {
-  background-color: $colorWarning !important;
+  background-color: v.$colorWarning !important;
 }
 .bg-primary {
-  background-color: $colorPrimary !important;
+  background-color: v.$colorPrimary !important;
   color: #fff;
 }
 .bg-info {
-  background-color: $colorInfo !important;
+  background-color: v.$colorInfo !important;
   color: #fff;
 }
 .bg-muted {
-  background-color: $colorGray !important;
+  background-color: v.$colorGray !important;
 }
 .darker {
   filter: brightness(0.9);

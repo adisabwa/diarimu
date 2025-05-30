@@ -22,10 +22,10 @@ module.exports = {
         brand: '#167a78',  // Custom brand blue
       },
       fontFamily: {
-       'montserrat': '"Montserrat", sans-serif',
+       'montserrat': 'Montserrat, sans-serif',
        'avenir': 'avenir-lt-w01_35-light1475496, avenir-lt-w05_35-light, sans-serif',
-       'gama': '"Gama Serif",Georgia,"Times New Roman",Times,serif',
-       'noto': '"Noto Sans Arabic", sans-serif',
+       'gama': 'Gama Serif,"Georgia","Times New Roman",Times,serif',
+       'noto': 'Noto Sans Arabic, sans-serif',
       },
       keyframes: {
         spin: {

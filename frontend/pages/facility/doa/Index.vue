@@ -1,17 +1,21 @@
 <template>
   <div id="bacaan-doa" class="pt-[50px] translate-y-[-10px] px-0">
     <el-card class="relative overflow-hidden
-        bg-gradient-to-tr from-white/[0.8] from-40% to-amber-100/[0.7] rounded-[10px]
+        bg-gradient-to-tr from-white/[0.8] from-40% to-yellow-100/[0.7] rounded-[10px]
       z-[0]
         font-montserrat
       mb-3 p-0" 
-      header-class="relative px-4 pt-6 pb-2 text-[18px] font-bold text-left text-center"
+      header-class="relative px-4 pt-6 pb-3 text-[18px] font-bold text-left text-center"
       body-class="p-0">
       <template #header>
-        <div @click="showList = true">Bacaan Doa</div>
+        <div @click="showList = true"
+          class="text-yellow-900">Bacaan Doa</div>
         <img :src="doa.image" height="90px" width="90px"
-            class="absolute z-[-1] top-[0px] left-[-15px]
+            class="absolute z-[-1] top-[0px] right-[-15px]
               opacity-[0.5]"/>
+        <icons icon="mdi:menu" @click="showList = true"
+          class="absolute z-[1] top-[17px] left-[20px] text-[20px]
+            text-yellow-700 bg-yellow-100 rounded-full p-2"/>
       </template>
       <div class="px-4 pt-2" v-if="showList">
         <el-input v-model="keyword" placeholder="Cari Doa ( Judul / Arab / Latin / Arti )" size="large" 
@@ -36,12 +40,13 @@
                 <span>{{ key == 0 ? 'Doa Favorit' : 'Data Doa Lengkap' }}</span>
               </div>
               <template v-for="(item, key) in _datas">
-                <div class="text-center bg-white text-amber-800 rounded-[15px]  shadow-md
+                <div class="text-center bg-white text-yellow-900 rounded-[15px]  shadow-md
                   mb-3 z-[0]
                   relative overflow-hidden
                   cursor-pointer active:scale-90">
-                  <div class="text-left h-full py-3 mx-5
-                    bg-white/[0.7] z-[2]"
+                  <div class="text-left h-full py-3 pr-2 mx-5
+                    bg-white/[0.7] z-[2] 
+                    text-[14px] italic font-semibold leading-[1.4]"
                   @click="showList = false;
                     dataKey = datas.findIndex(d => d.id == item.id);
                   ">
@@ -71,10 +76,10 @@
             <div class="text-[16px] font-bold mb-2
               absolute w-full top-[16px] left-0 z-[3]">
               <icons v-show="dataKey > 0" icon="fe:arrow-left" 
-                  class="cursor-pointer text-[20px] text-amber-700 ml-3 z-[2] float-left"
+                  class="cursor-pointer text-[20px] text-yellow-700 ml-3 z-[2] float-left"
                 @click="dataKey--;direction='left'"/>
               <icons v-show="dataKey < (datas.length - 1)" icon="fe:arrow-right" 
-                class="cursor-pointer text-[20px] text-amber-700 mr-3 z-[2] float-right"
+                class="cursor-pointer text-[20px] text-yellow-700 mr-3 z-[2] float-right"
                 @click="dataKey++;direction='right'"/>
             </div>
             <transition name="fade"
@@ -85,12 +90,13 @@
               leave-from-class=" opacity-100 translate-x-0"
               :leave-to-class="'absolute opacity-0 ' + (direction == 'right' ? '-translate-x-full' : ' translate-x-full')">
                 <div :key="dataKey">
-                <div class="relative text-center text-[16px] font-bold mb-2">
+                <div class="relative text-center text-[16px] font-bold mb-2
+                  text-yellow-950">
                   <div>{{ data.judul }}</div>
                 </div>
                 <el-divider class="my-3"></el-divider>
                 <div :class="[
-                  data.fav ? 'text-yellow-800 ' : 'text-slate-400',
+                  data.fav ? 'text-yellow-900 ' : 'text-slate-400',
                   'flex items-center justify-center text-[13px]'
                 ]"
                   @click="clickFavorite(data)">

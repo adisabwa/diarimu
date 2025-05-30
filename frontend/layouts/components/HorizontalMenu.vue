@@ -1,5 +1,5 @@
 <template>
-    <el-container class="z-[10]">
+    <el-container class="fixed z-[10]">
       <top-menu>
         <el-header class="bg-orange-100 h-[40px] w-full relative"></el-header>
         <div id="top" class="add-play bg-cover bg-bottom
