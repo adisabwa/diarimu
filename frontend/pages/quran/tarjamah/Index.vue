@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import FilterAnggota from '../../components/FilterAnggota.vue';
 import FormQuran from '@/pages/quran/components/FormQuran.vue';
 import StatisticData from '@/pages/quran/components/StatisticData.vue';
@@ -96,7 +96,7 @@ export default {
    
   },  
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
       anggotas:'data/anggotas'
     }),
@@ -119,9 +119,8 @@ export default {
       },
   },
   created: function() {
-    this.$store.dispatch('data/getAllAnggotaInGroup')
-    this.idAnggota = this.$store.getters.loggedUser.id_anggota
-    this.updateChart()
+    useDataStore()?.getAllAnggotaInGroup()
+    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
     this.getInitial();
   },
 }

@@ -41,7 +41,7 @@
               <div class="dialog-footer flex justify-between">
                 <el-button @click="showRole = false">Batal</el-button>
                 <el-button type="primary" @click="showRole = false;
-                  $store.dispatch('changeRole', {role:role})"
+                  authStore.changeRole({role:role})"
                   class="bg-teal-700 border-0">
                   Ubah
                 </el-button>
@@ -184,10 +184,12 @@ async function installApp() {
     console.log('User dismissed the install prompt');
   }
 }
+const authStore = useAuthStore()
+ 
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import { organizationMenu, facilityMenu, topMenu } from '@/helpers/menus.js'
 import { meanBy } from 'lodash';
 
@@ -220,7 +222,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
     }),
   },

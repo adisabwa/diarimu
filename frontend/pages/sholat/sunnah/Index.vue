@@ -302,7 +302,7 @@
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import Chart from '@/pages/components/DataChart.vue'
 import FilterAnggota from '../../components/FilterAnggota.vue';
 import ListData from '@/pages/components/ListData.vue';
@@ -353,7 +353,7 @@ export default {
     },
   },  
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
     }),
     totals(){
@@ -590,8 +590,8 @@ export default {
   created: function() {
     this.tanggal = this.dateNow()
     // this.tanggal = '2025-05-01'
-    this.idAnggota = this.$store.getters.loggedUser.id_anggota
-    this.$store.dispatch('data/getAllAnggotaInGroup')
+    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
+    useDataStore()?.getAllAnggotaInGroup()
     this.setTanggalInitial()
     this.setDataInitiall()
     this.getAllSunnah()

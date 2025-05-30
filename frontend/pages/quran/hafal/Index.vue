@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import FilterAnggota from '../../components/FilterAnggota.vue';
 import FormQuran from '@/pages/quran/components/FormQuran.vue';
 import StatisticData from '@/pages/quran/components/StatisticData.vue';
@@ -114,10 +114,12 @@ export default {
    
   },  
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
+    }),
+    ...mapState(useDataStore, {
       anggotas:'data/anggotas'
-    }),    
+    }),
   },
   methods: {
     getInitial: async function() {
@@ -138,8 +140,8 @@ export default {
   },
   created: function() {
     this.getInitial()
-    this.$store.dispatch('data/getAllAnggotaInGroup')
-    this.idAnggota = this.$store.getters.loggedUser.id_anggota
+    useDataStore()?.getAllAnggotaInGroup()
+    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
   },
 }
 </script>

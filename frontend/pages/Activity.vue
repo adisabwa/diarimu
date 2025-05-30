@@ -236,7 +236,7 @@
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import { topMenu } from '@/helpers/menus.js'
 
 export default {
@@ -270,7 +270,7 @@ export default {
    
   },  
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
     }),
     
@@ -294,7 +294,7 @@ export default {
     }
   },
   created: function() {
-    this.idAnggota = this.$store.getters.loggedUser.id_anggota
+    this.idAnggota = this.user.id_anggota
     // this.idAnggota = '24'
     this.tanggal = this.dateNow()
     // this.tanggal = '2025-05-09'

@@ -45,7 +45,7 @@
           bg-cover bg-no-repeat bg-left-center bg-fixed" 
           :style="`background-image:url('${$baseUrl}assets/images/back-sketch.png')`">
         </div>
-        <div :class="`${user.vertical == '1' ? 'sm:ml-[--width-menu]' : 'ml-0' } h-full flex-1 bg-transparent z-[0]`">
+        <div :class="`${isVertical == '1' ? 'sm:ml-[--width-menu]' : 'ml-0' } h-full flex-1 bg-transparent z-[0]`">
           <router-view v-slot="{ Component , route}" >
             <transition name="slide-in" mode="out-in"
               enter-active-class="transition-all ease-in-out duration-500"
@@ -102,7 +102,7 @@
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import VerticalMenu from './components/VerticalMenu.vue';
 import HorizontalMenu from './components/HorizontalMenu.vue';
 
@@ -157,7 +157,7 @@ export default {
     HorizontalMenu,
   },
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
       pageTitle: 'pageTitle',
       pageSubTitle: 'pageSubTitle',
@@ -221,7 +221,7 @@ export default {
         this.doLogout()
     },
     doLogout: function() {
-      this.$store.dispatch('logout')
+      useAuthStore().logout()
         .then(res => {
           this.$router.replace({ name: 'login' });
         })
@@ -235,9 +235,9 @@ export default {
         });
     },
     toggleMenu(to){
-      let id = this.user.id
+      this.resetStorage('vertical-menu')
       this.saveToStorage('vertical-menu',to);
-      this.isVertical = to == '1'
+      this.isVertical = to
     }
   },
   created: async function() {

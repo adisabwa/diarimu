@@ -119,7 +119,7 @@
 </template>
   
   <script>
-  import { mapGetters } from 'vuex';
+  import { mapState } from 'pinia';
   import { facilityMenu } from '@/helpers/menus.js'
 import { data } from 'jquery';
   
@@ -143,7 +143,7 @@ import { data } from 'jquery';
      
     },  
     computed: {
-      ...mapGetters({
+      ...mapState({
         user: 'loggedUser',
       }),    
       data : function() {

@@ -64,7 +64,7 @@
 
 <script>
 import { topMenu } from '@/helpers/menus.js'
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 
 export default {
   data: function() {
@@ -73,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
     }),
   },

@@ -107,13 +107,13 @@ let listFunction = {
           expires = "; expires=" + date.toUTCString();
       }
       value = JSON.stringify(value)
-      console.log(value)
+      // console.log(value)
       document.cookie = name + "=" + (value || "") + expires + "; path=/";
     },
     getCookie(name) {
       const nameEQ = name + "=";
       const ca = document.cookie.split(';');
-      console.log(ca)
+      // console.log(ca)
       let value = null
       for (let i = 0; i < ca.length; i++) {
           let c = ca[i];
@@ -153,9 +153,15 @@ let listFunction = {
       localStorage.setItem(index,JSON.stringify(new_data))
       console.log('save',this.getDataFormStorage(index))
     },
+    resetStorage(index){
+      return localStorage.setItem(index, null)
+    },
     getDataFormStorage(index){
       let data = localStorage.getItem(index)
-      return JSON.parse(data)
+      if (data)
+        return JSON.parse(data)
+      else
+        return ''
     },
     useLocalStorage(index, defaultValue) {
       const storedValue = localStorage.getItem(index);

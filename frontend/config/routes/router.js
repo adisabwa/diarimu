@@ -1,7 +1,4 @@
 import { createRouter, createWebHistory , createWebHashHistory} from 'vue-router'
-
-import store from '@/config/store'
-
 import groupRoute from './routes/group'
 import quranRoute from './routes/quran'
 import authRoute from './routes/auth'
@@ -40,24 +37,25 @@ const routes = new createRouter({
 })
 
 routes.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
   
   try {
-    await store.dispatch('checkUser').then(() => {
-      // console.log('User check completed')
+    await authStore.checkUser().then(() => {
+      console.log('User check completed')
     }).catch((err) => {
-      // console.error('User check failed', err)
+      console.error('User check failed', err)
     })
-    const loggedUser = store.getters.loggedUser
-    var title = to.meta.pageTitle
-    if (title) {
-      var pageTitle = title
-    } else {
-      var pageTitle = '<b>Layanan Penjadwalan</b>'
-    }
-    var pageSubTitle = to.meta.pageSubTitle
+    const loggedUser = authStore.loggedUser
+    // var title = to.meta.pageTitle
+    // if (title) {
+    //   var pageTitle = title
+    // } else {
+    //   var pageTitle = '<b>Layanan Penjadwalan</b>'
+    // }
+    // var pageSubTitle = to.meta.pageSubTitle
 
-    store.dispatch('changePageTitle', pageTitle)
-    store.dispatch('changePageSubTitle', pageSubTitle)
+    // store.dispatch('changePageTitle', pageTitle)
+    // store.dispatch('changePageSubTitle', pageSubTitle)
     
     // If login, dont enter login and default=
     // console.log(to)
@@ -71,13 +69,13 @@ routes.beforeEach(async (to, from, next) => {
           query: { nextUrl: to.fullPath }
         })
       } else { if (to.meta.allowedRoles) {
-          console.log(to.meta.allowedRoles, loggedUser.role, !to.meta.allowedRoles.includes(loggedUser.role));
+          // console.log(to.meta.allowedRoles, loggedUser.role, !to.meta.allowedRoles.includes(loggedUser.role));
           if (!to.meta.allowedRoles.includes(loggedUser.role)) {
             let name = 'unauthorized'
-            console.log(name)
+            // console.log(name)
             if (to.meta.redirect)
               name = to.meta.redirect
-            console.log(name)
+            // console.log(name)
             next({
               name: name,
             })

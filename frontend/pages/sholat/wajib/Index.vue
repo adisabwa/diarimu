@@ -215,7 +215,7 @@
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState, mapActions } from 'pinia';
 import Chart from '@/pages/components/DataChart.vue'
 import { topMenu } from '@/helpers/menus.js'
 import FilterAnggota from '../../components/FilterAnggota.vue';
@@ -294,10 +294,9 @@ export default {
     }
   },  
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
-      anggotas:'data/anggotas'
-    }),    
+    }),
   },
   methods: {
     getLast(){
@@ -336,7 +335,8 @@ export default {
               let data = res.data
               vm.datas[index].id = this.coalesce([data?.id,-1])
               vm.datas[index].tanggal = this.coalesce([data?.tanggal,''])
-              vm.tanggals[index] = vm.datas[index].tanggal
+              if (id != -1)
+                vm.tanggals[index] = vm.datas[index].tanggal
               let keys = Object.keys(vm.dataSholat.sholats)
               keys.forEach(( k, ind) => {
                 if (data[k] !== null) {
@@ -429,9 +429,11 @@ export default {
       }, duration * 1000 + 100);
     },
     async editData({tanggal}){
+      // console.log(tanggal)
       this.tanggal = tanggal
       this.setTanggalInitial();
       this.setDataInitial();
+      this.scrollElement('#header-scroll')
     },
     setTanggalInitial(){
       this.tanggals = [
@@ -505,8 +507,8 @@ export default {
   created: function() {
     this.tanggal = this.dateNow()
     // this.tanggal = '2025-05-01'
-    this.idAnggota = this.$store.getters.loggedUser.id_anggota
-    this.$store.dispatch('data/getAllAnggotaInGroup')
+    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
+    useDataStore()?.getAllAnggotaInGroup()
     this.setTanggalInitial()
     this.setDataInitial()
     this.getLast()

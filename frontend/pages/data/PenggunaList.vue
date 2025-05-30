@@ -68,6 +68,7 @@
   <script>
     import TableData from '@/components/TableData.vue'
     import { reactive } from 'vue';
+    import { mapActions, mapState } from 'pinia';
   
   export default {
     name: "pengguna-list",
@@ -105,9 +106,9 @@
       
     },
     computed: {
-      user(){
-        return this.$store.getters.loggedUser
-      }
+      ...mapState(useAuthStore,{
+        user:'loggedUser'
+      })
     },
     methods: {
       getInitial: async function() {
@@ -122,9 +123,7 @@
         },
     },
     created: function() {
-      this.getInitial();
-      this.$store.dispatch('changePageTitle', `<b>Data ${this.data.title} </b>`)
-    }
+      this.getInitial();}
   }
   </script>
   

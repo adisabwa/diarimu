@@ -130,7 +130,7 @@
 </template>
   
   <script>
-  import { mapGetters } from 'vuex';
+  import { mapState } from 'pinia';
   import FilterAnggota from '@/pages/components/FilterAnggota.vue';
   import ListData from '@/pages/components/ListData.vue';
   import Chart from '@/pages/components/DataChart.vue'
@@ -183,7 +183,7 @@
       }
     },  
     computed: {
-      ...mapGetters({
+      ...mapState({
         user: 'loggedUser',
         anggotas:'data/anggotas'
       }),
@@ -228,13 +228,10 @@
       }
     },
     created: function() {
-      // let filter = this.$store.getters.filter
-      // this.filter.nama = this.isEmpty(filter.nama) ? '' : filter.nama
-      // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
-      // console.log(this.$router);
+      
     },
     mounted: function() {
-      this.idAnggota = this.$store.getters.loggedUser.id_anggota
+      this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
       this.getInitial()
     },
   }

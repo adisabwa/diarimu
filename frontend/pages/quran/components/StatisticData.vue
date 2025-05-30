@@ -13,10 +13,10 @@
           [&_*]:text-[20px] text-emerald-900/[0.4]">
           <icons icon="fa6-solid:chart-line" 
             @click="showData='chart'"
-            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
+            :class="`cursor-pointer ${showData == 'chart' ? 'text-emerald-900' : ''}`"/>
           <icons icon="material-symbols:view-list" 
             @click="showData='list'"
-            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
+            :class="`cursor-pointer ${showData == 'list' ? 'text-emerald-900' : ''}`"/>
         </div>
       </template>
       <chart v-if="showData == 'chart'" 

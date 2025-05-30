@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'pinia';
 
 export default {
   name: "ListData",
@@ -97,7 +98,6 @@ export default {
 			noMoreScrolling:false,
 			limit:5,
 			offset:null,
-      user:this.$store.getters.loggedUser,
       showName:false,
 		}
 	},
@@ -114,10 +114,15 @@ export default {
 		disabledScroll(){
       // console.log(this.noMoreScrolling, this.loadingScroll)
 			return this.noMoreScrolling || this.loadingScroll
-		}
-
+		},
+    ...mapState(useAuthStore,{
+      user:'loggedUser',
+    })
 	},
 	methods:{
+    ...mapActions(useDataStore,{
+      delete:'deleteData'
+    }),
     getData(reset = true){
       // console.log(this.href, reset, this.idAnggota)
       console.log(this.datas)
@@ -185,7 +190,7 @@ export default {
       this.removeClass('#listData'+key, 'translate-x-[125px]')
     },
     deleteData(id){
-      this.$store.dispatch('data/deleteData',{
+      this.delete({
         href:this.hrefDelete,
         id:id,
       }).then( res => {

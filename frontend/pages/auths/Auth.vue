@@ -67,6 +67,8 @@
 </template>
 
 <script>
+  const authStore = useAuthStore()
+
 export default {
   name: 'auth',
   data() {
@@ -81,6 +83,7 @@ export default {
         password: '',
       },
       saveAuth:true,
+      authStore:authStore,
     };
   },
   methods: {
@@ -92,7 +95,8 @@ export default {
     },
     doLogin() {
       this.loading = true;
-      this.$store.dispatch('login', this.form, this.saveAuth)
+      console.log(this.authStore)
+      this.authStore.login(this.form, this.saveAuth)
         .then(res => {
           this.loading = false;
           this.redirect();
@@ -113,8 +117,8 @@ export default {
         });
     },
     redirect(){
-      this.$store.dispatch('checkUser');
-      const loggedUser = this.$store.getters.loggedUser;
+      this.authStore.checkUser();
+      const loggedUser = this.authStore.loggedUser;
       if (loggedUser.role != '') {
         if (this.nextUrl) {
           this.$router.replace({ path: this.nextUrl });

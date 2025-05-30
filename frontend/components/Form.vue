@@ -489,6 +489,7 @@ export default {
         parent: parent,
         option: options?.filter?.(d => d.value == value)?.[0]
       })
+      this.errors[field] = ''
     },
     searchData(ind){
       let field = this.fieldsData[ind]
@@ -665,7 +666,8 @@ export default {
 :deep(.el-input-group__prepend + .el-input__wrapper) {
   @apply rounded-none rounded-r-[15px];
 }
-.el-form-item__error {
-  margin-top: 6px;
+:deep(.el-form-item__error) {
+  margin-top: 3px;
+  position: relative;
 }
 </style>

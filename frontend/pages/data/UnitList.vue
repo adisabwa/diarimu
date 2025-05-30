@@ -10,6 +10,7 @@
   <script>
     import TableData from '@/components/TableData.vue'
     import { reactive } from 'vue';
+    import { mapActions, mapState } from 'pinia';
   
   export default {
     name: "unit-list",
@@ -48,9 +49,9 @@
       
     },
     computed: {
-      user(){
-        return this.$store.getters.loggedUser
-      },
+      ...mapState(useAuthStore,{
+        user:'loggedUser'
+      }),
       tableParams() {
         return {
           where: this.user.role === 'super-admin' ? {} : { bidang: this.user.bidang },

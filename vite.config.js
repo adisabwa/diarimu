@@ -43,6 +43,12 @@ export default ({ command, mode }) => {
       vue(),// ...
       AutoImport({
         resolvers: [ElementPlusResolver()],
+        imports: [
+          'vue',
+          'vue-router',
+          'pinia',              // auto-import Pinia APIs like `defineStore`, `useStore`
+        ],
+        dirs: ['frontend/config/store'],  // auto-import your stores from this folder
       }),
       Components({
         resolvers: [ElementPlusResolver()],
