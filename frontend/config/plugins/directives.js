@@ -24,13 +24,21 @@ const clickOutsideDirective = {
 
 const clickExcludeIdDirective = {
   beforeMount(el, binding) {
-    const { handler, excludeIds = [] } = binding.value
+    const handler = binding.value
+    const excludeIds = binding.arg ? binding.arg.split(',') : [];
 
     el.__clickOutsideHandler__ = (event) => {
+      
+
       const isClickInside = el.contains(event.target)
       const isClickOnExcludedId = excludeIds.some(id =>
         event.target.closest(`#${id}`)
       )
+
+      if (handler === undefined) {
+        console.warn('clickExcludeIdDirective: handler is not defined')
+        return
+      }
 
       if (!isClickInside && !isClickOnExcludedId) {
         handler(event)

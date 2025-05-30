@@ -104,6 +104,11 @@
               <span class="">{{ menu.label }}</span>
             </el-menu-item>
           </template>
+            <el-menu-item @click="$emit('function', 'doLogout')"
+              class="pl-5 text-left menu-item-custom title">
+              <icons icon="mdi:logout" />
+              <span class="">Keluar</span>
+            </el-menu-item>
         </template>
       </el-menu>
       <div class="text-teal-700

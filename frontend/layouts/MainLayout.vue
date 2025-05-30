@@ -162,7 +162,7 @@ export default {
       pageSubTitle: 'pageSubTitle',
     }),
     MenuComponent(){
-      return VerticalMenu
+      return HorizontalMenu
     }
   },
   methods: {

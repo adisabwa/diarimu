@@ -45,12 +45,12 @@ let admin = [
     icon:'mdi:account',
     label:'Data Profil',
   },
-  {
-    route:'',
-    function:'doLogout',
-    icon:'mdi:logout',
-    label:'Keluar',
-  },
+  // {
+  //   route:'',
+  //   function:'doLogout',
+  //   icon:'mdi:logout',
+  //   label:'Keluar',
+  // },
 ]
 
 export default admin
