@@ -20,7 +20,7 @@ function scrollTo(to, duration, onDone) {
   animateScroll();
 } 
 
-function scrollToCoordinate(parent, coordinate, duration, scroll = 'left', rerun = false, loop = true, onDone){
+function scrollToCoordinate(parent, coordinate, duration, scroll = 'left', rerun = false, onDone){
   let to = coordinate; 
   var start = scroll == 'left' ? parent.scrollLeft : parent.scrollTop,
     change = to - start,
@@ -189,20 +189,20 @@ let listFunction = {
       // el.scrollIntoView({ behavior: "smooth" });
     }
   },
-  scrollElement(parent, destination, duration = 2, scroll = 'left', rerun = true){
+  scrollElement(parent, destination, duration = 2, scroll = 'left', rerun = false, onDone = null){
     parent = jquery(parent)[0];
     let el = jquery(parent).find(destination)[0];
     if (el) {
       var pos = getOffsetWithinContainer(jquery(el), jquery(parent));
       let coordinate = scroll == 'left' ? pos.left : pos.top;
       // console.log(parent.scrollTop, pos, coordinate)
-      scrollToCoordinate(parent, coordinate, duration, scroll, rerun)
+      scrollToCoordinate(parent, coordinate, duration, scroll, rerun, onDone)
     }
   },
-  scrollToCoordinate(element, coordinate, duration, scroll = 'left', rerun = false){
+  scrollToCoordinate(element, coordinate, duration = 2, scroll = 'left', rerun = false, onDone = null){
     element = jquery(element)[0];
-    // console.log(element)
-    scrollToCoordinate(element, coordinate, duration, scroll, rerun)
+    // console.log(element, coordinate, scroll)
+    scrollToCoordinate(element, coordinate, duration, scroll, rerun, onDone)
   },
   toggleClass(el, cls, delay = 0){
     // console.log(el)

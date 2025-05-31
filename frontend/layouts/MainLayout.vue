@@ -45,7 +45,7 @@
           bg-cover bg-no-repeat bg-left-center bg-fixed" 
           :style="`background-image:url('${$baseUrl}assets/images/back-sketch.png')`">
         </div>
-        <div :class="`${isVertical == '1' ? 'sm:ml-[--width-menu]' : 'ml-0' } h-full flex-1 bg-transparent z-[0]`">
+        <div :class="`${isVertical == '1' ? 'sm:w-[calc(100%_-_var(--width-menu,0))] sm:translate-x-[--width-menu]' : 'w-full' } animate h-full flex-1 bg-transparent z-[0]`">
           <router-view v-slot="{ Component , route}" >
             <transition name="slide-in" mode="out-in"
               enter-active-class="transition-all ease-in-out duration-500"

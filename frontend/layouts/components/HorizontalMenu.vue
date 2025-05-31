@@ -13,7 +13,8 @@
               class="el-menu-demo bg-transparent
                 h-full
                 justify-end
-                max-w-[calc(100vw-400px)]">
+                w-full
+                max-w-[calc(100vw-500px)]">
               <template v-for="menu in menus">
                 <template v-if="menu.type == 'submenu' && (isEmpty(menu.roles) || menu?.roles?.includes(user.role))">
                   <el-sub-menu :index="menu.index" class="pl-5 [&>*]:p-0 text-left menu-item-custom title">
