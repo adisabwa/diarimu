@@ -22,12 +22,13 @@ class BasePageController extends BaseDataController
     {
         $where = $this->request->getGetPost('where') ?? [];
         $whereOr = $this->request->getGetPost('or') ?? [];
+        $whereIn = $this->request->getGetPost('in') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
         $grouping = $this->request->getGetPost('grouping') ?? ['id'];
 
         $data = $this->model->getAll($where,$whereOr,'tanggal desc, id',
-        $limit, $offset, $grouping);
+        $limit, $offset, $grouping, $whereIn);
 
         return $this->respondCreated($data);
 
@@ -65,6 +66,7 @@ class BasePageController extends BaseDataController
             ]
         );
         $_data = [];
+        // var_dump($data);
         foreach ($data as $key => $d) {
             $d->id_anggota = "$d->id_anggota-$d->nama";
             if (empty($_data[$d->id_anggota][$d->tanggal])) {

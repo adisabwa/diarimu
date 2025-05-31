@@ -13,7 +13,7 @@ let listFunction = {
         // key = key + '.coba'
         if (this.getObjectValueByPath(src, key) !== undefined) {
           // src[key] = data[key];
-          // console.log('run')
+          // console.log(key, data[key])
           let res = this.setObjectValueByPath(src, key, data[key])
           // console.log('res', res, src)
         }
@@ -70,7 +70,7 @@ let listFunction = {
     setObjectValueByPath(obj, path, value) {
       const keys = path.split('.'); // Split the path into individual keys
       let current = obj;
-    
+      // console.log('setObjectValueByPath', keys, value)
       // Iterate over the keys to find the target location
       keys.forEach((key, index) => {
         // console.log(current, keys, key)
@@ -127,6 +127,19 @@ let listFunction = {
     },
     deleteCookie(name) {
       document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    },
+    convertNullToEmptyString(obj) {
+      if (Array.isArray(obj)) {
+        return obj.map(item => this.convertNullToEmptyString(item));
+      } else if (obj !== null && typeof obj === 'object') {
+        const result = {};
+        for (const key in obj) {
+          result[key] = this.convertNullToEmptyString(obj[key]);
+        }
+        return result;
+      } else {
+        return obj === null ? '' : obj;
+      }
     }
   }
   

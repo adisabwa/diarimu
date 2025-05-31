@@ -17,10 +17,12 @@ class Kolom extends BaseController
     public function preparation($table = NULL, $return_data = FALSE, $grouping = NULL)
     {
         $input = empty($this->request) ? '1' : $this->request->getGet('input');
+        $output = empty($this->request) ? '0' : $this->request->getGet('output');
         $input = ($input ?? '1') == '1';
+        $output = ($output ?? '0') == '1';
         $table = $table ?? $this->request->getGet('table');
         $grouping = ($grouping ?? $this->request->getGet('grouping')) != '0';
-        $datas = $this->kolomModel->getAll($table, $input);
+        $datas = $this->kolomModel->getAll($table, $input, $output);
 
         $results = [];
         // echo json_encode($datas);exit;
@@ -39,13 +41,17 @@ class Kolom extends BaseController
                         ];
                     }
                 } else {
-                    $model = $data->pilihan;
+                    $methods = explode('::',$data->pilihan);
+                    $model = $methods[0];
+                    $method = $methods[1] ?? 'getOptions';
+                    // var_dump($model);
                     $model = model($model);
-                    $options = $model->getOptions() ?? [];
+                    $options = $model?->$method() ?? [];
                 }
             }
             $data->options = $options;
             $data->allow_add = $data->allow_add == '1';
+            $data->allow_create = $data->allow_create == '1';
             $data->customInput = false;
             if ($data->allow_add){
                 // echo json_encode($data);exit;

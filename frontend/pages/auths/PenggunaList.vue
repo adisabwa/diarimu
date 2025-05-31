@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-3 md:mx-10 pt-6">
+  <div class="mx-3 sm:mx-10 pt-6">
     <div id="pengguna-list" class="py-6">
       <table-data ref="tableData" :fields="fields" href="pengguna"
       :checked="true" :upload="false"

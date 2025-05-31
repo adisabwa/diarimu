@@ -1,10 +1,11 @@
 export default {
-	'pcm' : {
-		title:'Data Cabang Muhammadiyah',
-		href:'data/pcm',
-		table:'pdm_pcm',
-		upload: true,
+	'pengguna' : {
+		title:'Data Pengguna Aplikasi',
+		href:'data/anggota',
+		table:'mu_anggota',
+		upload: false,
 		checked:true,
+		pass:['tanggal_lahir','tempat_lahir','alamat','password','passwordconf'],
 		order:[],
 	},
 	'prm' : {

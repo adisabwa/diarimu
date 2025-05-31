@@ -21,6 +21,7 @@ class BaseDataController extends BaseController
     public function index()
     {
         $where = $this->request->getGetPost('where') ?? [];
+        $in = $this->request->getGetPost('in') ?? [];
         $or = $this->request->getGetPost('or') ?? ['1=1' => NULL];
         $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
@@ -29,15 +30,21 @@ class BaseDataController extends BaseController
         $order = implode(",", $order);
 
         $data = $this->model->builder()
-                            ->where($where)
-                            ->groupStart()
-                                ->orWhere($or)
-                            ->groupEnd()
-                            ->orderBy($order)
-                            ->limit($limit, $offset)
-                            ->get()
-                            ->getResult();
-        // var_dump($this->model->getLastQuery());
+                            ->where($where);
+        
+        foreach ($in as $key => $value) {
+            $data->whereIn($key, $value);
+        }
+
+        $data = $data->groupStart()
+                    ->orWhere($or)
+                    ->groupEnd()
+                    ->orderBy($order)
+                    ->limit($limit, $offset)
+                    ->get()
+                    ->getResult();
+        // var_dump($data);
+        // var_dump($this->model->getLastQuery());exit;
         foreach ($data as $key => $d) {
             $d->checked = false;
         }
@@ -105,7 +112,7 @@ class BaseDataController extends BaseController
             $save = $this->model->insert($data, TRUE);
             $posted_data['id'] = $this->model->insertID();
         }
-        // var_dump($posted_data);
+        // // var_dump($posted_data);
         // var_dump( $this->model->error());
         // Append ID to data
         foreach ($child_table as $table => $values) {
@@ -118,6 +125,7 @@ class BaseDataController extends BaseController
                     $value[$fk] = $id;
                 });
                 $model->insertBatch($values);
+            //     var_dump( $model->error());
             }
         }
 

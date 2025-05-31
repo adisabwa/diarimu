@@ -7,7 +7,7 @@ const clickOutsideDirective = {
       // Only trigger if the element is visible AND the click was outside
       const clickedOutside = !el.contains(event.target);
 
-      console.log(isVisible, clickedOutside)
+      // console.log(isVisible, clickedOutside)
       if (isVisible && clickedOutside) {
         // console.log(binding.value)
         binding.value(event);
@@ -24,13 +24,21 @@ const clickOutsideDirective = {
 
 const clickExcludeIdDirective = {
   beforeMount(el, binding) {
-    const { handler, excludeIds = [] } = binding.value
+    const handler = binding.value
+    const excludeIds = binding.arg ? binding.arg.split(',') : [];
 
     el.__clickOutsideHandler__ = (event) => {
+      
+
       const isClickInside = el.contains(event.target)
       const isClickOnExcludedId = excludeIds.some(id =>
         event.target.closest(`#${id}`)
       )
+
+      if (handler === undefined) {
+        console.warn('clickExcludeIdDirective: handler is not defined')
+        return
+      }
 
       if (!isClickInside && !isClickOnExcludedId) {
         handler(event)

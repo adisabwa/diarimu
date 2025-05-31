@@ -8,6 +8,10 @@ import authRoute from './routes/auth'
 import infaqRoute from './routes/infaq'
 import defaultRoute from './routes/default'
 import sholatRoute from './routes/sholat'
+import persyarikatanRoute from './routes/persyarikatan'
+import kajianRoute from './routes/kajian'
+import dataRoute from './routes/data'
+import facilityRoute from './routes/facility'
 // Vue router
 const routes = new createRouter({
   history: createWebHistory(),
@@ -17,6 +21,10 @@ const routes = new createRouter({
     ...infaqRoute,
     ...authRoute,
     ...quranRoute,
+    ...dataRoute,
+    ...kajianRoute,
+    ...persyarikatanRoute,
+    ...facilityRoute,
     ...sholatRoute,
 	],
   scrollBehavior: function(to, from, savedPosition) {
@@ -32,50 +40,66 @@ const routes = new createRouter({
 })
 
 routes.beforeEach(async (to, from, next) => {
-  await store.dispatch('checkUser')
-  const loggedUser = store.getters.loggedUser
-  var title = to.meta.pageTitle
-  if (title) {
-    var pageTitle = title
-  } else {
-    var pageTitle = '<b>Layanan Penjadwalan</b>'
-  }
-  var pageSubTitle = to.meta.pageSubTitle
-
-  store.dispatch('changePageTitle', pageTitle)
-  store.dispatch('changePageSubTitle', pageSubTitle)
-
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (loggedUser.role == '') {
-      // window.alert('Silahkan login terlebih dahulu')
-      next({
-        name: 'login',
-        query: { nextUrl: to.fullPath }
-      })
+  
+  try {
+    await store.dispatch('checkUser').then(() => {
+      // console.log('User check completed')
+    }).catch((err) => {
+      // console.error('User check failed', err)
+    })
+    const loggedUser = store.getters.loggedUser
+    var title = to.meta.pageTitle
+    if (title) {
+      var pageTitle = title
     } else {
-      if (to.meta.allowedRoles) {
-        // console.log(to.meta.app, loggedUser.app);
-        if (!loggedUser.role.includes(to.meta.allowedRoles)) {
-          let name = 'unauthorized'
-          if (to.meta.redirect)
-            name = to.meta.redirect
-          
-          next({
-            name: name,
-          })
+      var pageTitle = '<b>Layanan Penjadwalan</b>'
+    }
+    var pageSubTitle = to.meta.pageSubTitle
+
+    store.dispatch('changePageTitle', pageTitle)
+    store.dispatch('changePageSubTitle', pageSubTitle)
+    
+    // If login, dont enter login and default=
+    // console.log(to)
+    if (loggedUser.role != '' && ['login','default'].includes(to.name)) {
+      next({name:'dashboard'})
+    } else if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (loggedUser.role == '') {
+        // window.alert('Silahkan login terlebih dahulu')
+        next({
+          name: 'login',
+          query: { nextUrl: to.fullPath }
+        })
+      } else { if (to.meta.allowedRoles) {
+          console.log(to.meta.allowedRoles, loggedUser.role, !to.meta.allowedRoles.includes(loggedUser.role));
+          if (!to.meta.allowedRoles.includes(loggedUser.role)) {
+            let name = 'unauthorized'
+            console.log(name)
+            if (to.meta.redirect)
+              name = to.meta.redirect
+            console.log(name)
+            next({
+              name: name,
+            })
+          } 
+          else {
+            next()
+          }
         } 
         else {
           next()
         }
-      } 
-      else {
-        next()
       }
+      // next()
+    } else if (to.matched.some(record => record.meta.guest)) {
+      next()
+    } else {
+      next()
     }
-  } else if (to.matched.some(record => record.meta.guest)) {
-    next()
-  } else {
-    next()
+    // next()
+  } catch (err) {
+    console.error('Navigation error:', err)
+    return next({ name: 'login' }) // Fallback if checkUser fails
   }
 })
 

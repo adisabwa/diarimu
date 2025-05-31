@@ -23,22 +23,28 @@ class InfaqShadaqahModel extends Model
 
     }
 
-    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0)
+    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0, $groupBy = ['id'], $whereIn = [])
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        return $this->db->table('mu_infaq_shadaqah f')
+        $builder = $this->db->table('mu_infaq_shadaqah f')
                     ->select('f.*, f.jumlah data_chart, s.nama, s.nbm, 1 as count')
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
-                    ->where($whereAnd)
-                    ->groupStart()
-                        ->orWhere($whereOr)
-                    ->groupEnd()
-                    ->orderBy($order)
-                    ->limit($limit, $offset)
-                    ->get()
-                    ->getResult();
+                    ->where($whereAnd);
+
+        foreach($whereIn as $key => $in) {
+            $builder->whereIn($key, $in);
+        }
+
+        return $builder->groupStart()
+                            ->orWhere($whereOr)
+                        ->groupEnd()
+                        ->orderBy($order)
+                        ->groupBy($groupBy)
+                        ->limit($limit, $offset)
+                        ->get()
+                        ->getResult();
     }
 
     public function get_last($id_anggota)

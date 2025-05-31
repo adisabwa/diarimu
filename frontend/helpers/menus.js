@@ -1,140 +1,6 @@
 
 import { baseUrl } from "@/config/url";
 
-let iqab = [
-  {
-    index: 'dashboard',
-    route: { name:'iqab-dashboard' },
-    icon:'mdi:view-dashboard',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Dashboard',
-    type:'menu',
-  },
-  {
-    index:'data',
-    icon:'fluent:clipboard-data-bar-24-filled',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Pengolahan Data',
-    type:'submenu',
-    children: [
-      {
-        index:'santri-list',
-        route: { name:'iqab-data', params: { type: 'santri' } },
-        title:'Data Santri',
-      },
-      {
-        index:'pelanggaran-list',
-        route: { name:'iqab-data', params: { type: 'pelanggaran' } },
-        title:'Jenis Pelanggaran',
-      },
-      {
-        index:'iqab-list',
-        route: { name:'iqab-data', params: { type: 'iqab' } },
-        title:'Daftar Iqab',
-      },
-      // {
-      //   index:'pelanggaran-iqab-list',
-      //   route: { name:'iqab-data', params: { type: 'pelanggaran_iqab' } },
-      //   title:'Pelanggaran & Iqab',
-      // },
-    ]
-  },
-  {
-    index: 'admin-iqab',
-    route: { name:'admin-iqab' },
-    icon:'ph:notebook-fill',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Pelanggaran Santri',
-    type:'menu',
-  },
-  {
-    index: 'rekap-iqab',
-    route: { name:'rekap-iqab' },
-    icon:'ic:baseline-data-thresholding',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Rekapitulasi Pelanggaran',
-    type:'menu',
-  },
-]
-
-let library = [
-  {
-    index: 'dashboard',
-    route: { name:'library-dashboard' },
-    icon:'mdi:view-dashboard',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Dashboard',
-    type:'menu',
-  },
-  {
-    index:'book',
-    icon:'mdi:book',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Kelola Data',
-    type:'menu',
-    route: { name:'book-list'},
-  },
-  {
-    index:'data',
-    icon:'fluent:clipboard-data-bar-24-filled',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Pengolahan Data',
-    type:'submenu',
-    children: [
-      {
-        index:'jenis-buku-list',
-        route: { name:'library-data', params: { type: 'jenis' } },
-        title:'Data Jenis Buku',
-      },
-    ]
-  }
-]
-
-
-let base = [
-  {
-    index: 'default',
-    route: { name:'default' },
-    icon:'mdi:view-dashboard',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Dashboard',
-    type:'menu',
-  },
-]
-
-let saving = [
-  {
-    index:'data',
-    icon:'fluent:clipboard-data-bar-24-filled',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Pengolahan Data',
-    type:'submenu',
-    children: [
-      {
-        index:'santri-list',
-        route: { name:'saving-data', params: { type: 'santri' } },
-        title:'Data Santri',
-      },
-    ]
-  },
-  {
-    index: 'admin-saving',
-    route: { name:'admin-saving' },
-    icon:'ph:notebook-fill',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Tabungan Santri',
-    type:'menu',
-  },
-  {
-    index: 'rekap-saving',
-    route: { name:'rekap-saving' },
-    icon:'ic:baseline-data-thresholding',
-    color:'bg-[theme(colors.emerald.700)]',
-    title:'Rekapitulasi Keuangan',
-    type:'menu',
-  },
-]
-
 let topMenu = {
   quranBaca: {
     url:'quran/baca',
@@ -192,14 +58,76 @@ let topMenu = {
   },
 }
 
-export { iqab }
-export { library }
-export { saving }
-export { base }
+let organizationMenu = {
+  group: {
+    url:'group',
+    label:"Data Kelompok",
+    route:'group-admin',
+    color:'bg-orange-200',
+    shadowColor:'shadow-orange-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/group.png',
+  },
+  kajian: {
+    url:'kajian',
+    label:"Kajian / Halaqah",
+    route:'kajian',
+    color:'bg-cyan-200',
+    shadowColor:'shadow-cyan-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/mimbar.png',
+  },
+  persyarikatan: {
+    url:'persyarikatan',
+    label:"Kegiatan Persyarikatan",
+    route:'persyarikatan',
+    color:'bg-indigo-200',
+    shadowColor:'shadow-indigo-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/meeting.png',
+  },
+}
+
+let facilityMenu = {
+  bacaanSholat: {
+    url:'facility/sholat',
+    label:"Bacaan Sholat",
+    route:'facility-sholat',
+    color:'bg-fuchsia-200',
+    shadowColor:'shadow-fuchsia-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/praying.png',
+  },
+  bacaanDoa: {
+    url:'facility/doa',
+    label:"Doa Harian",
+    route:'facility-doa',
+    color:'bg-amber-200',
+    shadowColor:'shadow-amber-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/pray.png',
+  },
+}
+
+let adminMenu = {
+  account: {
+    url:'data/pengguna',
+    label:"Daftar Pengguna",
+    route:'account-list',
+    color:'bg-emerald-200',
+    shadowColor:'shadow-emerald-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/account.png',
+  },
+}
+
+export { adminMenu }
+export { facilityMenu }
 export { topMenu }
+export { organizationMenu }
 export default {
-  iqab,
-  library,
-  saving,
-  base
+  topMenu,
+  adminMenu,
+  facilityMenu,
+  organizationMenu,
 }

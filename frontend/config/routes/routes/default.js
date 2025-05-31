@@ -54,7 +54,7 @@ let routes = [
               leaveFromClass : "opacity-50",
               leaveToClass : "translate-y-full opacity-0",
             }
-          }
+          },
         ]
       },
     ],

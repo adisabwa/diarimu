@@ -43,7 +43,7 @@ class QuranController extends BasePageController
     {
         $posted_data = $this->request->getPost();
         // var_dump($posted_data);
-        $countAyat = $this->quran->countAyat($posted_data['surat_mulai'], $posted_data['ayat_mulai'],     $posted_data['surat_selesai'], $posted_data['ayat_selesai']);
+        $countAyat = $this->quran->countAyat($posted_data['surat_mulai'], $posted_data['ayat_mulai'],$posted_data['surat_selesai'], $posted_data['ayat_selesai']);
         $posted_data['total_ayat'] = $countAyat;
         $this->request->setGlobal('post', $posted_data);
         return $this->store();

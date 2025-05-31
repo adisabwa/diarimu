@@ -1,11 +1,12 @@
 <template>
 	<div class="">
     <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving" :inline="inline"
-      :class="[formClass]">
+      :class="[gridClass,formClass]">
       <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
       <template  v-for="(field, ind) in fieldsData">
-        <el-form-item :class="['grow-0',  formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
-          v-if="showColumns.length > 0 ? showColumns.includes(field.nama_kolom) : !passColumns.includes(field.nama_kolom)"
+        <el-form-item :class="['grow-0', gridItemClass(field?.span), formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
+        {{ resolvedShowColumns }}
+          v-show="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
           :error="field.input == 'array' ? '' : errors[field.nama_kolom]">
           <template #label v-if="showLabel">
             <span :class="[field.required == '1' ? 'required' : '','leading-[1.5] mt-2', labelClass]"> {{ field.label }} </span>
@@ -60,13 +61,15 @@
                 :size="size"
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
-            <template v-else-if="field.input == 'select' || field.input == 'select-multiple'">
-              <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
+            <template v-else-if="['select','select-multiple','scroll'].includes(field.input)">
+              <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
                 filterable clearable
+                :allow-create="field.allow_create"
                 :class="['w-full',inputClass]" 
                 :size="size"
                 @change="changedValue(field.nama_kolom)"
                 :style="{width:(field.width_input.split('-')[1] ?? '') + ' !important'}"  
+                :type="field.input.split('-')[0]"
                 :options="field.options"
                 :prefix="field.prepend">
                 <template v-if="field.allow_add" #footer>
@@ -108,7 +111,7 @@
                 :prefix="field.prepend1">
               </floating-select>
               <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
-                :filterable="false" clearable
+                filterable clearable
                 :class="['w-full',inputClass]" 
                 @change="changedValue(field.nama_kolom)"
                 :size="size"
@@ -127,7 +130,7 @@
                 class="p-7"
                 :close-on-click-modal="false"
                 width="500px">
-                <Form 
+                <form-comp 
                   :fields="field.addFields" 
                   ref="formAdd"
                   :key="'from'+field.nama_kolom"
@@ -211,7 +214,7 @@
                 <div v-for="(recData, ind) in form[field.nama_kolom]"
                   class="flex flex-col gap-y-0"
                   :style="{width:field.width_input + ' !important'}">
-                  <Form ref="formItem"
+                  <form-comp ref="formItem"
                     class="mb-0"
                     :key="'form-item-'+ ind"
                     :fields="field.fields"
@@ -225,7 +228,7 @@
                     form-item-class="w-full m-0"
                     input-class="[&_*]:rounded-[15px]"
                     :show-required-text="false">
-                  </Form>  
+                  </form-comp>  
                   <div class="ml-3 mt-1 mb-2 flex items-baseline">
                     <el-button text class="text-sky-500
                       p-0 h-auto text-[12px]"
@@ -362,9 +365,14 @@ export default {
     inputClass:{
       type:String,
       default:'',
+    },
+    cols:{
+      type:[String, Number],
+      default:'6',
     }
   },
-  emits:['update:id','saved','error','changeId','update:formValue','changedValue','update:errorValue'],
+  inject: ['sharedState'],
+  emits:['update:id','saved','error','get','changeId','update:formValue','changedValue','update:errorValue'],
   data: function() {
     return {
       saving: false,
@@ -375,6 +383,7 @@ export default {
       original:{},
       fieldsData:{},
       dataId:null,
+      // initial:true,
     };
   },
   watch: {
@@ -390,9 +399,10 @@ export default {
     },
     dataId: function(val, oldVal) {
       this.$emit('update:id', val);
-      if (val > 0) {
+        // this.initial = val <= 0
+
         this.getData({id:val})
-      }
+      // }
     },
     form: {
       handler(newVal, oldVal) {
@@ -402,7 +412,7 @@ export default {
     },
     formValue: {
       handler(newVal, oldVal) {
-        // console.log(newVal)
+        console.log('form-value', newVal)
       },
       deep: false, // Watch nested properties
     },
@@ -421,20 +431,64 @@ export default {
     },
   },
   computed: {
-    
+    resolvedPassColumns(){
+      if (Array.isArray(this.passColumns) && this.passColumns.length > 0)
+        return this.passColumns 
+      
+      if (Array.isArray(this?.sharedState?.passColumns) && this?.sharedState?.passColumns?.length > 0)
+        return this?.sharedState?.passColumns
+      
+       return []
+    },
+    resolvedShowColumns(){
+      if (Array.isArray(this.showColumns) && this.showColumns.length > 0)
+        return this.showColumns 
+      
+      if (Array.isArray(this?.sharedState?.showColumns) && this?.sharedState?.showColumns?.length > 0)
+        return this?.sharedState?.showColumns
+      
+       return []
+    },
+    gridClass(){
+      return 'gap-x-4 grid grid-cols-' + this.cols
+    },
   },
   methods: {
-    changeData(field, val, dest = 'form'){
-      if (dest == 'form')
-        this.form[field] = val
-      else if (dest == 'parent')
-        this.fields[field].parentSelect = val
+    gridItemClass(span){
+      if (this.isEmpty(span))
+        return 'col-span-' + this.cols
+      else
+        return 'col-span-' + span
+    },
+    changeData({field, value, parent, func = null}){
+      // if (this.initial) return
+      // console.log('change')
+      if (typeof func == 'function') {
+        value = func({
+          field:field,
+          fieldData:this.fields[field],
+          value:value,
+        })
+      }
+      
+      this.form[field] = value
+      if (!this.isEmpty(parent))
+        this.fields[field].parentSelect = parent
     },
     changedValue(field){
+      // if (this.initial) return
+      let value = this.form[field]
+      let parent = this.fields[field]?.parentSelect
+      let options = this.fields[field]?.options ?? []
+      // console.log(field, value, parent, options)
+      if (Array.isArray(options)) {
+        options = Object.values(options)
+      }
       this.$emit('changedValue', {
         field: field,
-        value: this.form[field],
-        parent: this.fields[field]?.parentSelect
+        value: value,
+        parent: parent,
+        option: options?.filter?.(d => d.value == value)?.[0]
       })
     },
     searchData(ind){
@@ -445,20 +499,23 @@ export default {
         this.getData(where, true)
       }   
     },
-    getData(where, changeId){
-      if (this.hrefGet == '') return
+    async getData(where, changeId){
+      console.log('get-data', this.initial)
+      await this.settingFields();
+      if (this.hrefGet == '') 
+        return
       this.saving = true
-      this.$http.get(this.hrefGet,
+      await this.$http.get(this.hrefGet,
         {
           params:where
         }
       )
         .then(result => {
           this.saving = false;
-          // this.resetObjectValue(this.form)
-          // this.resetObjectValue(this.links)
           var psb = result.data;
           if (!this.isEmpty(psb)) {
+            // console.log('psb:', psb);
+            // console.log('form keys:', Object.keys(this.form));
             this.fillObjectValue(this.form, psb)
             this.fillObjectValue(this.links, psb)
             if (changeId) {
@@ -473,7 +530,13 @@ export default {
                 this.fields[d.nama_kolom].parentSelect = psb.parentSelect[d.nama_kolom]
               }
             })
+            // console.log(this.fields)
           }
+          this.$emit('get')
+          // setTimeout(() => {
+          //   this.initial = false
+          // }, 500)
+          // console.log(psb, this.form)
         })
         .catch(err => {
           console.log(err)
@@ -514,7 +577,7 @@ export default {
           delete form[ind]
       });
       form.id = this.dataId
-      // console.log(form)
+      form = this.convertNullToEmptyString(form)
       var formData = window.jsonToFormData(form); 
 
       this.$http.post(this.href, formData, {
@@ -535,8 +598,8 @@ export default {
           
           if (code == '400') {
             // Populating error message
-            // console.log(res.data.messages, this.errors)
-            this.fillObjectValue(this.errors, res.data.messages);
+            this.fillAndAddObjectValue(this.errors, res.data.messages);
+            console.log(res.data.messages, this.errors)
             if (this.showNotification)
               this.$notify.error({
                 title: 'Gagal',
@@ -554,32 +617,40 @@ export default {
           this.form = backUpForm;
         });
     },
-    settingFields(){
-      let vm = this
-      let fieldsData = Object.values(this.fields)
-      vm.form, vm.errors, vm.links, vm.original = {}
-      fieldsData.forEach(d => {
-        if (d.from_user == '1' || d.from_user == undefined) {
-          vm.fieldsData[d.nama_kolom] = d
-          vm.form[d.nama_kolom] = d.input == 'array' ? [['']] : vm.coalesce([d.default,''])
-          vm.errors[d.nama_kolom] = d.input == 'array' ? [['']] : ''
-          vm.original[d.nama_kolom] = false
-          if (d.input == 'file') {
-            // delete vm.form[d.nama_kolom]
-            vm.links[d.nama_kolom] = ''
+    settingFields() {
+      return new Promise((resolve) => {
+        let vm = this;
+
+        vm.form = {};
+        vm.errors = {};
+        vm.links = {};
+        vm.original = {};
+        vm.fieldsData = {};
+
+        Object.values(vm.fields).forEach(d => {
+          if (d.from_user == '1' || d.from_user == undefined) {
+            vm.fieldsData[d.nama_kolom] = d;
+            vm.form[d.nama_kolom] = d.default ?? (d.input == 'array' ? [] : '');
+            vm.errors[d.nama_kolom] = d.input == 'array' ? [] : '';
+            vm.original[d.nama_kolom] = false;
+            if (d.input == 'file') {
+              vm.links[d.nama_kolom] = '';
+            }
           }
-        }
-      })
-      // console.log('form isi', vm.form, vm.errors)
+        });
+
+        console.log('form isi', vm.form);
       vm.fillObjectValue(vm.form, vm.formValue)
       setTimeout(() => {
         vm.fillObjectValue(vm.form, vm.formValue)
       },500)
+        resolve();
+      });
     }
   },
   mounted(){
     // console.log('mounted')
-    this.settingFields();
+    // this.settingFields();
     this.getData({id:this.dataId});
   }
 }

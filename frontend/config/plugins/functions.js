@@ -8,6 +8,7 @@ let listFunction = {
     window.open(link,'_blank');
   },
   copyText(link) {
+    console.log(link)
     const textArea = document.createElement("textarea");
     textArea.value = link
     document.body.appendChild(textArea);

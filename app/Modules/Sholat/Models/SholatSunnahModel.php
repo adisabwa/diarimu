@@ -23,12 +23,12 @@ class SholatSunnahModel extends Model
 
     }
 
-    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0, $groupBy = 'id')
+    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0, $groupBy = 'id', $whereIn = [])
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
-        return $this->db->table('mu_sholat_sunnah f')
+        $builder = $this->db->table('mu_sholat_sunnah f')
                     ->select("f.*, s.nama, s.nbm,
                         su.nama_sholat,
                         SUM(f.rakaat) total_rakaat, 
@@ -37,14 +37,20 @@ class SholatSunnahModel extends Model
                     ->join('mu_anggota'.' s','s.id=f.id_anggota')
                     ->join('mu__sholat_sunnah su','su.id=f.id_sholat')
                     ->where($whereAnd)
-                    ->groupStart()
-                        ->orWhere($whereOr)
-                    ->groupEnd()
-                    ->orderBy($order)
-                    ->groupBy($groupBy)
-                    ->limit($limit, $offset)
-                    ->get()
-                    ->getResult();
+                    ->where($whereAnd);
+
+        foreach($whereIn as $key => $in) {
+            $builder->whereIn($key, $in);
+        }
+
+        return $builder->groupStart()
+                            ->orWhere($whereOr)
+                        ->groupEnd()
+                        ->orderBy($order)
+                        ->groupBy($groupBy)
+                        ->limit($limit, $offset)
+                        ->get()
+                        ->getResult();
     }
 
     

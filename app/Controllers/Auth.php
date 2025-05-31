@@ -4,10 +4,12 @@ namespace App\Controllers;
 
 class Auth extends BaseController
 {
+    protected $penggunaModel;
+
     public function __construct()
     {
         
-        $this->penggunaModel = model('PenggunaModel');
+        $this->penggunaModel = model('AnggotaModel');
         // helper('auth');
     }
 
@@ -42,9 +44,20 @@ class Auth extends BaseController
     public function user()
     {
         if (empty(userdata())) {
-            return $this->unauthorized();
+            return $this->check_cookie();
         }
         return $this->respondCreated(userdata());
+    }
+
+    public function check_cookie()
+    {
+        $cookie = $this->request->getCookie('userData');
+        // var_dump($cookie);
+        if (empty($cookie)) {
+            return $this->unauthorized();
+        }
+        $cookie = json_decode($cookie);
+        return $this->login($cookie->no_hp, $cookie->password);
     }
 
     public function forbidden()

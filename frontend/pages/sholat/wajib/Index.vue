@@ -1,33 +1,24 @@
 
 <template>
-  <div id="sholat relative" class="pt-[50px]">
-    <div v-if="user.role == 'mentor'" 
-      class="bg-white/[0.9] rounded-[10px] shadow-md
-      mb-3 p-4">
-      <div class="text-sm mb-2">Nama Anggota :</div>
-      <el-select v-model="idAnggota" placeholder="Pilih Anggota"
-        @change="reloadData">
-        <el-option :value="anggotas.map(user => user.id_anggota).join(',')" label="Semua" />
-        <el-option v-for="a in anggotas"
-          :key="a.id"
-          :value="a.id_anggota"
-          :label="a.nama"/>
-      </el-select>
-    </div>
-    <el-card v-show="user.role == 'user'"
+  <div id="sholat relative" class="pt-[50px] sm:pt-5">
+    <FilterAnggota v-if="user.role != 'user'" 
+      v-model:id-anggota="idAnggota" @change="reloadData"/>
+    <el-card v-show="['user','super-admin'].includes(user.role)"
       class="rounded-[10px]
       bg-gradient-to-tr from-white/[0.8] from-30% to-purple-200/[0.7] 
       mb-3 p-0"
       body-class="relative p-0"
       header-class="relative p-0">
-      <img :src="sholat.image" height="90px" width="90px"
-          class="absolute z-[0] top-[-60px] right-[-20px]
-            opacity-[0.5]"/>
       <template #header>
+        <img :src="sholat.image" height="90px" width="90px"
+            class="absolute z-[0] top-[0px] right-[-20px]
+              opacity-[0.5]"/>
         <div id="header-scroll" class="relative px-0 py-4 font-bold text-[18px] overflow-x-scroll
         snap-x snap-mandatory" >
           <div v-if="editTanggal" class="text-center">
             <date-wheel-picker
+              ref="editTanggal"
+              id="editTanggal"
               class="w-fit mx-auto"
               v-model:value="tanggal"
               value-format="YYYY-MM-DD"
@@ -59,10 +50,16 @@
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
-      <div id="body-scroll" class="relative px-0 py-6
+      <div class="mt-1 text-center active:scale-90"
+        @click="collapseInput = !collapseInput">
+        <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
+        <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
+      </div>
+      <div id="body-scroll" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-screen pt-0 pb-6', `relative px-0 
+        animate
         flex    
         overflow-x-scroll
-        snap-x snap-mandatory">
+        snap-x snap-mandatory`]">
         <template v-for="(_data, ind) in datas">
           <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
             px-5 w-full
@@ -71,7 +68,7 @@
             v-loading="loadings[ind]">
             <template v-for="sholat in _data.sholats">
               <div :class="`${setStatusColor(sholat.value)}
-                pt-4 pb-3 mb-4 px-7
+                pt-4 pb-3 mb-4 px-7 mx-auto
                 rounded-[15px] min-w-[240px] max-w-[300px]
                 shadow-md
                 relative flex gap-x-3 items-center`">
@@ -82,15 +79,12 @@
                   </div>
                 </div>
                 <div class="flex gap-x-1 mx-3">
-                  <star :id="'1star'+ind+tanggals[ind]+sholat.nama_kolom" />
-                  <star :id="'2star'+ind+tanggals[ind]+sholat.nama_kolom" />
-                  <star :id="'3star'+ind+tanggals[ind]+sholat.nama_kolom" />
+                  <star :count="getCount(sholat.value)"/>
                 </div>
                 <el-dropdown v-if="user.role == 'user'"
                   trigger="click"
                   @command="(res) => {
                     sholat.value = res
-                    showStar()
                     saveData(ind, sholat.nama_kolom)
                   }"
                   :popper-class="`${setStatusColor(sholat.value)}`"
@@ -126,7 +120,7 @@
         <template v-for="(data, ind) in {last:lastData, best:bestData}">
           <div class="shrink-1 text-center py-4 px-4
             border-2 border-solid border-indigo-200
-            bg-sky-100/[0.4]
+            bg-purple-100/[0.4]
             rounded-[20px]">
             <div class="text-gray-500 font-bold w-[100px] text-[14px]
               mb-4">Nilai {{ ind == 'best' ? 'Terbaik' : 'Terakhir' }}</div>
@@ -134,9 +128,8 @@
               <div class="mb-2  text-gray-500  text-[13px]"><b>( {{ dateShortIndo(data.tanggal) }} )</b></div>
               <div class="mb-2 text-[45px] font-semibold leading-[1]">{{ data.total_score }}</div>
               <div class="flex items-start justify-center">
-                <star :id="'1star'+ind+'data'" width="28px"/>
-                <star :id="'2star'+ind+'data'" width="33px"/>
-                <star :id="'3star'+ind+'data'" width="28px"/>
+                <star width="28px" :count="getCount(data.total_score / 5)"
+                  class="gap-0 *:mx-[-3px] [&>*:not(:first-child):not(:last-child)>*]:w-[34px]"/>
               </div>
             </template>
             <template v-else>
@@ -165,42 +158,77 @@
       </template>
       <chart ref="wajibChartData" 
         href="sholat/wajib/dashboard"
-         :id-anggota="idAnggota"
+        :id-anggota="idAnggota"
+        :add-options="{
+          scales:{
+            y:{
+              title:{display:true, text:'Total Score'},
+              ticks: {stepSize:50}
+            }}}"
            v-if="showData == 'chart'" 
         class="px-4"/>
-      <list-data ref="wajibListData"
+      <ListData ref="wajibListData"
+        class="[--text-color:theme(colors.purple.900)]
+          [--bg-color:theme(colors.purple.50)]
+          [--border-color:theme(colors.purple.400)]
+          [--bg-button-color:theme(colors.purple.100)]
+          [--button-color:theme(colors.purple.200)]
+        "
         :id-anggota="idAnggota"
-          :key="'wajibListData'+formKey"
-        :add-options="{scales:{y:{title:{display:true, text:'Jumlah Ayat'}}}}"
+        href="sholat/wajib"
+        href-delete="sholat/wajib/delete"
         v-if="showData =='list'"
-        @edit-data="(({id}) => {
-          dataId = id
-          showCreate = true
-        })"/>
+        @edit-data="editData">
+        <template #title="{ data }">
+          {{ dateDayIndo(data.tanggal)}}
+        </template>
+        <template #content="{ data }">
+          <div class="flex items-center"
+            @click="data.show_detail = !data.show_detail">
+            <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
+            <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
+            Sholat Wajib {{ (
+              (data.shubuh > 0 ? 2 : 0) + (data.dhuhur > 0 ? 4 : 0) + (data.asar > 0 ? 4 : 0) + (data.maghrib > 0 ? 3 : 0) + (data.isya > 0 ? 4 : 0) 
+            ) }} Raka'at
+          </div>
+          <ol v-show="data.show_detail"
+            class="pl-[30px] italic mt-0 mb-1">
+            <li v-for="ind in ['shubuh','dhuhur','asar','maghrib','isya']"
+              class="pl-1">
+              <div class="flex items-center gap-x-3">
+                Sholat {{ ucFirst(ind) }} ( {{ getLabel(data[ind]) }} ) 
+                <template v-if="data[ind] >= 25">
+                  <star :count="getCount(data[ind])" width="12px"
+                    class="gap-x-[2px]"/>
+                </template>
+              </div>
+            </li>
+          </ol>
+        </template>
+      </ListData>
     </el-card>
   </div>
 </template>
 
 <script setup>
-  import { setStatusColor, options, getLabel } from '@/helpers/sholat.js'
+  import { setStatusColor, options, getLabel, getCount } from '@/helpers/sholat.js'
 </script>
 
 <script>
 import { mapGetters } from 'vuex';
-import Form from '@/components/Form.vue'
-import Chart from '@/components/statistics/DataChart.vue'
-import ListData from './components/ListData.vue'
+import Chart from '@/pages/components/DataChart.vue'
 import { topMenu } from '@/helpers/menus.js'
-import Star from '../components/Star.vue'
-import { getGlobalThis } from '@vue/shared';
+import FilterAnggota from '../../components/FilterAnggota.vue';
+import ListData from '@/pages/components/ListData.vue';
+import { set } from 'lodash';
+import { data } from 'jquery';
 
 export default {
   name: "sholat",
   components: {
-    'form-comp' : Form,
     Chart,
     ListData,
-    Star,
+    FilterAnggota,
   },
   data: function() {
     return {
@@ -215,6 +243,7 @@ export default {
       loadings:[false, false, false],
       dataSholat: {
         id:'-1',
+        tanggal:'',
         sholats:{
           shubuh:{
             nama_kolom: 'shubuh',
@@ -248,9 +277,9 @@ export default {
         tanggal:'',
         total_score:'',
       },
-      sizeWindow:window.innerWidth,
       sholat: topMenu.sholatWajib,
       showData:'list',
+      collapseInput:false,
     };
   },
   watch: {
@@ -260,16 +289,15 @@ export default {
         vm.setHeaderToCenter()
       }, 50);
     },
+    dataId(val){
+
+    }
   },  
   computed: {
     ...mapGetters({
       user: 'loggedUser',
       anggotas:'data/anggotas'
-    }),
-    labelPosition(){
-      return this.sizeWindow < 800 ? 'top' : 'left'
-    },
-    
+    }),    
   },
   methods: {
     getLast(){
@@ -284,26 +312,31 @@ export default {
           let data = res.data
           this.fillObjectValue(this.lastData, data?.last)
           this.fillObjectValue(this.bestData, data?.best)
-          this.toggleStarClass('starlastdata',data?.last?.total_score / 5)
-          this.toggleStarClass('starbestdata',data?.best?.total_score / 5)
         })
     },
-    getData: async function(index) {
+    getData: async function(index, id = -1) {
       let vm = this
       vm.loading = true;
       vm.loadings[index] = true;
+      let where = {
+        id_anggota: vm.idAnggota,
+      }
+      if (id != -1) {
+        where.id = id
+      } else {
+        where.tanggal = vm.tanggals[index]
+      }
       // setTimeout(() => {
         vm.$http.get('sholat/wajib/get_where', {
             params: {
-              where: {
-                id_anggota:vm.idAnggota,
-                tanggal:vm.tanggals[index],
-              }
+              where: where
             }
           })
             .then(res => {
               let data = res.data
               vm.datas[index].id = this.coalesce([data?.id,-1])
+              vm.datas[index].tanggal = this.coalesce([data?.tanggal,''])
+              vm.tanggals[index] = vm.datas[index].tanggal
               let keys = Object.keys(vm.dataSholat.sholats)
               keys.forEach(( k, ind) => {
                 if (data[k] !== null) {
@@ -313,7 +346,6 @@ export default {
                   vm.datas[index].sholats[k].value = null
                 }
                 // console.log(index, k, vm.datas[index][k])
-                vm.showStar()
               })
               setTimeout(() => {
                 vm.loading = false
@@ -333,50 +365,6 @@ export default {
             })
       // }, 1000)
     },
-    showStar(){
-      let vm = this
-      vm.datas.forEach((d, ind)=> {
-        let array = Object.keys(d.sholats)
-        for (let i = 0; i < array.length; i++) {
-          const key = array[i];
-          let sholat = d.sholats[key]
-          let value = sholat.value
-          let id = 'star' + ind + vm.tanggals[ind] + key;
-          this.toggleStarClass(id, value)
-        }
-      })
-    },
-    toggleStarClass(id, value){
-      let vm = this
-      if (value >= 25) {
-        vm.removeClass('#1' + id,'scale-0')
-        vm.removeClass('#2' + id,'scale-0')
-        vm.removeClass('#3' + id,'scale-0')
-      } else {
-        vm.addClass('#1' + id,'scale-0')
-        vm.addClass('#2' + id,'scale-0')
-        vm.addClass('#3' + id,'scale-0')
-      }
-
-      
-      if (value == 100) {
-        vm.removeClass('#1' + id,'grayscale')
-        vm.removeClass('#2' + id,'grayscale')
-        vm.removeClass('#3' + id,'grayscale')
-      } else if (value >= 75) {
-        vm.addClass('#1' + id,'grayscale')
-        vm.removeClass('#2' + id,'grayscale')
-        vm.removeClass('#3' + id,'grayscale')
-      } else if (value >= 50) {
-        vm.addClass('#1' + id,'grayscale')
-        vm.addClass('#2' + id,'grayscale')
-        vm.removeClass('#3' + id,'grayscale')
-      } else if (value >= 25) {
-        vm.addClass('#1' + id,'grayscale')
-        vm.addClass('#2' + id,'grayscale')
-        vm.addClass('#3' + id,'grayscale')
-      } 
-    },
     saveData(ind, kolom){
       let data = this.datas[ind]
       let form = {
@@ -391,7 +379,8 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' }
       } )
         .then(result => {
-          // this.getData()
+          let res = result.data
+          this.datas[1].id = res.id
           this.getLast()
         })
         .catch(err => {
@@ -401,10 +390,11 @@ export default {
     changeTanggal(){
       let vm = this
       vm.editTanggal = true;
-      console.log('change')
-      // setTimeout(() => {
-      //   vm.jquery('#editTanggal.el-input__inner')[0].focus();
-      // }, 5000);
+      // console.log('change', this.tanggal)
+      setTimeout(() => {
+        vm.jquery('#editTanggal .el-input__inner')[0].focus();
+        this.$refs.editTanggal.showModal = true
+      }, 100);
     },
     setHeaderToCenter(){
       // console.log('center')
@@ -437,6 +427,11 @@ export default {
       setTimeout(() => {
         vm.addClass('#header-scroll','snap-x snap-mandatory')
       }, duration * 1000 + 100);
+    },
+    async editData({tanggal}){
+      this.tanggal = tanggal
+      this.setTanggalInitial();
+      this.setDataInitial();
     },
     setTanggalInitial(){
       this.tanggals = [
@@ -493,12 +488,18 @@ export default {
       // }, 500);
     },  
     reloadData(){
+      // console.log(this.idAnggota)
       this.setTanggalInitial()
       this.setDataInitial()
       this.getLast()
-      if (this.showData == 'chart') this.$refs.wajibChartData.getChart();
-      if (this.showData == 'list') this.$refs.wajibListData.getData(true);
-      this.formKey++
+      setTimeout(() => {
+        this.updateChart();
+      }, 400);
+      // this.formKey++
+    },
+    updateChart(){
+      if (this.showData == 'chart') this.$refs.wajibChartData?.getChart();
+      if (this.showData == 'list') this.$refs.wajibListData?.getData(true);
     }
   },
   created: function() {
@@ -512,11 +513,6 @@ export default {
   },
   mounted: function() {
     let vm = this
-    vm.sizeWindow = window.innerWidth
-
-    window.addEventListener('resize', () => {
-      vm.sizeWindow = window.innerWidth
-    });
 
     let scrollTimeout;
     jquery('#header-scroll').on('scroll', () => {      

@@ -119,7 +119,17 @@ pos.left   = cPos.left   - pPos.left;
 
 return pos;
 }
-  
+
+function getOffsetWithinContainer($child, $container) {
+  const childOffset = $child.offset();
+  const containerOffset = $container.offset();
+
+  return {
+    top: childOffset.top - containerOffset.top + $container.scrollTop(),
+    left: childOffset.left - containerOffset.left + $container.scrollLeft()
+  };
+}
+
 function easeInOutQuad(t){ 
 return t <.5 ? 2*t*t : -1+(4-2*t)*t 
 };
@@ -137,8 +147,24 @@ const observer = new MutationObserver(function(mutationList, observer) {
 });
 
 let listFunction = {
-  jquery(val){
-    return jquery(val);
+  jquery(target){
+    let $target;
+
+    if (typeof target === 'string') {
+      // Assume class name or selector string
+      $target = jquery(target); // converts string selector to jQuery object
+    } else if (target instanceof jQuery) {
+      // Already a jQuery object
+      $target = target;
+    } else if (target instanceof Element) {
+      // Raw DOM element
+      $target = jquery(target);
+    } else {
+      console.warn('Unsupported target type');
+      return this;
+    }
+
+    return $target
   },
   observeMutation(target, config = { attributes: true }){
     let targetNode = jquery(target)[0];
@@ -166,16 +192,16 @@ let listFunction = {
   scrollElement(parent, destination, duration = 2, scroll = 'left', rerun = true){
     parent = jquery(parent)[0];
     let el = jquery(parent).find(destination)[0];
-    // console.log(parent, destination, el)
     if (el) {
-      var pos = getRelativePos(el);
-      let coordinate = scroll == 'left' ? pos.left : pos.bottom;
-      // console.log(parent.scrollLeft, coordinate)
+      var pos = getOffsetWithinContainer(jquery(el), jquery(parent));
+      let coordinate = scroll == 'left' ? pos.left : pos.top;
+      // console.log(parent.scrollTop, pos, coordinate)
       scrollToCoordinate(parent, coordinate, duration, scroll, rerun)
     }
   },
-  scrollToCoordinate(element, coordinate, duration, scroll = 'left', rerun = true){
+  scrollToCoordinate(element, coordinate, duration, scroll = 'left', rerun = false){
     element = jquery(element)[0];
+    // console.log(element)
     scrollToCoordinate(element, coordinate, duration, scroll, rerun)
   },
   toggleClass(el, cls, delay = 0){

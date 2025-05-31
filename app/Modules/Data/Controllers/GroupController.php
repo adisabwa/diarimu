@@ -40,7 +40,12 @@ class GroupController extends BaseDataController
         $id = $this->request->getGet('id');
         $data = $this->model->find($id);
         if (!empty($data))
-        $data->mu_group_anggota = $this->modelAnggota->getAll(['id_group' => $id]);
+        $data->mu_group_anggota = array_map(function($val){
+            return (object)[
+                'id_anggota'    => $val->id_anggota,
+                'type'    => $val->type,
+            ];
+        }, $this->modelAnggota->getAll(['id_group' => $id]) );
 
         return $this->respondCreated(($data));
     }
@@ -75,7 +80,7 @@ class GroupController extends BaseDataController
         $id = $this->request->getGetPost('id') ?? userdata()->id_anggota;
         $data = $this->modelAnggota->where(['id_anggota' => $id,'type' => 'mentor'])->find()[0] ?? [];
         $datas = [];
-
+        
         if ($user->role == 'super-admin')
             $where_group = "1=1";
         else if ($user->role == 'admin')

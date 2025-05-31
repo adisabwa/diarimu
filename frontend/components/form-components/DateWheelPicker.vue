@@ -87,13 +87,14 @@ export default {
   },
   watch: {
     vModel(val){
-      console.log(val)
+      // console.log(val)
       this.selectOption(val)
       this.$emit('update:value', val)
     },
     value: {
       immediate: true,
       async handler(val) {
+        // console.log('val', val)
         this.vModel = val;
       },
     },
@@ -107,14 +108,14 @@ export default {
       this.emitDate()
     },
     showModal(val){
-      console.log('show', val)
+      // console.log('show', val)
       if (!val)
         this.changedValue(this.vModel)
     }
   },
   methods: {
     resetData(){
-      [this.year, this.month, this.day] = this.dateNow().split('-')
+      [this.year, this.month, this.day] = (this.isEmpty(this.value) ? this.dateNow() : this.value).split('-')
       this.emitDate()
     },
     changedValue(val){
