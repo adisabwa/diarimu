@@ -50,7 +50,7 @@
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
-      <div class="mt-1 text-center active:scale-90"
+      <div class="mt-1 text-center active:scale-90 cursor-pointer"
         @click="collapseInput = !collapseInput">
         <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
         <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
@@ -314,6 +314,50 @@ export default {
           this.fillObjectValue(this.bestData, data?.best)
         })
     },
+    async editData({tanggal}){
+      // console.log(tanggal)
+      this.tanggal = tanggal
+      this.setTanggalInitial();
+      this.setDataInitial();
+      window.scrollTo({
+        top:0,
+        behavior: 'smooth',
+      })
+    },
+    setTanggalInitial(){
+      this.tanggals = [
+        this.addDay(this.tanggal, -1),
+        this.tanggal,
+        this.addDay(this.tanggal, 1),
+      ]
+    },
+    setDataInitial(){
+      this.datas = [];
+      for (let index = 0; index < this.tanggals.length; index++) {
+        this.datas[index] = JSON.parse(JSON.stringify(this.dataSholat))
+        this.getData(index)
+      }
+    },
+    changeTanggalData(course = -1){
+      // console.log(course)
+      let vm = this
+      vm.tanggal = vm.addDay(vm.tanggal, course)
+      for (let i = 0; i < vm.tanggals.length; i++) {
+        vm.tanggals[i] = vm.addDay(vm.tanggals[i], course)
+      }
+      // unset(vm.datas[-1])
+      // unset(vm.datas[3])
+      let n_data = JSON.parse(JSON.stringify(vm.dataSholat))
+      if (course == -1) {
+        vm.datas.pop()
+        vm.datas.unshift(n_data)
+        vm.getData(1)
+      } else {
+        vm.datas.shift()
+        vm.datas.push(n_data)
+        vm.getData(2)
+      }
+    },
     getData: async function(index, id = -1) {
       let vm = this
       vm.loading = true;
@@ -423,50 +467,6 @@ export default {
       // setTimeout(() => {
       //   vm.addClass('#header-scroll','snap-x snap-mandatory')
       // }, duration * 1000 + 100);
-    },
-    async editData({tanggal}){
-      // console.log(tanggal)
-      this.tanggal = tanggal
-      this.setTanggalInitial();
-      this.setDataInitial();
-      window.scrollTo({
-        top:0,
-        behavior: 'smooth',
-      })
-    },
-    setTanggalInitial(){
-      this.tanggals = [
-        this.addDay(this.tanggal, -1),
-        this.tanggal,
-        this.addDay(this.tanggal, 1),
-      ]
-    },
-    setDataInitial(){
-      this.datas = [];
-      for (let index = 0; index < this.tanggals.length; index++) {
-        this.datas[index] = JSON.parse(JSON.stringify(this.dataSholat))
-        this.getData(index)
-      }
-    },
-    changeTanggalData(course = -1){
-      // console.log(course)
-      let vm = this
-      vm.tanggal = vm.addDay(vm.tanggal, course)
-      for (let i = 0; i < vm.tanggals.length; i++) {
-        vm.tanggals[i] = vm.addDay(vm.tanggals[i], course)
-      }
-      // unset(vm.datas[-1])
-      // unset(vm.datas[3])
-      let n_data = JSON.parse(JSON.stringify(vm.dataSholat))
-      if (course == -1) {
-        vm.datas.pop()
-        vm.datas.unshift(n_data)
-        vm.getData(1)
-      } else {
-        vm.datas.shift()
-        vm.datas.push(n_data)
-        vm.getData(2)
-      }
     },
     handleAfterScroll(){
       // console.log('handle-after')
