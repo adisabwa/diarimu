@@ -98,6 +98,15 @@ let facilityMenu = {
     textColor:'text-orange-500',
     image:baseUrl + 'assets/images/icons/praying.png',
   },
+  bacaanDzikirSholat: {
+    url:'facility/dzikir-sholat',
+    label:"Dzikir Setelah Sholat",
+    route:'facility-dzikir-sholat',
+    color:'bg-emerald-200',
+    shadowColor:'shadow-emerald-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/after-praying.png',
+  },
   bacaanDoa: {
     url:'facility/doa',
     label:"Doa Harian",

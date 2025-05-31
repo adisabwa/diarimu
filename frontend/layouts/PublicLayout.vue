@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 
 export default {
   name: 'dashboard-layout',
@@ -79,10 +79,8 @@ export default {
 
   },
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
-      pageTitle: 'pageTitle',
-      pageSubTitle: 'pageSubTitle',
     }),
   },
   methods: {

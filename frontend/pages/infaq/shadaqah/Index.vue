@@ -169,7 +169,7 @@
 </template>
   
   <script>
-  import { mapGetters } from 'vuex';
+  import { mapState } from 'pinia';
   import FilterAnggota from '@/pages/components/FilterAnggota.vue';
   import ListData from '@/pages/components/ListData.vue';
   import Chart from '@/pages/components/DataChart.vue'
@@ -220,7 +220,7 @@
      
     },  
     computed: {
-      ...mapGetters({
+      ...mapState({
         user: 'loggedUser',
         anggotas:'data/anggotas'
       }),
@@ -244,7 +244,7 @@
             this.dataId = -1
             this.fields = this.fillAndAddObjectValue(this.fields, res)
             this.fields.tanggal.default = this.dateNow()
-            this.fields.id_anggota.default = this.$store.getters.loggedUser.id_anggota
+            this.fields.id_anggota.default = useAuthStore()?.loggedUser?.id_anggota
             this.formKey++
             this.loading = false
           });
@@ -266,10 +266,7 @@
       }
     },
     created: function() {
-      // let filter = this.$store.getters.filter
-      // this.filter.nama = this.isEmpty(filter.nama) ? '' : filter.nama
-      // this.filter.kelas = this.isEmpty(filter.kelas) ? '' : filter.kelas
-      this.idAnggota = this.$store.getters.loggedUser.id_anggota
+      this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
       this.getInitial()
       this.updateChart()
       // console.log(this.$router);

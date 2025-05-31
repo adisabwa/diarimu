@@ -176,7 +176,7 @@ export default {
       this.$http.get('/data/group',{
         params: {
           where: {
-            id_anggota:this.$store.getters.loggedUser.id_anggota
+            id_anggota:useAuthStore()?.loggedUser?.id_anggota
           }
         }
       })

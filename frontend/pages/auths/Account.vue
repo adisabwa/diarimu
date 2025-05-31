@@ -2,7 +2,8 @@
 	<div id="account-page">
 		<el-card class="mx-2 bg-white pt-[50px] pb-10">
 			<div class="relative">
-				<div class="h-[120px] w-[120px] mx-auto mb-6
+				<div class="cursor-pointer
+          h-[120px] w-[120px] mx-auto mb-6
           rounded-full overflow-hidden relative
 					flex items-center justify-center
 					border-3 border-solid border-teal-700"
@@ -21,14 +22,21 @@
 					<el-button class="mt-1 flex items-center
 						w-full rounded-[10px] mx-0 bg-teal-700 
 						text-teal-100 font-bold"
-						@click="showEdit = true;showColumns=[]">
+						@click="showEdit = true;
+              showColumns=[];
+              getInitial();">
 						<icons icon="mdi:edit"/>
 						Data Profil
 					</el-button>
 					<el-button class="mt-1 flex items-center
 						w-full rounded-[10px] mx-0 bg-teal-700 
 						text-teal-100 font-bold"
-						@click="showEdit = true;showColumns=['password','passwordconf']">
+						@click="showEdit = true;
+              showColumns = ['password','passwordconf'];
+              fields = {
+                password: {input:'password',nama_kolom:'password',default:'',label:'Password Baru'},
+                passwordconf: {input:'password',nama_kolom:'passwordconf',default:'',label:'Konfirmasi Password Baru'}
+              };">
 						<icons icon="mdi:edit"/>
 						Kata Sandi
 					</el-button>
@@ -44,7 +52,7 @@
 					href="data/anggota/store"
 					href-get="data/anggota/get"
 					@saved="saving = false; showEdit = false;
-            $store.dispatch('resetAccount')"  
+					authStore.resetAccount(); getInitial()"  
 					@error="saving=false"
           :pass-columns="['password','passwordconf','role']"
 					size="large"
@@ -56,8 +64,7 @@
 					<view-table
 						ref="viewAccount"
 						class="mt-2 w-full"
-						:fields="fields" 
-						:key="'from'+active"
+						:fields="fields"
 						label-position="top"
             v-model:form-value="viewValue"
 						label-width="80px"
@@ -75,12 +82,17 @@
 	</div>
 </template>
 
+<script setup>
+   
+</script>
+
 <script>
 
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import ViewTable from '../../components/ViewTable.vue';
 import Form from '../../components/Form.vue';
 import { unset } from 'lodash';
+const authStore = useAuthStore()
 
 export default {
 	name: 'account-page',
@@ -90,6 +102,7 @@ export default {
 	},
 	data: function() {
 		return {
+      formKey:1,
 			saving: false,
 			showEdit: false,
 			showColumns:[],
@@ -99,34 +112,38 @@ export default {
 			dataId:-1,
       formValue:{},
       viewValue:{},
+	  authStore:authStore,
 		};
 	},
 	computed:{
-		...mapGetters({
-			loggedUser: 'loggedUser',
-			// pegawai: 'data/employee',
-		}),
 	},
+  watch: {
+    fields:{
+      deep:true,
+      handler(val){
+        this.formKey++;
+      }
+    }
+  },
 	methods: {
 		getInitial(){
+      this.fields = {}
 			this.$http.get('/kolom/preparation?table=mu_anggota&grouping=0&input=0')
         .then(result => {
           var res = result.data;
           delete res.password
           delete res.passwordconf
           this.fields = res
-          this.formKey++
           this.saving = false
+          // console.log(this.fields)
         });
 		}
 		
 	},
 	created() {
-		this.dataId = this.loggedUser.id_anggota;
-		console.log(this.dataId)
+		this.dataId = this.authStore.loggedUser.id_anggota;
 		this.getInitial()
-		// this.$store.dispatch('data/getEmployee', {id:this.loggedUser.id_pegawai} );
-	},
+  }
 }
 </script>
 

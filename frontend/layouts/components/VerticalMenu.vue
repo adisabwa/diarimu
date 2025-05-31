@@ -58,7 +58,7 @@
                 <div class="dialog-footer flex justify-between">
                   <el-button @click="showRole = false">Batal</el-button>
                   <el-button type="primary" @click="showRole = false;
-                    $store.dispatch('changeRole', {role:role})"
+                    authStore.changeRole({role:role})"
                     class="bg-teal-700 border-0">
                     Ubah
                   </el-button>
@@ -104,12 +104,12 @@
               <span class="">{{ menu.label }}</span>
             </el-menu-item>
           </template>
-            <el-menu-item @click="$emit('function', 'doLogout')"
-              class="pl-5 text-left menu-item-custom title">
-              <icons icon="mdi:logout" />
-              <span class="">Keluar</span>
-            </el-menu-item>
         </template>
+        <el-menu-item @click="$emit('function', 'doLogout')"
+          class="pl-5 text-left menu-item-custom title">
+          <icons icon="mdi:logout" />
+          <span class="">Keluar</span>
+        </el-menu-item>
       </el-menu>
       <div class="text-teal-700
         text-center px-2 pb-10">
@@ -128,8 +128,13 @@
   </div>
 </template>
 
+<script setup>
+  const authStore = useAuthStore()
+   
+</script>
+
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 
 export default {
   name: 'vertical-menu',
@@ -156,7 +161,7 @@ export default {
 
   },
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
     }),
   },

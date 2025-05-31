@@ -1,9 +1,9 @@
 import { createStore } from 'vuex'
-import configModule from './modules/config';
-import filterModule from './modules/filter';
-import authModule from './modules/auth';
-import penggunaModule from './modules/pengguna';
-import dataModule from './modules/data';
+import configModule from './modulesOld/config';
+import filterModule from './modulesOld/filter';
+import authModule from './modulesOld/auth';
+import penggunaModule from './modulesOld/pengguna';
+import dataModule from './modulesOld/data';
 
 export default createStore({
   modules: {

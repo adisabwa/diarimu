@@ -38,6 +38,10 @@
 	</div>
 </template>
 
+<script setup>
+  const authStore = useAuthStore()
+</script>
+
 <script>
 import { topMenu } from '@/helpers/menus.js'
 
@@ -50,10 +54,13 @@ export default {
 		topMenu:topMenu,
     };
   },
-  async created() { 
-	await this.$store.dispatch('checkUser');
-	const loggedUser = this.$store.getters.loggedUser;
-	if (loggedUser.role != '') {
+  methods:{
+	async getInitial() {
+	}
+  },
+  created() { 
+	const authStore = useAuthStore()
+	if (authStore.loggedUser.role != '') {
 		this.$router.replace({ name: 'dashboard' });
 	}
   },

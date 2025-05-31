@@ -3,11 +3,13 @@ import App from "./App.vue"
 let app = createApp(App)
 
 //Modules
+import { createPinia } from 'pinia'
+const pinia = createPinia()
+app.use(pinia)
+
 import router from '@/config/routes/router'
 app.use(router)
 
-import store from '@/config/store'
-app.use(store)
 
 //Styling
 import '@/config/styles/tailwind.css'

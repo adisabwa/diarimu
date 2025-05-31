@@ -28,7 +28,7 @@
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState, mapActions } from 'pinia';
 
 export default {
   name: "filter-anggota",
@@ -40,7 +40,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
       anggotas:'data/anggotas'
     }),
@@ -61,9 +61,11 @@ export default {
      }
   },
 	methods:{
+    ...mapActions(useDataStore,['getAllAnggotaInGroup']),
+
 	},
 	mounted(){
-    this.$store.dispatch('data/getAllAnggotaInGroup')
+    this.getAllAnggotaInGroup()
 	}
 }
 </script>

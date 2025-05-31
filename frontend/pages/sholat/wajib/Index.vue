@@ -13,8 +13,8 @@
         <img :src="sholat.image" height="90px" width="90px"
             class="absolute z-[0] top-[0px] right-[-20px]
               opacity-[0.5]"/>
-        <div id="header-scroll" class="relative px-0 py-4 font-bold text-[18px] overflow-x-scroll
-        snap-x snap-mandatory" >
+        <DragScroll id="header-scroll" ref="headerScroll" 
+          :syncWith="syncWith?.header" class="relative px-0 py-4 font-bold text-[18px] overflow-x-scroll" >
           <div v-if="editTanggal" class="text-center">
             <date-wheel-picker
               ref="editTanggal"
@@ -40,7 +40,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </DragScroll>
         <icons @click="scrollHeader(-1)"
           class="m-0 text-[35px] pointer z-[999]
             absolute top-1/2 -translate-y-1/2 left-5"
@@ -50,16 +50,17 @@
             absolute top-1/2 -translate-y-1/2 right-5" 
           icon="iconamoon:arrow-right-2-bold"/>
       </template>
-      <div class="mt-1 text-center active:scale-90"
+      <div class="mt-1 text-center active:scale-90 cursor-pointer"
         @click="collapseInput = !collapseInput">
         <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
         <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
       </div>
-      <div id="body-scroll" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-screen pt-0 pb-6', `relative px-0 
+      <DragScroll id="body-scroll" ref="bodyScroll"
+        :syncWith="syncWith?.body" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-screen pt-0 pb-6', `relative px-0 
         animate
         flex    
-        overflow-x-scroll
-        snap-x snap-mandatory`]">
+        overflow-x-scroll`]"
+        @scrollEnd="handleAfterScroll">
         <template v-for="(_data, ind) in datas">
           <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
             px-5 w-full
@@ -107,7 +108,7 @@
             </template>
           </el-container>
         </template>
-      </div>
+      </DragScroll>
     </el-card>
     <el-card class="relative w-full
       overflow-hidden
@@ -215,13 +216,12 @@
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState, mapActions } from 'pinia';
 import Chart from '@/pages/components/DataChart.vue'
 import { topMenu } from '@/helpers/menus.js'
 import FilterAnggota from '../../components/FilterAnggota.vue';
 import ListData from '@/pages/components/ListData.vue';
-import { set } from 'lodash';
-import { data } from 'jquery';
+import DragScroll from '@/components/DragScroll.vue';
 
 export default {
   name: "sholat",
@@ -229,6 +229,7 @@ export default {
     Chart,
     ListData,
     FilterAnggota,
+    DragScroll,
   },
   data: function() {
     return {
@@ -267,7 +268,6 @@ export default {
           },
         }
       },
-      afterScroll: true,
       tipe:'',
       lastData:{
         tanggal:'',
@@ -280,6 +280,7 @@ export default {
       sholat: topMenu.sholatWajib,
       showData:'list',
       collapseInput:false,
+      syncWith:{},
     };
   },
   watch: {
@@ -294,10 +295,9 @@ export default {
     }
   },  
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
-      anggotas:'data/anggotas'
-    }),    
+    }),
   },
   methods: {
     getLast(){
@@ -313,6 +313,50 @@ export default {
           this.fillObjectValue(this.lastData, data?.last)
           this.fillObjectValue(this.bestData, data?.best)
         })
+    },
+    async editData({tanggal}){
+      // console.log(tanggal)
+      this.tanggal = tanggal
+      this.setTanggalInitial();
+      this.setDataInitial();
+      window.scrollTo({
+        top:0,
+        behavior: 'smooth',
+      })
+    },
+    setTanggalInitial(){
+      this.tanggals = [
+        this.addDay(this.tanggal, -1),
+        this.tanggal,
+        this.addDay(this.tanggal, 1),
+      ]
+    },
+    setDataInitial(){
+      this.datas = [];
+      for (let index = 0; index < this.tanggals.length; index++) {
+        this.datas[index] = JSON.parse(JSON.stringify(this.dataSholat))
+        this.getData(index)
+      }
+    },
+    changeTanggalData(course = -1){
+      // console.log(course)
+      let vm = this
+      vm.tanggal = vm.addDay(vm.tanggal, course)
+      for (let i = 0; i < vm.tanggals.length; i++) {
+        vm.tanggals[i] = vm.addDay(vm.tanggals[i], course)
+      }
+      // unset(vm.datas[-1])
+      // unset(vm.datas[3])
+      let n_data = JSON.parse(JSON.stringify(vm.dataSholat))
+      if (course == -1) {
+        vm.datas.pop()
+        vm.datas.unshift(n_data)
+        vm.getData(1)
+      } else {
+        vm.datas.shift()
+        vm.datas.push(n_data)
+        vm.getData(2)
+      }
     },
     getData: async function(index, id = -1) {
       let vm = this
@@ -336,7 +380,8 @@ export default {
               let data = res.data
               vm.datas[index].id = this.coalesce([data?.id,-1])
               vm.datas[index].tanggal = this.coalesce([data?.tanggal,''])
-              vm.tanggals[index] = vm.datas[index].tanggal
+              if (id != -1)
+                vm.tanggals[index] = vm.datas[index].tanggal
               let keys = Object.keys(vm.dataSholat.sholats)
               keys.forEach(( k, ind) => {
                 if (data[k] !== null) {
@@ -397,9 +442,7 @@ export default {
       }, 100);
     },
     setHeaderToCenter(){
-      // console.log('center')
       let vm = this
-      vm.afterScroll = false
       let body = vm.jquery('#body-scroll');
       let bcenter = vm.jquery('#body1');
       body[0].scrollLeft = bcenter[0].offsetLeft
@@ -409,66 +452,23 @@ export default {
       let center = vm.jquery('#header1');
       header[0].scrollLeft = center[0].offsetLeft
 
-      setTimeout(() => {
-        // console.log('bypass-handle')
-        vm.afterScroll = true
-      }, 700);
+      console.log('center', body[0].scrollLeft,  bcenter[0].offsetLeft, header[0].scrollLeft)
     },
     scrollHeader(course = -1){
       let duration = 0.7
       let vm = this
       // console.log(course)
-      vm.removeClass('#header-scroll','snap-x snap-mandatory')
+      // vm.removeClass('#header-scroll','snap-x snap-mandatory')
       if (course == -1) {
         vm.scrollElement('#header-scroll','#header0',duration)
       } else {
         vm.scrollElement('#header-scroll','#header2',duration)
       }
-      setTimeout(() => {
-        vm.addClass('#header-scroll','snap-x snap-mandatory')
-      }, duration * 1000 + 100);
-    },
-    async editData({tanggal}){
-      this.tanggal = tanggal
-      this.setTanggalInitial();
-      this.setDataInitial();
-    },
-    setTanggalInitial(){
-      this.tanggals = [
-        this.addDay(this.tanggal, -1),
-        this.tanggal,
-        this.addDay(this.tanggal, 1),
-      ]
-    },
-    setDataInitial(){
-      this.datas = [];
-      for (let index = 0; index < this.tanggals.length; index++) {
-        this.datas[index] = JSON.parse(JSON.stringify(this.dataSholat))
-        this.getData(index)
-      }
-    },
-    changeTanggalData(course = -1){
-      // console.log(course)
-      let vm = this
-      vm.tanggal = vm.addDay(vm.tanggal, course)
-      for (let i = 0; i < vm.tanggals.length; i++) {
-        vm.tanggals[i] = vm.addDay(vm.tanggals[i], course)
-      }
-      // unset(vm.datas[-1])
-      // unset(vm.datas[3])
-      let n_data = JSON.parse(JSON.stringify(vm.dataSholat))
-      if (course == -1) {
-        vm.datas.pop()
-        vm.datas.unshift(n_data)
-        vm.getData(1)
-      } else {
-        vm.datas.shift()
-        vm.datas.push(n_data)
-        vm.getData(2)
-      }
+      // setTimeout(() => {
+      //   vm.addClass('#header-scroll','snap-x snap-mandatory')
+      // }, duration * 1000 + 100);
     },
     handleAfterScroll(){
-      if (!this.afterScroll) return
       // console.log('handle-after')
       let vm = this
       if (vm.editTanggal == true)
@@ -505,47 +505,20 @@ export default {
   created: function() {
     this.tanggal = this.dateNow()
     // this.tanggal = '2025-05-01'
-    this.idAnggota = this.$store.getters.loggedUser.id_anggota
-    this.$store.dispatch('data/getAllAnggotaInGroup')
+    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
+    useDataStore()?.getAllAnggotaInGroup()
     this.setTanggalInitial()
     this.setDataInitial()
     this.getLast()
   },
   mounted: function() {
     let vm = this
-
-    let scrollTimeout;
-    jquery('#header-scroll').on('scroll', () => {      
-      const scrollLeft = jquery('#header-scroll')[0].scrollLeft;
-      // console.log('header-scroll')
-      vm.removeClass('#body-scroll','snap-x snap-mandatory')
-      jquery('#body-scroll').scrollLeft(scrollLeft);
-      vm.following = 'body'
-
-      clearTimeout(scrollTimeout);
-      if (vm.afterScroll) {
-        vm.loadings[0] = vm.loadings[1] = vm.loadings[2] = true
-      }
-      scrollTimeout = setTimeout(() => {
-        // console.log('header', 'Scrolling has finished');
-        setTimeout(() => {
-          vm.addClass('#header-scroll','snap-x snap-mandatory')
-          vm.addClass('#body-scroll','snap-x snap-mandatory')
-          vm.handleAfterScroll()
-        }, 500);
-        // Your code here
-      }, 200); // Adjust timeout duration as needed
-    });
-    
-    jquery('#body-scroll').on('scroll', () => {
-      const scrollLeft = jquery('#body-scroll')[0].scrollLeft;
-      // console.log('body-scroll')
-      // console.log(scrollLeft)
-      vm.removeClass('#header-scroll','snap-x snap-mandatory')
-      jquery('#header-scroll').scrollLeft(scrollLeft);
-    });
     this.setHeaderToCenter()
     // window.addEventListener('scroll', this.handleScroll);
+    this.syncWith = {
+      header:[this.$refs.bodyScroll],
+      body:[this.$refs.headerScroll],
+    }
   },
   unmounted(){
     // window.removeEventListener('scroll', this.handleScroll);

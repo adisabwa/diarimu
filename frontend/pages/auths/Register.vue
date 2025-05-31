@@ -88,7 +88,7 @@ export default {
         password: this.formValue.password,
       }
       // console.log(payload)
-      this.$store.dispatch('login',payload, true)
+      authStore.login(payload, true)
         .then(() => {
           this.$router.push({name:'dashboard'})
         })

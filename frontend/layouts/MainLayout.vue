@@ -1,7 +1,7 @@
 <template>
   <div id="main-layout" class="bg-white 
     [--width-menu:250px]">
-    <div class="z-[10] w-full">
+    <div class="z-[20] w-full">
       <transition name="slide-in" mode="out-in"
         enter-active-class="transition-all ease-in-out duration-500"
         leave-active-class="transition-all ease-in-out duration-500"
@@ -34,7 +34,7 @@
       </el-button> -->
     </div>
     <el-container>
-      <el-main class="p-0 px-3 pb-12 overflow-visible
+      <el-main class="p-0 px-3 pb-3 overflow-visible
         sm:px-5 sm:mt-[20px]
         min-h-[calc(100vh-110px)] 
         relative
@@ -45,7 +45,7 @@
           bg-cover bg-no-repeat bg-left-center bg-fixed" 
           :style="`background-image:url('${$baseUrl}assets/images/back-sketch.png')`">
         </div>
-        <div :class="`${user.vertical == '1' ? 'sm:ml-[--width-menu]' : 'ml-0' } h-full flex-1 bg-transparent z-[0]`">
+        <div :class="`${isVertical == '1' ? 'sm:w-[calc(100%_-_var(--width-menu,0))] sm:translate-x-[--width-menu]' : 'w-full' } animate h-full flex-1 bg-transparent z-[0]`">
           <router-view v-slot="{ Component , route}" >
             <transition name="slide-in" mode="out-in"
               enter-active-class="transition-all ease-in-out duration-500"
@@ -102,7 +102,7 @@
 </script>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
 import VerticalMenu from './components/VerticalMenu.vue';
 import HorizontalMenu from './components/HorizontalMenu.vue';
 
@@ -148,7 +148,8 @@ export default {
           icon:'mdi:logout',
           label:'Keluar',
         },
-      }
+      },
+      isVertical:'1',
     };
   },
   components: {
@@ -156,14 +157,14 @@ export default {
     HorizontalMenu,
   },
   computed: {
-    ...mapGetters({
+    ...mapState(useAuthStore, {
       user: 'loggedUser',
       pageTitle: 'pageTitle',
       pageSubTitle: 'pageSubTitle',
     }),
     MenuComponent(){
-      return HorizontalMenu
-    }
+      return this.isVertical == '1' ? VerticalMenu : HorizontalMenu
+    },
   },
   methods: {
     setActiveMenu: function() {
@@ -220,7 +221,7 @@ export default {
         this.doLogout()
     },
     doLogout: function() {
-      this.$store.dispatch('logout')
+      useAuthStore().logout()
         .then(res => {
           this.$router.replace({ name: 'login' });
         })
@@ -234,18 +235,16 @@ export default {
         });
     },
     toggleMenu(to){
-      let id = this.user.id
-      this.$store.dispatch('pengguna/store', {id : id, vertical: to})
-				.then(res => {
-					this.$store.dispatch('pengguna/get',{id:id});
-					this.$store.dispatch('resetAccount');
-				})
+      this.resetStorage('vertical-menu')
+      this.saveToStorage('vertical-menu',to);
+      this.isVertical = to
     }
   },
   created: async function() {
     this.getMenus()
     this.scrollPosition = window.scrollY;
     this.mainMenus.logout.function = this.doLogout
+    this.isVertical = this.getDataFormStorage('vertical-menu') ?? '1';
   },
   mounted(){
    

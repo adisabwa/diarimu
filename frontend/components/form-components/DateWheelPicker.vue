@@ -9,28 +9,30 @@
         {{ prefix }}
       </template>
     </el-input>
-    <el-dialog v-model="showModal"
-        :class="['max-w-[80%] p-0 py-4 mt-40 w-fit']"
-        header-class="flex items-center"
-        body-class="relative px-0 text-[16px] ">
-      <div :class="['flex justify-center items-center gap-4 p-4 rounded-xl']" >
-        <div class="shrink-0 relative h-[200px] w-[60px]">
-          <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
-          <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
-          <ScrollPicker :options="days" v-model:modelValue="day" />
-        </div>
-        <div class="shrink-0 relative h-[200px] w-[60px]">
+    <teleport to="body">
+      <el-dialog v-model="showModal"
+          :class="['max-w-[80%] p-0 py-4 mt-40 w-fit']"
+          header-class="flex items-center"
+          body-class="relative px-0 text-[16px] ">
+        <div :class="['flex justify-center items-center gap-4 p-4 rounded-xl']" >
+          <div class="shrink-0 relative h-[200px] w-[60px]">
             <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
             <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
-          <ScrollPicker :options="months" v-model:modelValue="month" />
+            <ScrollPicker :options="days" v-model:modelValue="day" />
+          </div>
+          <div class="shrink-0 relative h-[200px] w-[60px]">
+              <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
+              <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
+            <ScrollPicker :options="months" v-model:modelValue="month" />
+          </div>
+          <div class="shrink-0 relative h-[200px] w-[80px]">
+            <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
+            <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
+            <ScrollPicker :options="years" v-model:modelValue="year" />
+          </div>
         </div>
-        <div class="shrink-0 relative h-[200px] w-[80px]">
-          <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
-          <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
-          <ScrollPicker :options="years" v-model:modelValue="year" />
-        </div>
-      </div>
-    </el-dialog>
+      </el-dialog>
+    </teleport>
   </div>
 </template>
 
