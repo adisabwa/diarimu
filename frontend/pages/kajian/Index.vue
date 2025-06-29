@@ -102,7 +102,7 @@
     </el-dialog>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
-      header="Statistik Sadaqah"
+      header="Statistik Kajian / Halaqah"
       header-class="py-3 font-bold text-[18px] text-center" >
     <chart ref="kajianChartData" 
       href="kajian/dashboard"
@@ -183,9 +183,8 @@
       }
     },  
     computed: {
-      ...mapState({
+      ...mapState(useAuthStore, {
         user: 'loggedUser',
-        anggotas:'data/anggotas'
       }),
       
     },

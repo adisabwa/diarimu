@@ -53,7 +53,7 @@
       })"
       >
       <template #header>
-        <div>Data Baca Tarjamah Qur'an</div>
+        <div class="text-[var(--text-color)]">Data Baca Tarjamah Qur'an</div>
       </template>
     </statistic-data>
   </div>

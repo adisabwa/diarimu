@@ -229,73 +229,54 @@
         </template>
       </el-dialog>
     </teleport>
-    <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-0"
-      header-class="py-3 font-bold text-[16px]
-        text-lime-800
-        flex justify-between items-center" >
-      <template #header>
-        <div>Data Sholat Sunnah</div>
-        <div class="flex items-center gap-1
-          [&_*]:text-[20px] text-emerald-900/[0.4]">
-          <icons icon="fa6-solid:chart-line" 
-            @click="showData='chart'"
-            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
-          <icons icon="material-symbols:view-list" 
-            @click="showData='list'"
-            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
-        </div>
-      </template>
-      <chart ref="sunnahChartData" 
-        href="sholat/sunnah/dashboard"
-         :id-anggota="idAnggota"
-          v-if="showData == 'chart'" 
-        :add-options="{
-          scales:{
-            y:{
-              title:{display:true, text:'Jml Rakaat'},
-              ticks: {stepSize:2}
-            }}}"
-        class="px-4"/>
-      <ListData ref="sunnahListData"
-        class="[--text-color:theme(colors.rose.900)]
+    <statistic-data class="bg-white/[0.9] rounded-[10px] mb-3 p-0
+          [--text-color:theme(colors.rose.900)]
           [--bg-color:theme(colors.rose.50)]
           [--border-color:theme(colors.rose.400)]
           [--bg-button-color:theme(colors.rose.100)]
-          [--button-color:theme(colors.rose.200)]
-        "
-        :id-anggota="idAnggota"
-        href="sholat/sunnah"
-        href-delete="sholat/sunnah/delete"
-        :group-by="['tanggal']"
-        v-if="showData =='list'"
+          [--button-color:theme(colors.rose.200)]"
+      ref="statisticDataSholat"
+      :id-anggota="idAnggota"
+      href-dashboard="sholat/sunnah/dashboard"
+      href="sholat/sunnah"
+      :group-by="['tanggal']"
+      href-delete="sholat/sunnah/delete"
+      :add-options-chart="{
+        scales:{
+          y:{
+            title:{display:true, text:'Jml Rakaat'},
+            ticks: {stepSize:2}
+          }}}"
         @edit-data="((res) => {
           tanggal = res.tanggal;
           setTanggalInitial();
           setDataInitiall();
-        })">
-        <template #title="{ data }">
-          {{ dateDayIndo(data.tanggal)}}
-        </template>
-        <template #content="{ data }">
-          <div class="flex items-center"
-            @click="data.show_detail = !data.show_detail">
-            <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
-            <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
-            Sholat Sunnah {{ data.total_rakaat }} Raka'at
-            <star :count="getCountSunnah(data.total_rakaat)" width="12px"
-              class="ml-3 gap-x-[2px]"/>
-          </div>
-          <ol v-show="data.show_detail"
-            class="pl-[30px] italic mt-0 mb-1">
-            <li v-for="(j) in data.daftar_sholat.split('/')"
-              class="pl-1">
-              {{ getLabelSholat(j) }}
-            </li>
-          </ol>
-        </template>
-      </ListData>
-    </el-card>
+        })"
+      >
+      <template #header>
+        <div class="text-[var(--text-color)]">Data Sholat Sunnah</div>
+      </template>
+      <template #title="{ data }">
+        {{ dateDayIndo(data.tanggal)}}
+      </template>
+      <template #content="{ data }">
+        <div class="flex items-center"
+          @click="data.show_detail = !data.show_detail">
+          <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
+          <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
+          Sholat Sunnah {{ data.total_rakaat }} Raka'at
+          <star :count="getCountSunnah(data.total_rakaat)" width="12px"
+            class="ml-3 gap-x-[2px]"/>
+        </div>
+        <ol v-show="data.show_detail"
+          class="pl-[30px] italic mt-0 mb-1">
+          <li v-for="(j) in data.daftar_sholat.split('/')"
+            class="pl-1">
+            {{ getLabelSholat(j) }}
+          </li>
+        </ol>
+      </template>
+    </statistic-data>
   </div>
 </template>
 
@@ -305,17 +286,15 @@
 
 <script>
 import { mapState } from 'pinia';
-import Chart from '@/pages/components/DataChart.vue'
 import FilterAnggota from '../../components/FilterAnggota.vue';
-import ListData from '@/pages/components/ListData.vue';
 import DragScroll from '@/components/DragScroll.vue';
 import { topMenu } from '@/helpers/menus.js'
+import StatisticData from '@/pages/components/StatisticData.vue';
 
 export default {
   name: "sholat",
   components: {
-    Chart,
-    ListData,
+    StatisticData,
     FilterAnggota,
     DragScroll,
   },
@@ -336,7 +315,6 @@ export default {
       hideOnClick:true,
       sizeWindow:window.innerWidth,
       sholat: topMenu.sholatSunnah,
-      showData:'list',
       filterSunnah:'',
       sholatSunnah:[],
       showInput:false,
@@ -477,7 +455,7 @@ export default {
       } )
         .then(result => {
           // this.getData()
-          this.updateChart()
+          this.$refs.statisticDataSholat.updateChart()
         })
         .catch(err => {
           
@@ -575,12 +553,7 @@ export default {
       this.setTanggalInitial()
       this.setDataInitiall()
       this.getAllSunnah()
-      setTimeout(this.updateChart(), 500);
     },
-    updateChart(){
-      if (this.showData == 'chart') this.$refs.sunnahChartData?.getChart();
-      if (this.showData == 'list') this.$refs.sunnahListData?.getData(true);
-    }
   },
   created: function() {
     this.tanggal = this.dateNow()
@@ -594,7 +567,6 @@ export default {
 
   mounted: function() {
     let vm = this
-    this.updateChart()
     this.setHeaderToCenter()
     // window.addEventListener('scroll', this.handleScroll);
     this.syncWith = {

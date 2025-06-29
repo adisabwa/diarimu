@@ -53,7 +53,7 @@
       })"
       >
       <template #header>
-        <div>Data Membaca Al-Qur'an</div>
+        <div class="text-[var(--text-color)]">Data Membaca Al-Qur'an</div>
       </template>
     </statistic-data>
   </div>

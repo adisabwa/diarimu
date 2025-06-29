@@ -71,7 +71,7 @@
       })"
       >
       <template #header>
-        <div>Data Setoran Hafalan Qur'an</div>
+        <div class="text-[var(--text-color)]">Data Setoran Hafalan Qur'an</div>
       </template>
     </statistic-data>
   </div>

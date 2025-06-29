@@ -7,18 +7,7 @@
       @change="$emit('change')"
       size="large"
       filterable
-      :options="[
-        ...[{ 
-          value: anggotas.map(user => user.id_anggota).join(','),
-          label:'Semua'
-        }],
-        ...anggotas.map((val) => {
-          return {
-            value:val.id_anggota,
-            label:val.nama,
-          }
-        })
-      ]">
+      :options="optionsAnggota">
     </floating-select>
   </div>
 </template>
@@ -42,12 +31,32 @@ export default {
   computed: {
     ...mapState(useAuthStore, {
       user: 'loggedUser',
-      anggotas:'data/anggotas'
     }),
+    ...mapState(useDataStore, ['anggotas']),
+    optionsAnggota(store){
+      let anggotas = store.anggotas
+      // console.log(store, anggotas)
+      if (!anggotas) {
+        return []
+      }
+      return [
+        ...[{ 
+          value: anggotas?.map(user => user.id_anggota).join(','),
+          label:'Semua'
+        }],
+        ...anggotas?.map?.((val) => {
+          return {
+            value:val?.id_anggota,
+            label:val?.nama,
+          }
+        })
+      ]
+    }
   },
   data: function() {
     return {
       id:'',
+      optionsAnggota:[],
 		}
 	},
   watch:{
@@ -56,7 +65,7 @@ export default {
       handler(val){ this.id = val }
     },
     id(val){ 
-      console.log(val)
+      // console.log(val)
       this.$emit('update:idAnggota', val)
      }
   },

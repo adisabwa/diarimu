@@ -220,9 +220,8 @@
      
     },  
     computed: {
-      ...mapState({
+      ...mapState(useAuthStore, {
         user: 'loggedUser',
-        anggotas:'data/anggotas'
       }),
       href(){
         return "infaq/shadaqah/" + this.chartType
