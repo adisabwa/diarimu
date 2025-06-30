@@ -143,7 +143,7 @@ import { data } from 'jquery';
      
     },  
     computed: {
-      ...mapState({
+      ...mapState(useAuthStore, {
         user: 'loggedUser',
       }),    
       data : function() {
