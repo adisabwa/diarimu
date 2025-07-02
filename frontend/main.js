@@ -47,9 +47,12 @@ import API from '@/config/api'
 app.config.globalProperties.$http = API
 
 
+const sharedState = reactive({ passColumns:[], showColumns:[] })
+app.provide('sharedState', sharedState)
+
 import AddToHomescreen from '@owliehq/vue-addtohomescreen';
 app.use(AddToHomescreen, {
-  buttonColor: 'blue',
+  buttonColor: 'green',
 });
 
 if ('serviceWorker' in navigator) {

@@ -22,6 +22,7 @@
           <icons icon="fe:arrow-down" class="text-[90%]" />
         </span>
       </div>
+			<teleport to="body">
         <el-dialog v-model="showRole" width="60%"
           class="[&_*]:font-montserrat text-teal-800 ">
           <template #header>
@@ -48,6 +49,7 @@
             </div>
           </template>
         </el-dialog>
+			</teleport>
     </div>
 		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 sm:mx-auto pt-12 pb-20">
 			<div class="bg-white rounded-xl shadow-md shadow-emerald-700/[0.2]

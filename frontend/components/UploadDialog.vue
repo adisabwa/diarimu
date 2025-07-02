@@ -5,70 +5,73 @@
 </style>
 <template>
   <div>
-    <el-dialog  
-      v-model="showDialog"
-      class="p-7"
-      :close-on-click-modal="false"
-      width="500px">
-      <template #header>
-        <b>Upload Data {{ title }} File Excel</b>
-      </template>
-       <div class="text-center">
-        <el-upload
-          class="upload-demo mt-4"
-          ref="upload" drag
-          :action="`${$siteUrl}/${link}/upload${params}`"
-          :on-change="handleChange" :on-success="handleSuccess" :on-error="handleError"
-          :file-list="fileList"  :auto-upload="false">
-          <icons icon="material-symbols:cloud-upload" class="text-5xl text-blue-600"/>
-          <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
-          <div class="el-upload__tip text-sm" slot="tip">.xls, kurang dari 5MB</div>
-        </el-upload>
-        <div class="text-left mx-6" style="word-break: break-word;">
-          <ul class="p-0">
-            <li>File yang diunggah harus sesuai dengan template yang sudah ditentukan.<br>
-                Silakan <a type="text" class="cursor-pointer text-blue-500" @click="downloadTemplate">Unduh Template.</a></li>
-            <li>Apabila ada data {{ title }} yang sebelumnya sudah ada, maka akan dilewati.</li>
-            <li>Apabila ada data {{ title }} yang keliru, maka akan dilewati.</li>
-          </ul>
+    <teleport to="body">
+      <el-dialog  
+        v-model="showDialog"
+        class="p-7"
+        :close-on-click-modal="false"
+        width="500px">
+        <template #header>
+          <b>Upload Data {{ title }} File Excel</b>
+        </template>
+        <div class="text-center">
+          <el-upload
+            class="upload-demo mt-4"
+            ref="upload" drag
+            :action="`${$siteUrl}/${link}/upload${params}`"
+            :on-change="handleChange" :on-success="handleSuccess" :on-error="handleError"
+            :file-list="fileList"  :auto-upload="false">
+            <icons icon="material-symbols:cloud-upload" class="text-5xl text-blue-600"/>
+            <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
+            <div class="el-upload__tip text-sm" slot="tip">.xls, kurang dari 5MB</div>
+          </el-upload>
+          <div class="text-left mx-6" style="word-break: break-word;">
+            <ul class="p-0">
+              <li>File yang diunggah harus sesuai dengan template yang sudah ditentukan.<br>
+                  Silakan <a type="text" class="cursor-pointer text-blue-500" @click="downloadTemplate">Unduh Template.</a></li>
+              <li>Apabila ada data {{ title }} yang sebelumnya sudah ada, maka akan dilewati.</li>
+              <li>Apabila ada data {{ title }} yang keliru, maka akan dilewati.</li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <template #footer>
-        <el-button @click="showDialog = false">Batal</el-button>
-        <el-button 
-          type="success" 
-          @click="submitUpload()" :icon="saving ? 'el-icon-loading' : ''" 
-          :disabled="saving">Simpan</el-button>
-      </template>
-    </el-dialog>
+        <template #footer>
+          <el-button @click="showDialog = false">Batal</el-button>
+          <el-button 
+            type="success" 
+            @click="submitUpload()" :icon="saving ? 'el-icon-loading' : ''" 
+            :disabled="saving">Simpan</el-button>
+        </template>
+      </el-dialog>
+    </teleport>
 
-
-    <el-dialog 
-      title="Konfirmasi" 
-      width="1000px"
-      v-model="showErrorDialog">
-      <h3>Ada data yang keliru</h3>
-      <br>
-      <p>Berikut adalah data yang tidak bisa disimpan</p>
-      <el-table
-        :data="dataError"
-        max-height="300"
-        style="width: 100%">
-        <el-table-column
-          prop="keterangan"
-          label="Data">
-        </el-table-column>
-        <el-table-column
-          prop="error"
-          label="Kesalahan">
-        </el-table-column>
-      </el-table>
-      <br/>
-      <template #footer>
-        <el-button @click="showErrorDialog = false">Batal</el-button>
-        <el-button type="success" @click="showErrorDialog = false; showDialog = true;">Upload Ulang</el-button>
-      </template>
-    </el-dialog>
+    <teleport to="body">
+      <el-dialog 
+        title="Konfirmasi" 
+        width="1000px"
+        v-model="showErrorDialog">
+        <h3>Ada data yang keliru</h3>
+        <br>
+        <p>Berikut adalah data yang tidak bisa disimpan</p>
+        <el-table
+          :data="dataError"
+          max-height="300"
+          style="width: 100%">
+          <el-table-column
+            prop="keterangan"
+            label="Data">
+          </el-table-column>
+          <el-table-column
+            prop="error"
+            label="Kesalahan">
+          </el-table-column>
+        </el-table>
+        <br/>
+        <template #footer>
+          <el-button @click="showErrorDialog = false">Batal</el-button>
+          <el-button type="success" @click="showErrorDialog = false; showDialog = true;">Upload Ulang</el-button>
+        </template>
+      </el-dialog>
+    </teleport>
   </div>
 </template>
 

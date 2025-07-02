@@ -77,26 +77,28 @@
                   </el-button>
                 </template>
               </floating-select>
-              <el-dialog v-model="field.isAdding"
-                :title="'Tambah ' + field.label"
-                class="p-7"
-                :close-on-click-modal="false"
-                width="500px">
-                <Form 
-                  :fields="field.addFields" 
-                  ref="formAdd"
-                  :key="'from'+field.nama_kolom"
-                  size="default"
-                  :show-label="false"
-                  :href="field.addHref"
-                  :href-get="field.addHrefGet"
-                  @saved="field.isAdding = false; resetOptions(ind, field.addReset);"
-                  :show-required-text="false"
-                  :text-submit="'Konfirmasi'"
-                  />
-                <el-button size="default" @click="field.isAdding = !field.isAdding"
-                  class="float-left translate-y-[-25px]">Batal</el-button>
-              </el-dialog>
+              <teleport to="body">
+                <el-dialog v-model="field.isAdding"
+                  :title="'Tambah ' + field.label"
+                  class="p-7"
+                  :close-on-click-modal="false"
+                  width="500px">
+                  <Form 
+                    :fields="field.addFields" 
+                    ref="formAdd"
+                    :key="'from'+field.nama_kolom"
+                    size="default"
+                    :show-label="false"
+                    :href="field.addHref"
+                    :href-get="field.addHrefGet"
+                    @saved="field.isAdding = false; resetOptions(ind, field.addReset);"
+                    :show-required-text="false"
+                    :text-submit="'Konfirmasi'"
+                    />
+                  <el-button size="default" @click="field.isAdding = !field.isAdding"
+                    class="float-left translate-y-[-25px]">Batal</el-button>
+                </el-dialog>
+              </teleport>
             </template>
             <template v-else-if="field.input.includes('select-double')">
               <floating-select v-model:value="field.parentSelect" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label1}`" 
@@ -124,26 +126,28 @@
                   </el-button>
                 </template>
               </floating-select>
-              <el-dialog v-model="field.isAdding"
-                :title="'Tambah ' + field.label"
-                class="p-7"
-                :close-on-click-modal="false"
-                width="500px">
-                <form-comp 
-                  :fields="field.addFields" 
-                  ref="formAdd"
-                  :key="'from'+field.nama_kolom"
-                  size="default"
-                  :show-label="false"
-                  :href="field.addHref"
-                  :href-get="field.addHrefGet"
-                  @saved="field.isAdding = false; resetOptions(ind, field.addReset);"
-                  :show-required-text="false"
-                  :text-submit="'Konfirmasi'"
-                  />
-                <el-button size="default" @click="field.isAdding = !field.isAdding"
-                  class="float-left translate-y-[-25px]">Batal</el-button>
-              </el-dialog>
+              <teleport to="body">
+                <el-dialog v-model="field.isAdding"
+                  :title="'Tambah ' + field.label"
+                  class="p-7"
+                  :close-on-click-modal="false"
+                  width="500px">
+                  <form-comp 
+                    :fields="field.addFields" 
+                    ref="formAdd"
+                    :key="'from'+field.nama_kolom"
+                    size="default"
+                    :show-label="false"
+                    :href="field.addHref"
+                    :href-get="field.addHrefGet"
+                    @saved="field.isAdding = false; resetOptions(ind, field.addReset);"
+                    :show-required-text="false"
+                    :text-submit="'Konfirmasi'"
+                    />
+                  <el-button size="default" @click="field.isAdding = !field.isAdding"
+                    class="float-left translate-y-[-25px]">Batal</el-button>
+                </el-dialog>
+              </teleport>
             </template>
             <template v-else-if="field.input=='radio'">
               <el-radio-group v-model="form[field.nama_kolom]"

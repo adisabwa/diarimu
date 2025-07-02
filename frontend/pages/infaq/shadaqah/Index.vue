@@ -1,6 +1,6 @@
 <template>
   <div id="infaq" class="pt-[50px] translate-y-[-10px] px-0">
-    <FilterAnggota v-if="user.role != 'user'" 
+    <FilterAnggota v-if="user?.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="submittedData"/>
     <lazismu v-model:show="showLazismu"/>
     <teleport to="body">
@@ -29,12 +29,12 @@
       body-class="py-4 px-0">
       <template #header>
         <span>Data Infaq Anda</span>
-        <img :src="infaq.image" height="90px" width="90px"
+        <img :src="infaq?.image" height="90px" width="90px"
             class="absolute z-[-1] top-[-10px] right-[-15px]
               opacity-[0.5]"/>
       </template>
       <div class="px-8"
-        v-if="['user','super-admin'].includes(user.role)">
+        v-if="['user','super-admin'].includes(user?.role)">
         <el-button class="rounded-full w-full
           font-montserrat
           mb-4
@@ -62,54 +62,56 @@
           showAdd = true
         })">
         <template #subtitle="{ data }">
-          {{ dateDayIndo(data.tanggal)}}
+          {{ dateDayIndo(data?.tanggal)}}
         </template>
         <template #title="{ data }">
           <div class="text-[20px]">
-            {{ data.tipe == '0' ? 'Tanpa Nominal' : toIDR(data.jumlah) }}
+            {{ data?.tipe == '0' ? 'Tanpa Nominal' : toIDR(data?.jumlah) }}
           </div>
         </template>
         <template #content="{ data }">
-          {{ data.keterangan }}
+          {{ data?.keterangan }}
         </template>
       </ListData>
     </el-card>
-    <el-dialog v-model="showAdd" draggable
-      :append-to-body="true"
-      class="w-fit max-w-[90%] py-3
-        bg-gradient-to-tr from-white from-50% to-teal-100"
-      header-class="font-bold text-[16px]"
-      body-class="">
-      <template #header>
-        <div>Data Shadaqah</div>
-      </template>
-      <form-comp ref="formInfaq"
-        class=""
-        :key="'form-shadaqah-'+formKey"
-        :fields="fields" 
-        v-model:id="dataId"
-        v-model:form-value="formValue" 
-        href="infaq/shadaqah/store"
-        href-get="infaq/shadaqah/get"
-        :show-columns="[...['tipe','tanggal'],
-          ...(formValue.tipe == '1' ? ['jumlah','keterangan'] : [])]"
-        @saved="submittedData" 
-        @error="saving=false"
-        size="large"
-        :show-submit="false"
-        label-position="top"
-        :show-required-text="false">
-      </form-comp>  
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="showAdd = false">Batal</el-button>
-          <el-button type="primary" @click="$refs.formInfaq.submitForm()"
-            class="bg-teal-700">
-            Simpan
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <teleport to="body">
+      <el-dialog v-model="showAdd" draggable
+        :append-to-body="true"
+        class="w-fit max-w-[90%] py-3
+          bg-gradient-to-tr from-white from-50% to-teal-100"
+        header-class="font-bold text-[16px]"
+        body-class="">
+        <template #header>
+          <div>Data Shadaqah</div>
+        </template>
+        <form-comp ref="formInfaq"
+          class=""
+          :key="'form-shadaqah-'+formKey"
+          :fields="fields" 
+          v-model:id="dataId"
+          v-model:form-value="formValue" 
+          href="infaq/shadaqah/store"
+          href-get="infaq/shadaqah/get"
+          :show-columns="[...['tipe','tanggal'],
+            ...(formValue.tipe == '1' ? ['jumlah','keterangan'] : [])]"
+          @saved="submittedData" 
+          @error="saving=false"
+          size="large"
+          :show-submit="false"
+          label-position="top"
+          :show-required-text="false">
+        </form-comp>  
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="showAdd = false">Batal</el-button>
+            <el-button type="primary" @click="$refs?.formInfaq?.submitForm()"
+              class="bg-teal-700">
+              Simpan
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </teleport>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
       header="Statistik Sadaqah"
@@ -158,7 +160,7 @@
         :key="'infaqChartData'+formKey">
         <template #filter="{filter}">
           <el-select size="small" v-model="chartType" placeholder="Jenis Grafik"
-            @change="formKey++; $refs.infaqChartData.getChart()">
+            @change="formKey++; $refs?.infaqChartData?.getChart()">
             <el-option value="dashboard" label="Nominal Infaq" />
             <el-option value="dashboard_count" label="Jumlah Infaq" />
           </el-select>
@@ -167,8 +169,8 @@
     </el-card>
   </div>
 </template>
-  
-  <script>
+ 
+<script>
   import { mapState } from 'pinia';
   import FilterAnggota from '@/pages/components/FilterAnggota.vue';
   import ListData from '@/pages/components/ListData.vue';
@@ -220,9 +222,8 @@
      
     },  
     computed: {
-      ...mapState({
+      ...mapState(useAuthStore,{
         user: 'loggedUser',
-        anggotas:'data/anggotas'
       }),
       href(){
         return "infaq/shadaqah/" + this.chartType
@@ -275,5 +276,5 @@
       
     },
   }
-  </script>
+</script>
   

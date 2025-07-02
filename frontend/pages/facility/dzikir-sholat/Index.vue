@@ -73,7 +73,6 @@
 </template>
   
   <script>
-  import { mapState } from 'pinia';
   import { facilityMenu } from '@/helpers/menus.js'
   
   export default {
@@ -96,9 +95,6 @@
      
     },  
     computed: {
-      ...mapState({
-        user: 'loggedUser',
-      }),    
       data : function() {
         return this.datas[this.dataKey] || {};
       },  

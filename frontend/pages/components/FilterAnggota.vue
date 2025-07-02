@@ -9,13 +9,13 @@
       filterable
       :options="[
         ...[{ 
-          value: anggotas.map(user => user.id_anggota).join(','),
-          label:'Semua'
+          value: anggotas?.map?.(user => user.id_anggota)?.join(','),
+          label:'Semua Anggota dalam Grup',
         }],
-        ...anggotas.map((val) => {
+        ...anggotas?.map?.((val) => {
           return {
-            value:val.id_anggota,
-            label:val.nama,
+            value:val?.id_anggota,
+            label:val?.nama,
           }
         })
       ]">
@@ -40,9 +40,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, {
-      user: 'loggedUser',
-      anggotas:'data/anggotas'
+    ...mapState(useDataStore, {
+      anggotas:'anggotas'
     }),
   },
   data: function() {

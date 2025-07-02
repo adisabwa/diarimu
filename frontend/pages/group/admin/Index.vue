@@ -31,7 +31,7 @@
           [--border-color:theme(colors.teal.400)]
           [--bg-button-color:theme(colors.teal.100)]
           [--button-color:theme(colors.teal.200)]
-          font-sans max-h-screen
+          font-sans max-h-screen mt-2
         "
         :datas="datas"
         hrefDelete="data/group/delete"
@@ -79,88 +79,96 @@
         </template>
       </ListData>
     </el-card>
-    
-    <el-dialog v-model="showAdd" draggable
-      :append-to-body="true"
-      class="w-fit max-w-[80%] py-3
-        bg-gradient-to-tr from-white from-50% to-teal-100"
-      header-class="font-bold text-[16px]"
-      body-class="text-[14px]">
-      <template #header>
-        <div>Data Shadaqah</div>
-      </template>
-      <form-comp ref="formGroup"
-        class="[&_*]:rounded-[15px]"
-        :key="'form-group-'+formKey"
-        :fields="fields" 
-        v-model:id="dataId"
-        href="data/group/store"
-        href-get="data/group/get"
-        @saved="submittedData" 
-        :pass-columns="['mu_group_anggota']"
-        @error="saving=false"
-        size="large"
-        :show-submit="false"
-        label-position="top"
-        :show-required-text="false">
-        <template #default="{ form, errors, fields }">
-          <template v-for="tipe in ['mentor', 'anggota']">
-            <el-form-item
-              :label="`Nama ${ucFirst(tipe)}`"
-              :prop="`mu_group_anggota.${tipe}`">
-              <floating-select
-                class="w-full"
-                :data-input="form['mu_group_anggota']?.filter(d => d.type == tipe)?.map(data => data.id_anggota)"
-                :options="fields['mu_group_anggota']?.fields?.id_anggota?.options"
-                :placeholder="`Pilih ${ucFirst(tipe)}`"
-                :clearable="true"
-                :filterable="true"
-                :multiple="true"
-                @change="(ids) => {
-                  form['mu_group_anggota'] = form['mu_group_anggota']?.filter(i => i?.type == undefined || i.type != tipe)                
-                  if (Array.isArray(ids) == false) {
-                    return
-                  }
-                  ids.forEach((id) => {
-                    let index = form['mu_group_anggota'].findIndex(i => i.id_anggota == id)
-                    if (index > 0) {
-                      form['mu_group_anggota'][index].type = tipe
-                    } else {
-                      form['mu_group_anggota'].push({
-                        id_anggota: id,
-                        type: tipe,
-                      })
-                    }
-                  })
-                }"/>
-              <ol class="text-[15px] italic pl-6 m-0 leading-[1.5] mt-2">
-                <template v-for="(i, key) in form['mu_group_anggota']">
-                  <li v-if="i?.type == tipe"
-                    class="pl-1">
-                    <div>
-                      {{ runFunction(null, i?.id_anggota, fields['mu_group_anggota']?.fields?.id_anggota?.options) }}
-                    </div>
-                    <div v-if="errors['mu_group_anggota']?.[key]?.id_anggota"
-                      class="text-red-500 text-[12px]">
-                      {{ errors['mu_group_anggota']?.[key]?.id_anggota }}
-                    </div>
-                  </li>
-                </template>
-              </ol>
-            </el-form-item>
-          </template>
+    <teleport to="body">
+      <el-dialog v-model="showAdd" draggable
+        :append-to-body="true"
+        class="w-fit max-w-[80%] py-3
+          bg-gradient-to-tr from-white from-50% to-teal-100"
+        header-class="font-bold text-[16px]"
+        body-class="text-[14px]">
+        <template #header>
+          <div>Data Shadaqah</div>
         </template>
-      </form-comp>  
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="showAdd = false">Batal</el-button>
-          <el-button type="primary" @click="$refs.formGroup.submitForm()"
-            class="bg-teal-700">
-            Simpan
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+        <form-comp ref="formGroup"
+          class="[&_*]:rounded-[15px]"
+          :key="'form-group-'+formKey"
+          :fields="fields" 
+          v-model:id="dataId"
+          href="data/group/store"
+          href-get="data/group/get"
+          @saved="submittedData" 
+          :pass-columns="['mu_group_anggota']"
+          @error="saving=false"
+          size="large"
+          :show-submit="false"
+          label-position="top"
+          :show-required-text="false">
+          <template #default="{ form, errors, fields }">
+            <template v-for="tipe in ['mentor', 'anggota']">
+              <el-form-item
+                class="col-span-6"
+                :label="`Nama ${ucFirst(tipe)}`"
+                :prop="`mu_group_anggota.${tipe}`">
+                <floating-select
+                  class="w-full"
+                  :data-input="form['mu_group_anggota']?.filter?.(d => d?.type == tipe)?.map(data => data.id_anggota)"
+                  :options="fields['mu_group_anggota']?.fields?.id_anggota?.options"
+                  :placeholder="`Pilih ${ucFirst(tipe)}`"
+                  :clearable="true"
+                  :filterable="true"
+                  :multiple="true"
+                  @change="(ids) => {
+                    console.log('ids', ids)
+                    console.log('form', form['mu_group_anggota'])
+                    if (isEmpty(form['mu_group_anggota'])) {
+                      form['mu_group_anggota'] = []
+                    }
+                    form['mu_group_anggota'] = form['mu_group_anggota']?.filter?.(i => i?.type == undefined || i.type != tipe)                
+                    if (Array.isArray(ids) == false) {
+                      return
+                    }
+                    ids.forEach((id) => {
+                      let index = form['mu_group_anggota'].findIndex(i => i.id_anggota == id)
+                      if (index > 0) {
+                        form['mu_group_anggota'][index].type = tipe
+                      } else {
+                        form['mu_group_anggota'].push({
+                          id_anggota: id,
+                          type: tipe,
+                        })
+                      }
+                    })
+                  }"/>
+                <ol class="text-[15px] italic pl-6 m-0 leading-[1.5] mt-2
+                  max-h-[150px] w-full overflow-y-auto">
+                  <template v-for="(i, key) in form['mu_group_anggota']">
+                    <li v-if="i?.type == tipe"
+                      class="pl-1">
+                      <div>
+                        {{ runFunction(null, i?.id_anggota, fields['mu_group_anggota']?.fields?.id_anggota?.options) }}
+                      </div>
+                      <div v-if="errors['mu_group_anggota']?.[key]?.id_anggota"
+                        class="text-red-500 text-[12px]">
+                        {{ errors['mu_group_anggota']?.[key]?.id_anggota }}
+                      </div>
+                    </li>
+                  </template>
+                </ol>
+              </el-form-item>
+            </template>
+          </template>
+        </form-comp>  
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="showAdd = false">Batal</el-button>
+            <el-button type="primary" @click="$refs.formGroup.submitForm()"
+              class="bg-teal-700">
+              Simpan
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </teleport>
   </div>
 </template>
 

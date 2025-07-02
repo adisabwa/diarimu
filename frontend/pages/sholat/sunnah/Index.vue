@@ -16,8 +16,7 @@
   <div id="sholat" class="pt-[50px] sm:pt-5">
     <FilterAnggota v-if="user.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="reloadData"/>
-    
-      <el-card v-show="['user','super-admin'].includes(user.role)"
+    <el-card v-show="['user','super-admin'].includes(user.role)"
       class="rounded-[10px]
       bg-gradient-to-tr from-white/[0.8] from-30% to-rose-200/[0.7] 
       mb-3 p-0"
@@ -71,16 +70,18 @@
       </div>
       <DragScroll id="body-scroll" ref="bodyScroll"
         :syncWith="syncWith?.body" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-screen pt-0 pb-6',
-        `relative px-0 w-full
+        `relative px-0
         animate
         flex    
+        overflow-y-auto
         overflow-x-scroll`]"
         @scrollEnd="handleAfterScroll">
         <template v-for="(_data, ind) in datas">
           <el-container :id="'body'+ind" class="font-montserrat shrink-0 snap-center
             px-7 w-full
             relative
-            grid sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))]"
+            grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))]
+            gap-x-10"
             v-loading="loadings[ind]">
             <template v-for="(sholat, key) in _data">
               <div :class="`${ sholat.do ? 'bg-emerald-200 text-emerald-900  [&_*]:bg-emerald-200 [&_*]:text-emerald-900 ' : 'bg-white text-gray-400 [&_*]:bg-white [&_*]:text-gray-400 active:scale-90' }
@@ -119,31 +120,32 @@
                     </div>
                   </div>
                 </div>
-                  <div v-if="sholat.edit"
-                    class="flex flex-col items-center grow-0
-                      rounded-[5px] leading-[1]"> 
-                      <el-input-number v-model="sholat.rakaat" controls-position="right"
-                        class="h-full border-0 w-[83px]"
-                        :min="sholat.min" step="2">
-                        <template #decrease-icon>
-                          <icons icon="mdi:minus" class="text-sm"/>
-                        </template>
-                        <template #increase-icon>
-                          <icons icon="mdi:plus" class="text-sm"/>
-                        </template>
-                        <template #prefix>
-                          <icons icon="mdi:check" class="text-[16px] m-0
-                            px-1 active:scale-75"
-                            @click="saveData(ind, key); sholat.edit = false"/>  
-                        </template>
-                      </el-input-number> 
-                      <div class="text-[12px] mt-1 font-semibold">Raka'at</div>     
-                  </div>                  
+                <div v-if="sholat.edit"
+                  class="flex flex-col items-center grow-0
+                    rounded-[5px] leading-[1]"> 
+                    <el-input-number v-model="sholat.rakaat" controls-position="right"
+                      class="h-full border-0 w-[83px]"
+                      :min="sholat.min" step="2">
+                      <template #decrease-icon>
+                        <icons icon="mdi:minus" class="text-sm"/>
+                      </template>
+                      <template #increase-icon>
+                        <icons icon="mdi:plus" class="text-sm"/>
+                      </template>
+                      <template #prefix>
+                        <icons icon="mdi:check" class="text-[16px] m-0
+                          px-1 active:scale-75"
+                          @click="saveData(ind, key); sholat.edit = false"/>  
+                      </template>
+                    </el-input-number> 
+                    <div class="text-[12px] mt-1 font-semibold">Raka'at</div>     
+                </div>                  
               </div>
             </template>
             <div class="text-center text-slate-400
                 py-2 mb-5 px-5 mx-auto
-                rounded-[15px] min-w-[240px] max-w-[300px]
+                rounded-[15px] 
+                w-[-webkit-fill-available]
                 shadow-md
                 relative flex items-center justify-center
                 animate [--duration:0.5s]
@@ -365,7 +367,7 @@ export default {
       let total = []
       this.datas.forEach((data, i) => {
         // console.log(data)
-        total[i]= Object.values(data)?.reduce((sum, item) => sum + (item.do ? item.rakaat : 0), 0)
+        total[i]= Object.values(data)?.reduce((sum, item) => sum + (item.do ? parseInt(item.rakaat) : 0), 0)
       })
       // console.log(total)
       return total
@@ -518,17 +520,18 @@ export default {
       // }, duration * 1000 + 100);
     },
     handleAfterScroll(){
-      // console.log('handle-after')
+      console.log('handle-after')
+      // return
       let vm = this
       if (vm.editTanggal == true)
         return
       let header = this.jquery('#header-scroll')[0]
       let right = this.jquery('#header2')[0]
-      // console.log(header.scrollLeft)
-      if (header.scrollLeft == 0) {
+      console.log('scroll', header.scrollLeft, right.offsetLeft)
+      if (Math.round(header.scrollLeft) == 0) {
         this.changeTanggalData(-1)
         this.setHeaderToCenter()
-      } else if (header?.scrollLeft == right?.offsetLeft) {
+      } else if (Math.round(header?.scrollLeft) == Math.round(right?.offsetLeft)) {
         this.changeTanggalData(1)
         this.setHeaderToCenter()
       }
