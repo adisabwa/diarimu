@@ -65,44 +65,46 @@
         </template>
       </ListData>
     </el-card>
-    <el-dialog v-model="showAdd" draggable
-      :append-to-body="true"
-      class="w-fit max-w-[90%] py-3
-        bg-gradient-to-tr from-white from-50% to-indigo-100"
-      header-class="font-bold text-[16px]"
-      body-class="">
-      <template #header>
-        <div>Data </div>
-      </template>
-      <form-comp ref="formKajian"
-        class="min-w-[280px]"
-        :key="'form-shadaqah-'+formKey"
-        :fields="fields" 
-        v-model:id="dataId"
-        v-model:form-value="formValue" 
-        href="persyarikatan/store"
-        href-get="persyarikatan/get"
-        :pass-columns="['id_anggota']"
-        @saved="submittedData();updateChart();" 
-        @error="saving=false"
-        size="large"
-        :show-submit="false"
-        label-position="top"
-        :show-required-text="false">
-      </form-comp>  
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="showAdd = false">Batal</el-button>
-          <el-button type="primary" @click="$refs.formKajian.submitForm()"
-            class="bg-indigo-700">
-            Simpan
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <teleport to="body">
+      <el-dialog v-model="showAdd" draggable
+        :append-to-body="true"
+        class="w-fit max-w-[90%] py-3
+          bg-gradient-to-tr from-white from-50% to-indigo-100"
+        header-class="font-bold text-[16px]"
+        body-class="">
+        <template #header>
+          <div>Data </div>
+        </template>
+        <form-comp ref="formKajian"
+          class="min-w-[280px]"
+          :key="'form-shadaqah-'+formKey"
+          :fields="fields" 
+          v-model:id="dataId"
+          v-model:form-value="formValue" 
+          href="persyarikatan/store"
+          href-get="persyarikatan/get"
+          :pass-columns="['id_anggota']"
+          @saved="submittedData();updateChart();" 
+          @error="saving=false"
+          size="large"
+          :show-submit="false"
+          label-position="top"
+          :show-required-text="false">
+        </form-comp>  
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="showAdd = false">Batal</el-button>
+            <el-button type="primary" @click="$refs.formKajian.submitForm()"
+              class="bg-indigo-700">
+              Simpan
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </teleport>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
-      header="Statistik Persyarikatan"
+      header="Statistik Kegiatan Persyarikatan"
       header-class="py-3 font-bold text-[18px] text-center" >
     <chart ref="persyarikatanChartData" 
       href="persyarikatan/dashboard"

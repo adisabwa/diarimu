@@ -20,8 +20,11 @@
         cursor-pointer`,
         boxClass]"
 				draggable="true"
-				@click="(event) => editData(event, key)"
-				v-click-outside="() => addClass('#listData'+key, 'translate-x-[125px]')">
+				v-double-click="(event) => s.showButton = true"
+				v-hold-click="(event) => s.showButton = true"
+        v-click-outside="() => {
+          s.showButton = false
+        }">
         <div class="leading-[1.5] w-full">
           <div v-if="$slots.subtitle" class="font-semibold text-[13px] opacity-70">
             <slot name="subtitle" :data="s" />
@@ -38,10 +41,11 @@
           </div>
         </div>
 				<div :id="'listData'+key"
-					class="absolute bg-[var(--bg-button-color)] right-0 translate-x-[125px]
+					:class="[`absolute bg-[var(--bg-button-color)] right-0 
 					px-4
 					animate
-					h-full w-fit flex items-center" 
+					h-full w-fit flex items-center`,
+          s.showButton ? 'translate-x-0' : 'translate-x-[125px]']" 
 					v-if="['user','super-admin'].includes(user.role)">
 					<el-button
 						class="rounded-full h-[40px] w-[40px]
@@ -61,12 +65,13 @@
       </div>
 		</template>
 		<p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
-		<p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p>
+		<!-- <p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p> -->
 	</div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'pinia';
+import { nextTick } from 'vue';
 
 export default {
   name: "ListData",
@@ -75,6 +80,10 @@ export default {
     idAnggota:{
       type:[String, Number],
       default:null,
+    },
+    namaId:{
+      type:String,
+      default:'id_anggota',
     },
     href:{
       type:[String, Number],
@@ -86,6 +95,7 @@ export default {
     },
     boxClass:{type:String,default:''},
     groupBy:{type:Array, default:[]},
+    orderBy:{type:Array, default:['tanggal desc','nama','id desc']},
     datas:{type:[Array, Object], default:[]}
   },
   computed: {
@@ -125,7 +135,7 @@ export default {
     }),
     getData(reset = true){
       // console.log(this.href, reset, this.idAnggota)
-      console.log(this.datas)
+      // console.log(this.datas)
       if (!this.isEmpty(this.datas)) {
         this.listData = this.datas
         this.noMoreScrolling = true
@@ -142,15 +152,20 @@ export default {
       this.$http.get(this.href, {
           params: {
             in:{
-              id_anggota: this.idAnggota.split(','),
+              [this.namaId]: this.idAnggota?.split(',') ?? [],
             },
-            order:['tanggal desc','nama','id desc'],
+            order:this.orderBy,
             limit:this.limit,
             offset:this.offset,
             grouping:this.groupBy,
           }
         }).then(result => {
           var res = result.data;
+          res = res.map(d => {
+            d.show = false
+            d.showButton = false
+            return d
+          })
           this.listData = [...this.listData, ...res]
           // console.log(this.listData)
           this.showName = this.idAnggota.split(',').length > 1
@@ -179,15 +194,6 @@ export default {
       // console.log('loading')
       this.loadingScroll = true
       this.getData(false)
-    },
-    editData(event, key){
-      const isInsideParent = jquery('.content-data-list').toArray().some(function(parent) {
-        return jquery.contains(parent, event.target);
-      });
-      if (isInsideParent) {
-        return; // Ignore clicks on the excluded element
-      }
-      this.removeClass('#listData'+key, 'translate-x-[125px]')
     },
     deleteData(id){
       this.delete({

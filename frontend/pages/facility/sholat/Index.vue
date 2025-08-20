@@ -80,7 +80,7 @@
                       <div class="">
                         <div class="mt-1 font-noto
                           whitespace-pre-line text-center rtl font-arabic text-[24px] leading-loose">
-                          <markup class="bg-white/[0.8] px-3 py-[3px]">{{ data.arab }}</markup>
+                          <markup class="bg-white/[0.9] px-3 py-[3px]">{{ data.arab }}</markup>
                         </div>
                       </div>
                       <div class="mt-5 ">
@@ -89,7 +89,7 @@
                         </div>
                         <div class="mt-1
                           whitespace-pre-line text-md italic">
-                          <markup class="bg-white/[0.8] px-3 py-[3px]">{{ data.latin }}</markup>
+                          <markup class="bg-white/[0.9] px-3 py-[3px]">{{ data.latin }}</markup>
                         </div>
                       </div>
                       <div class="mt-5 ">
@@ -98,7 +98,7 @@
                         </div>
                         <div class="mt-1
                           whitespace-pre-line">
-                          <markup class="bg-white/[0.8] px-3 py-[3px]">{{ data.terjemah }}</markup>
+                          <markup class="bg-white/[0.9] px-3 py-[3px]">{{ data.terjemah }}</markup>
                         </div>
                       </div>
                     </div>
@@ -119,9 +119,7 @@
 </template>
   
   <script>
-  import { mapState } from 'pinia';
   import { facilityMenu } from '@/helpers/menus.js'
-import { data } from 'jquery';
   
   export default {
     name: "bacaan-sholat",

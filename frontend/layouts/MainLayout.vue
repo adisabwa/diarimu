@@ -22,7 +22,7 @@
         sm:hidden flex justify-center items-center
         opacity-[0.7]
         bg-yellow-50/[0.7]"  
-        @click="$router.back()">
+        @click="$router.go(-1)">
         <icons icon="mdi:arrow-left" class="m-0 text-2xl text-teal-700 font-bold"/>
       </el-button>
       <!-- <el-button class="fixed z-[200] bottom-7 right-7 rounded-full

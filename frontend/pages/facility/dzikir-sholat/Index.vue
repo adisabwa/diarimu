@@ -73,7 +73,6 @@
 </template>
   
   <script>
-  import { mapState } from 'pinia';
   import { facilityMenu } from '@/helpers/menus.js'
   
   export default {
