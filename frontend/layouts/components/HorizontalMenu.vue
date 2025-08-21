@@ -2,7 +2,7 @@
   <div class="">
     <div class="z-[99] h-[40px]">
       <div class="absolute sm:fixed z-[10] top-0 overflow-visible w-full max-w-[100vw] h-[30px]"> 
-        <div class="relative overflow-hidden h-[100px]">
+        <div class="relative">
           <el-header class="bg-white h-[40px] w-full relative
             flex justify-end
             shadow-md">
@@ -17,7 +17,7 @@
                 max-w-[calc(100vw-500px)]">
               <template v-for="menu in menus">
                 <template v-if="menu.type == 'submenu' && (isEmpty(menu.roles) || menu?.roles?.includes(user.role))">
-                  <el-sub-menu :index="menu.index" class="pl-5 [&>*]:p-0 text-left menu-item-custom title">
+                  <el-sub-menu :index="menu.index" class="px-4 [&>*]:p-0 text-left menu-item-custom title">
                     <template #title>
                       <icons v-if="!isEmpty(menu.icon)" class="mr-2" :icon="menu.icon" />
                       <span class="">{{ menu.label }}</span>
@@ -36,7 +36,7 @@
                   <el-menu-item @click="isEmpty(menu.route) ?
                     $emit('function', menu.function) :
                     $router.push({name:menu.route, params: menu.params})"
-                    :index="menu.index" class="pl-5 text-left menu-item-custom title">
+                    :index="menu.index" class="px-4 text-left menu-item-custom title">
                     <icons v-if="!isEmpty(menu.icon)" class="mr-2" :icon="menu.icon" />
                     <span class="">{{ menu.label }}</span>
                   </el-menu-item>
@@ -261,3 +261,4 @@ export default {
     }
   }
 </style>
+

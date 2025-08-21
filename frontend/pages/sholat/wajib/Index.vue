@@ -82,7 +82,7 @@
                 <div class="flex gap-x-1 mx-3">
                   <star :count="getCount(sholat.value)"/>
                 </div>
-                <el-dropdown v-if="user.role == 'user'"
+                <el-dropdown
                   trigger="click"
                   @command="(res) => {
                     sholat.value = res

@@ -104,7 +104,7 @@
     </teleport>
     <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
       body-class="py-3 px-5"
-      header="Statistik Persyarikatan"
+      header="Statistik Kegiatan Persyarikatan"
       header-class="py-3 font-bold text-[18px] text-center" >
     <chart ref="persyarikatanChartData" 
       href="persyarikatan/dashboard"

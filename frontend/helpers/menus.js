@@ -96,16 +96,13 @@ let organizationMenu = {
 
 let facilityMenu = {
   quranBest: {
-    label:"Quran Best",
-    route:'',
-//     app:`intent://open#Intent;scheme=quranbest;package=com.quranbest.app;action=android.intent.action.VIEW;
-// category=android.intent.category.BROWSABLE;end`,
-    app: "https://qbest.id/qbcom-download",
-    url:'https://play.google.com/store/apps/details?id=com.quranbest.app&hl=id',
-    color:'bg-red-200',
-    shadowColor:'shadow-red-600',
+    url:'https://play.google.com/store/apps/details?id=com.quranbest.app',
+    label:"Qur'an Best",
+    // route:'facility-sholat',
+    color:'bg-rose-200',
+    shadowColor:'shadow-rose-600',
     textColor:'text-orange-500',
-    image:baseUrl + 'assets/images/icons/quranBest.webp',
+    image:baseUrl + 'assets/images/icons/quran-best.png',
   },
   bacaanSholat: {
     url:'facility/sholat',

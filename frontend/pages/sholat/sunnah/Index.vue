@@ -251,6 +251,7 @@
           }}}"
         @edit-data="((res) => {
           tanggal = res.tanggal;
+          console.log(tanggal)
           setTanggalInitial();
           setDataInitiall();
         })"
@@ -481,7 +482,7 @@ export default {
       let center = vm.jquery('#header1');
       header[0].scrollLeft = center[0].offsetLeft
 
-      console.log('center', body[0].scrollLeft,  bcenter[0].offsetLeft, header[0].scrollLeft)
+      // console.log('center', body[0].scrollLeft,  bcenter[0].offsetLeft, header[0].scrollLeft)
     },
     scrollHeader(course = -1){
       let duration = 0.7
@@ -505,12 +506,11 @@ export default {
         return
       let header = this.jquery('#header-scroll')[0]
       let right = this.jquery('#header2')[0]
-      let headpos = Math.round(header?.scrollLeft)
-      let rightpos = Math.round(right?.offsetLeft)
-      if (headpos >= 0 && headpos <= 10) {
+      // console.log('scroll', header.scrollLeft, right.offsetLeft, Math.floor(header?.scrollLeft / 10) , Math.floor(right?.offsetLeft / 10))
+      if ((Math.floor(header.scrollLeft / 10)) == 0) {
         this.changeTanggalData(-1)
         this.setHeaderToCenter()
-      } else if (headpos >= (rightpos - 10) && headpos <= (rightpos + 10)) {
+      } else if (Math.floor(header?.scrollLeft / 10) == Math.floor(right?.offsetLeft / 10)) {
         this.changeTanggalData(1)
         this.setHeaderToCenter()
       }

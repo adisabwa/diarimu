@@ -241,11 +241,12 @@ const doubleClickDirective = {
     let timer;
 
     el.addEventListener('click', (event) => {
+      console.log('click', clickCount)
       clickCount++;
       if (clickCount === 1) {
         timer = setTimeout(() => {
           clickCount = 0; // Reset after single click timeout
-        }, 300); // Adjust timeout as needed
+        }, 500); // Adjust timeout as needed
       } else if (clickCount === 2) {
         clearTimeout(timer);
         clickCount = 0; // Reset after double click

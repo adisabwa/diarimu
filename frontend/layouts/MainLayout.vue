@@ -25,13 +25,6 @@
         @click="$router.go(-1)">
         <icons icon="mdi:arrow-left" class="m-0 text-2xl text-teal-700 font-bold"/>
       </el-button>
-      <!-- <el-button class="fixed z-[200] bottom-7 right-7 rounded-full
-        w-[70px] h-[70px] p-3
-        sm:hidden flex justify-center items-center
-        bg-yellow-50/[0.7]"  
-        @click="toggleClass('#menu-vertical','-translate-x-full')">
-        <icons icon="mdi:menu" class="m-0 text-4xl text-teal-700"/>
-      </el-button> -->
     </div>
     <el-container>
       <el-main class="p-0 px-3 pb-3 overflow-visible
@@ -59,18 +52,6 @@
           </router-view>
         </div>
       </el-main>
-      <!-- <el-footer height="auto" class="h-[20px] px-0 z-[99999] relative">
-        <div class="overflow-hidden h-[45px] w-screen
-          absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-[20px]">
-          <div id="bottom" class="bg-cover bg-top bg-repeat 
-            h-full min-w-[600px] w-full"
-            :style="`background-image:url('${$baseUrl}assets/images/bottom.png')`">
-          </div>
-        </div>
-        <div class="text-[12px] text-center h-full bg-gray-100 flex items-center justify-center gap-2">
-          &copy; 2023 by <a href="https://codev-app.my.id/" target="_blank" class="no-underline text-green-900"> Codev-App</a>
-        </div>
-      </el-footer> -->
     </el-container>
     
 		<div class="fixed left-0 bottom-0
