@@ -11,46 +11,47 @@
 			:style="{
 				backgroundImage:`url('${$baseUrl}/assets/images/dashboard.png')`,
 			}"/>
-    <div class="sm:hidden absolute w-full h-[40px] px-2 mt-0 z-[3]
-      text-white leading-[1.3]">
-      Assalamu'alaikum,<br/>
-      <div class="text-xl font-semibold">{{ user.nama }}</div>
-      <div class="text-md leading-[1]"
-        @click="showRole = true">
-        <span class="el-dropdown-link text-white flex items-end gap-1">
-          {{ ucFirst(user.role) }}
-          <icons icon="fe:arrow-down" class="text-[90%]" />
-        </span>
-      </div>
-			<teleport to="body">
-        <el-dialog v-model="showRole" width="60%"
-          class="[&_*]:font-montserrat text-teal-800 ">
-          <template #header>
-            <div>Masuk Sebagai</div>
-          </template>
-          <el-radio-group class="flex flex-col gap-2"
-            v-model="role">
-            <el-radio-button v-for="rl in user.allowed_roles"
-              :value="rl" class="
-              border border-solid border-teal-700/[0.5]
-              text-teal-800 
-              [&_*]:w-full w-full
-              [&_*]:border-0">
-              {{ ucFirst(rl) }}</el-radio-button>
-          </el-radio-group>
-          <template #footer>
-            <div class="dialog-footer flex justify-between">
-              <el-button @click="showRole = false">Batal</el-button>
-              <el-button type="primary" @click="showRole = false;
-                authStore.changeRole({role:role})"
-                class="bg-teal-700 border-0">
-                Ubah
-              </el-button>
-            </div>
-          </template>
-        </el-dialog>
-			</teleport>
-    </div>
+		<div class="sm:hidden absolute left-0
+			h-[40px] px-2 mt-0 z-[3]
+		text-white leading-[1.3]">
+			Assalamu'alaikum,<br/>
+			<div class="text-xl font-semibold">{{ user.nama }} </div>
+			<div class="text-md leading-[1]"
+				@click="showRole = true">
+				<span class="el-dropdown-link text-white flex items-end gap-1">
+				{{ ucFirst(user.role) }}
+				<icons icon="fe:arrow-down" class="text-[90%]" />
+				</span>
+			</div>
+				<teleport to="body">
+			<el-dialog v-model="showRole" width="60%"
+			class="[&_*]:font-montserrat text-teal-800 ">
+			<template #header>
+				<div>Masuk Sebagai</div>
+			</template>
+			<el-radio-group class="flex flex-col gap-2"
+				v-model="role">
+				<el-radio-button v-for="rl in user.allowed_roles"
+				:value="rl" class="
+				border border-solid border-teal-700/[0.5]
+				text-teal-800 
+				[&_*]:w-full w-full
+				[&_*]:border-0">
+				{{ ucFirst(rl) }}</el-radio-button>
+			</el-radio-group>
+			<template #footer>
+				<div class="dialog-footer flex justify-between">
+				<el-button @click="showRole = false">Batal</el-button>
+				<el-button type="primary" @click="showRole = false;
+					authStore.changeRole({role:role})"
+					class="bg-teal-700 border-0">
+					Ubah
+				</el-button>
+				</div>
+			</template>
+			</el-dialog>
+				</teleport>
+		</div>
 		<div id="management" class="flex flex-col justify-center max-w-[1100px] mx-1 sm:mx-auto pt-12 pb-20">
 			<div class="bg-white rounded-xl shadow-md shadow-emerald-700/[0.2]
 				overflow-hidden
@@ -112,7 +113,7 @@
 						px-1 sm:max-w-[80%] mx-auto pb-5">
 						<template v-for="(menu, ind) in _menu.menu">
 							<div class="grid-item h-[110px] cursor-pointer"
-								@click="$router.push({name:menu.route})">
+								@click="menu.route ? $router.push({name:menu.route}) : openLink(menu.url)">
 								<div class="animate pointer duration-500 group/app
 									hover:scale-90"	>
 									<el-badge :value="menu.before" :offset="['-5','10']"
@@ -159,7 +160,7 @@
           Tambah ke Halaman Utama
         </el-button>
       </div>
-    </div>
+    	</div>
 		<!-- <div class="translate-y-[-40px]">
 			<div id="bottom" class="bg-cover bg-top bg-repeat
 				h-[60px] min-w-[600px] w-full

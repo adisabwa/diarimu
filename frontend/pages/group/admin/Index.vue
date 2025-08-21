@@ -33,7 +33,8 @@
           [--button-color:theme(colors.teal.200)]
           font-sans max-h-screen mt-2
         "
-        :datas="datas"
+        :id-anggota="idAnggota"
+        href="data/group"
         hrefDelete="data/group/delete"
         box-class="px-2 mb-4"
         @edit-data="(({id}) => {
@@ -190,21 +191,10 @@ export default {
       fields:{},
       datas:{},
       dataId:-1,
+      idAnggota:-1,
     }
   },
   methods: {
-    getData() {
-      this.loading = true;
-      this.$http.get('/data/group')
-          .then(result => {
-            var res = result.data;
-            this.datas = res
-            this.loading = false
-            this.$nextTick(() => {
-              this.$refs.listGroup.getData(true)
-            });
-          });
-    },
     getInitial: async function() {
         this.loading = true;
         
@@ -221,12 +211,12 @@ export default {
     submittedData(){
       this.saving = false
       this.showAdd = false
-      this.getData()
+      setTimeout(this.$refs.listGroup?.getData?.(), 1000)
     },
   },
   created: function() {
-    this.getData()
     this.getInitial()
+    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
   },
   mounted(){
   }

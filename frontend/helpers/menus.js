@@ -89,6 +89,15 @@ let organizationMenu = {
 }
 
 let facilityMenu = {
+  quranBest: {
+    url:'https://play.google.com/store/apps/details?id=com.quranbest.app',
+    label:"Qur'an Best",
+    // route:'facility-sholat',
+    color:'bg-rose-200',
+    shadowColor:'shadow-rose-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/quran-best.png',
+  },
   bacaanSholat: {
     url:'facility/sholat',
     label:"Bacaan Sholat",

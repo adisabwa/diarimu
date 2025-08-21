@@ -222,11 +222,7 @@
      
     },  
     computed: {
-<<<<<<< HEAD
-      ...mapState(useAuthStore, {
-=======
       ...mapState(useAuthStore,{
->>>>>>> a83f740b5c10ce56ae7f21cb0ee7a1c3668d0dc7
         user: 'loggedUser',
       }),
       href(){

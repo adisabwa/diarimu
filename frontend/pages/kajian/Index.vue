@@ -186,7 +186,6 @@
     },  
     computed: {
       ...mapState(useAuthStore, {
-      ...mapState(useAuthStore, {
         user: 'loggedUser',
       }),
     },

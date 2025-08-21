@@ -12,7 +12,7 @@
 				<div class="font-montserrat
 					text-[16px] sm:text-2xl font-[500] text-emerald-800 leading-[1.3]
 					">
-					Sistem Pencacatan Ibadah Muhammadiyah Kendal
+					Sistem Pencatatan Ibadah Muhammadiyah Kendal
 				</div>
 				<img id="logo" :src="$baseUrl + 'assets/images/vector.png'" height="230px" 
 					class="mt-6

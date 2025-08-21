@@ -34,8 +34,11 @@
           :href-delete="hrefDelete"
           :group-by="groupBy"
           v-if="showData =='list'"
-          @edit-data="(({id}) => {
-            $emit('editData', {id})
+          @edit-data="(({id, tanggal}) => {
+            $emit('editData', {
+              id:id,
+              tanggal:tanggal
+            })
           })">
           <template #subtitle="{ data }">
             <slot name="subtitle" :data="data" />
@@ -80,7 +83,7 @@
     },
     data: function() {
       return {
-        showData:'chart',
+        showData:'list',
       };
     },
     watch: {

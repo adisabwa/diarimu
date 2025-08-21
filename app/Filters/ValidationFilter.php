@@ -104,7 +104,8 @@ class ValidationFilter implements FilterInterface
                      ]; 
                      // var_dump("{id}",$id,$validationRule[$nama]['rules']);
                      // $koloms[] = $data;
-                    $validationRule[$nama_rule]['rules'] = str_replace("{id}", $id,$validationRule[$nama_rule]['rules']);
+                    $new_id = is_array($id) ? implode(',', $id) : $id;
+                    $validationRule[$nama_rule]['rules'] = str_replace("{id}", $new_id,$validationRule[$nama_rule]['rules']);
                     $validationRule[$nama_rule]['rules'] = str_replace("{field}", $nama_rule,$validationRule[$nama_rule]['rules']);
                  }
             } else if (isset($files_data[$nama])) {

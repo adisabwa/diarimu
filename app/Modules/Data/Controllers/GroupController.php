@@ -28,7 +28,10 @@ class GroupController extends BaseDataController
         $offset = $this->request->getGetPost('offset') ?? 0;
 
         $order = implode(",", $order);
-
+        $user = userdata();
+        $role = $user->role ?? '';
+        $id_anggota = $user->id;
+        $id_unit = $user->id_unit;
         $data = $this->model->getAll($where, $or, 'type desc, nama asc', $limit, $offset);
         // var_dump($this->model->getLastQuery());
 

@@ -22,9 +22,13 @@ export default {
   name: 'DragScroll',
   emits:['drag-start','drag-move','drag-end','snap','momentum-end','scroll','scroll-start','scroll-end'],
   props: {
+    oneDirection: {
+      type: Boolean,
+      default: true, // 'x', 'y', or 'both'
+    },
     axis: {
       type: String,
-      default: 'x', // 'x', 'y', or 'both'
+      default: 'both', // 'x', 'y', or 'both'
     },
     friction: {
       type: Number,
@@ -58,8 +62,12 @@ export default {
       velocityY: 0,
       lastX: 0,
       lastY: 0,
+      directionX:0,
+      directionY:0,
       lastTime: 0,
+      runningTime:0,
       animationFrame: null,
+      move:'both',
       sourceScroll:'scroll',
     };
   },
@@ -81,8 +89,10 @@ export default {
       this.isMomentum = true;
       const step = () => {
         const el = this.$refs.container;
-        if (this.axis === 'x' || this.axis === 'both') el.scrollLeft -= this.velocityX * 20;
-        if (this.axis === 'y' || this.axis === 'both') el.scrollTop -= this.velocityY * 20;
+        if ( ['x','both'].includes(this.axis) && ['x','both'].includes(this.move))  
+          el.scrollLeft -= this.velocityX * 20;
+        if ( ['y','both'].includes(this.axis) && ['y','both'].includes(this.move)) 
+          el.scrollTop -= this.velocityY * 20;
 
         this.velocityX *= this.friction;
         this.velocityY *= this.friction;
@@ -154,22 +164,34 @@ export default {
       this.scrollLeft = this.$refs.container.scrollLeft;
       this.scrollTop = this.$refs.container.scrollTop;
       this.lastTime = Date.now();
+      this.directionX = this.directionY = this.runningTime = 0
       this.sourceScroll = 'drag';
       this.$emit('drag-start');
     },
     handleDrag(x, y) {
       if (!this.isDragging) return;
+      const el = this.$refs.container;
       const now = Date.now();
       const dx = x - this.lastX;
       const dy = y - this.lastY;
+      this.directionX += Math.abs(dx)
+      this.directionY += Math.abs(dy)
       const dt = now - this.lastTime;
+      this.runningTime += dt
+      if (this.runningTime > 200 && this.oneDirection && this.move === 'both') {
+         this.move = this.directionY > this.directionX ? 'y' : 'x'
+         console.log('check', this.move)
+      }       
 
       this.velocityX = dx / dt;
       this.velocityY = dy / dt;
+      
+      if ( ['x','both'].includes(this.axis) && ['x','both'].includes(this.move))  
+        // el.scrollLeft -= dx;
+      if ( ['y','both'].includes(this.axis) && ['y','both'].includes(this.move)) 
+        // el.scrollTop -= dy;
 
-      if (this.axis === 'x' || this.axis === 'both') this.$refs.container.scrollLeft -= dx;
-      if (this.axis === 'y' || this.axis === 'both') this.$refs.container.scrollTop -= dy;
-
+      console.log(this.runningTime, this.axis, this.move, dx, dy, el.scrollLeft, el.scrollTop)
       this.lastX = x;
       this.lastY = y;
       this.lastTime = now;
@@ -279,7 +301,7 @@ export default {
     },
     tryEmitScrollEnd() {
       // Wait for everything to end
-      console.log('tryEmitScrollEnd', this.isDragging, this.isMomentum, this.isSnapping);
+      // console.log('tryEmitScrollEnd', this.isDragging, this.isMomentum, this.isSnapping);
       if (!this.isDragging && !this.isMomentum && !this.isSnapping) {
         this.isScrolling = false;
         this.$emit('scroll-end');

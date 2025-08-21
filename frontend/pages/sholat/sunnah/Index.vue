@@ -69,7 +69,7 @@
         <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-rose-900/[0.4]"/>
       </div>
       <DragScroll id="body-scroll" ref="bodyScroll"
-        :syncWith="syncWith?.body" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-screen pt-0 pb-6',
+        :syncWith="syncWith?.body" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-[50vh] pt-0 pb-6',
         `relative px-0
         animate
         flex    
@@ -251,6 +251,7 @@
           }}}"
         @edit-data="((res) => {
           tanggal = res.tanggal;
+          console.log(tanggal)
           setTanggalInitial();
           setDataInitiall();
         })"
@@ -481,7 +482,7 @@ export default {
       let center = vm.jquery('#header1');
       header[0].scrollLeft = center[0].offsetLeft
 
-      console.log('center', body[0].scrollLeft,  bcenter[0].offsetLeft, header[0].scrollLeft)
+      // console.log('center', body[0].scrollLeft,  bcenter[0].offsetLeft, header[0].scrollLeft)
     },
     scrollHeader(course = -1){
       let duration = 0.7
@@ -505,11 +506,11 @@ export default {
         return
       let header = this.jquery('#header-scroll')[0]
       let right = this.jquery('#header2')[0]
-      console.log('scroll', header.scrollLeft, right.offsetLeft)
-      if (Math.round(header.scrollLeft) == 0) {
+      // console.log('scroll', header.scrollLeft, right.offsetLeft, Math.floor(header?.scrollLeft / 10) , Math.floor(right?.offsetLeft / 10))
+      if ((Math.floor(header.scrollLeft / 10)) == 0) {
         this.changeTanggalData(-1)
         this.setHeaderToCenter()
-      } else if (Math.round(header?.scrollLeft) == Math.round(right?.offsetLeft)) {
+      } else if (Math.floor(header?.scrollLeft / 10) == Math.floor(right?.offsetLeft / 10)) {
         this.changeTanggalData(1)
         this.setHeaderToCenter()
       }
