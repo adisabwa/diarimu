@@ -63,7 +63,7 @@ export default ({ command, mode }) => {
         },
         manifest: {
           "name": "Sistem Catatan Ibadah Muhammadiyah Kendal",
-          "short_name": "Diari-Mu",
+          "short_name": "Ashoi-Mu",
           "start_url": baseUrl + "index.php",
           "scope": baseUrl,
           "display": "standalone",

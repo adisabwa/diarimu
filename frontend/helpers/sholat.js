@@ -56,8 +56,8 @@ export function getCount(value){
 export function getCountSunnah(value){
   if (value >= 20) return 3
   else if (value >= 15) return 2
-  else if (value >= 10) return 1
-  else if (value >= 5) return 0
+  else if (value >= 8) return 1
+  else if (value >= 0) return 0
   else return -1
 }
 

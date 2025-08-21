@@ -45,7 +45,7 @@
               <td class="text-right">
                 <el-button class="[&_*]:text-[11px] h-fit py-1 active:scale-90
                   bg-teal-700 text-white"
-                  @click="showAdd = true"
+                  @click="showAdd = true; dataId = -1;"
                   >
                   <icons icon="mdi:plus"/>Tambah Data
                 </el-button>
@@ -53,77 +53,87 @@
             </tr>
           </tbody>
           </table>
-        <div 
-            v-infinite-scroll="loadingData"
-            :infinite-scroll-disabled="noMoreScrolling"
-            infinite-scroll-delay="1000"
-            infinite-scroll-distance="10"
-            class="min-h-[200px] max-h-[50vh] overflow-auto px-6 mt-3">
-          <div v-for="data in listActivity"
-            class="relative py-3 px-4 pb-3 bg-white/[0.9] rounded-[15px] mb-3
-            border border-solid border-teal-700/[0.5]
-            flex gap-x-2">
-            <div class="w-full text-[13px]">
-              <div class="font-bold italic">{{ dateDayIndo(data.tanggal) }}</div>
-              <el-divider class="my-1 
-                border-0 border-b border-solid border-teal-700/[0.5]"/>
-              <div :class="[`text-[12px] 
-                inline-block overflow-hidden`,
-                data.show ? '' : 'max-h-[35px]']">{{ data.kegiatan }}</div>
-              <div class="text-teal-700 text-[10px] float-right"
-                @click="data.show = !data.show">Show All</div>
-            </div>
-          </div>
-          <p v-if="loadingScroll" class="my-0 text-center text-[13px]">Menggambil Data...</p>
-          <p v-if="noMoreScrolling" class="my-0 text-center text-[13px]">Data Selesai</p>
-        </div>
+        <ListData v-if="data.id"
+          ref="groupListData"
+          class="[--text-color:theme(colors.teal.900)]
+            [--bg-color:theme(colors.teal.50)]
+            [--border-color:theme(colors.teal.400)]
+            [--bg-button-color:theme(colors.teal.100)]
+            [--button-color:theme(colors.teal.200)]
+            max-h-[70vh] mt-4
+          "
+          :id-anggota="data?.id"
+          nama-id="id_group"
+          :order-by="['tanggal DESC','id DESC']"
+          href="data/group/activity"
+          href-delete="data/group/activity/delete"
+          @edit-data="(({id}) => {
+            dataId = id
+            showAdd = true
+          })">
+          <template #title="{ data }">
+            <div class="font-bold italic text-[14px]">{{ dateDayIndo(data.tanggal) }}</div>
+            <el-divider class="my-1 
+              border-0 border-b border-solid border-teal-700/[0.5]"/>
+          </template>
+          <template #content="{ data }">
+            <div :class="[`text-[12px] 
+              inline-block overflow-hidden`,
+              data.show ? '' : 'max-h-[35px]']">{{ data.kegiatan }}</div>
+            <div class="text-teal-700 text-[10px] float-right"
+              @click="data.show = !data.show">Show All</div>
+          </template>
+        </ListData>
       </template>
     </el-card>
-    <el-dialog v-model="showAdd" draggable
-      :append-to-body="true"
-      class="w-fit max-w-[80%] py-3
-        bg-gradient-to-tr from-white from-50% to-teal-100"
-      header-class="font-bold text-[16px]"
-      body-class="text-[14px]">
-      <template #header>
-        <div>Data Aktifitas</div>
-      </template>
-      <form-comp ref="formActiviity"
-        class="[&_*]:rounded-[15px]"
-        :key="'form-activity-'+formKey"
-        :fields="fields" 
-        v-model:id="dataId"
-        v-model:form-value="formValue" 
-        href="data/group/activity/store"
-        href-get="data/group/activity/get"
-        :show-columns="['tanggal','kegiatan']"
-        @saved="submittedData" 
-        @error="saving=false"
-        size="large"
-        :show-submit="false"
-        label-position="top"
-        :show-required-text="false">
-      </form-comp>  
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="showAdd = false">Batal</el-button>
-          <el-button type="primary" @click="$refs.formActiviity.submitForm()"
-            class="bg-teal-700">
-            Simpan
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <teleport to="body">
+      <el-dialog v-model="showAdd" draggable
+        :append-to-body="true"
+        class="w-fit max-w-[80%] py-3
+          bg-gradient-to-tr from-white from-50% to-teal-100"
+        header-class="font-bold text-[16px]"
+        body-class="text-[14px]">
+        <template #header>
+          <div>Data Aktifitas</div>
+        </template>
+        <form-comp ref="formActiviity"
+          class="[&_*]:rounded-[15px]"
+          :key="'form-activity-'+formKey"
+          :fields="fields" 
+          v-model:id="dataId"
+          v-model:form-value="formValue" 
+          href="data/group/activity/store"
+          href-get="data/group/activity/get"
+          :show-columns="['tanggal','kegiatan']"
+          @saved="submittedData" 
+          @error="saving=false"
+          size="large"
+          :show-submit="false"
+          label-position="top"
+          :show-required-text="false">
+        </form-comp>  
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="showAdd = false">Batal</el-button>
+            <el-button type="primary" @click="$refs.formActiviity.submitForm()"
+              class="bg-teal-700">
+              Simpan
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </teleport>
   </div>
 </template>
 
 <script>
-  import Form from '@/components/Form.vue'
+import ListData from '@/pages/components/ListData.vue';
+import { orderBy } from 'lodash';
 
 export default {
   name:'group-user',
   components:{
-    'form-comp' : Form,
+    ListData
   },
   data: () => {
     return {
@@ -138,10 +148,6 @@ export default {
       data:{},
       listActivity:[],
       formValue:{},
-      loadingScroll:true,
-      noMoreScrolling:false,
-      limit:5,
-      offset:null,
     }
   },
   watch:{
@@ -187,43 +193,10 @@ export default {
             this.loading = false
           });
     },
-      submittedData(){
-        this.loading = false;
-        this.showAdd = false;
-        this.limit = this.offset
-        this.offset = 0
-        this.getDataActivity();
-      },
-    async getDataActivity(reset = true) {
-      this.loading = true;
-      this.$http.get('/data/group/activity', {
-        params:{
-          where:{ id_group : this.data?.id_group, },
-          order:['tanggal desc'],
-          limit:this.limit,
-          offset:this.offset,
-        }
-      })
-          .then(result => {
-            var res = result.data;
-            res = res.map(d => {
-              d.show = false
-              return d
-            })
-            // console.log(res)
-            this.listActivity = reset ? res : [...this.listActivity, ...res]
-            this.loading = false
-            this.loadingScroll = false
-            if (this.isEmpty(res)) {
-              this.noMoreScrolling = true
-            } else {
-              this.offset += 5
-            }
-          });
-    },
-    async loadingData(){
-      this.loadingScroll = true
-      await this.getDataActivity(false)
+    submittedData(){
+      this.loading = false;
+      this.showAdd = false;
+      this.$refs.groupListData.getData(true)
     },
   },
   created: function() {

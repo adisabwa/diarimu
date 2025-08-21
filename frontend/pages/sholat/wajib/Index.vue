@@ -110,7 +110,8 @@
         </template>
       </DragScroll>
     </el-card>
-    <el-card class="relative w-full
+    <el-card v-show="['user','super-admin'].includes(user.role)"
+      class="relative w-full
       overflow-hidden
     bg-white/[0.9] 
       rounded-[10px]
@@ -140,74 +141,53 @@
         </template>
       </div>
     </el-card>
-    <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-0"
-      header-class="py-3 font-bold text-[16px]
-        text-lime-800
-        flex justify-between items-center" >
-      <template #header>
-        <div>Data Sholat Wajib</div>
-        <div class="flex items-center gap-1
-          [&_*]:text-[20px] text-emerald-900/[0.4]">
-          <icons icon="fa6-solid:chart-line" 
-            @click="showData='chart'"
-            :class="` ${showData == 'chart' ? 'text-emerald-900 pointer' : ''}`"/>
-          <icons icon="material-symbols:view-list" 
-            @click="showData='list'"
-            :class="` ${showData == 'list' ? 'text-emerald-900 pointer' : ''}`"/>
-        </div>
-      </template>
-      <chart ref="wajibChartData" 
-        href="sholat/wajib/dashboard"
-        :id-anggota="idAnggota"
-        :add-options="{
-          scales:{
-            y:{
-              title:{display:true, text:'Total Score'},
-              ticks: {stepSize:50}
-            }}}"
-           v-if="showData == 'chart'" 
-        class="px-4"/>
-      <ListData ref="wajibListData"
-        class="[--text-color:theme(colors.purple.900)]
+    <statistic-data class="bg-white/[0.9] rounded-[10px] mb-3 p-0
+          [--text-color:theme(colors.purple.900)]
           [--bg-color:theme(colors.purple.50)]
           [--border-color:theme(colors.purple.400)]
           [--bg-button-color:theme(colors.purple.100)]
-          [--button-color:theme(colors.purple.200)]
-        "
-        :id-anggota="idAnggota"
-        href="sholat/wajib"
-        href-delete="sholat/wajib/delete"
-        v-if="showData =='list'"
-        @edit-data="editData">
-        <template #title="{ data }">
-          {{ dateDayIndo(data.tanggal)}}
-        </template>
-        <template #content="{ data }">
-          <div class="flex items-center"
-            @click="data.show_detail = !data.show_detail">
-            <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
-            <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
-            Sholat Wajib {{ (
-              (data.shubuh > 0 ? 2 : 0) + (data.dhuhur > 0 ? 4 : 0) + (data.asar > 0 ? 4 : 0) + (data.maghrib > 0 ? 3 : 0) + (data.isya > 0 ? 4 : 0) 
-            ) }} Raka'at
-          </div>
-          <ol v-show="data.show_detail"
-            class="pl-[30px] italic mt-0 mb-1">
-            <li v-for="ind in ['shubuh','dhuhur','asar','maghrib','isya']"
-              class="pl-1">
-              <div class="flex items-center gap-x-3">
-                Sholat {{ ucFirst(ind) }} ( {{ getLabel(data[ind]) }} ) 
-                <template v-if="data[ind] >= 25">
-                  <star :count="getCount(data[ind])" width="12px"
-                    class="gap-x-[2px]"/>
-                </template>
-              </div>
-            </li>
-          </ol>
-        </template>
-      </ListData>
-    </el-card>
+          [--button-color:theme(colors.purple.200)]"
+      ref="statisticDataSholat"
+      :id-anggota="idAnggota"
+      href-dashboard="sholat/wajib/dashboard"
+      href="sholat/wajib"
+      href-delete="sholat/wajib/delete"
+      :add-options-chart="{scales:{y:{
+        title:{display:true, text:'Total Score'},
+        ticks: {stepSize:50}
+      }}}"
+      @edit-data="editData">
+      >
+      <template #header>
+        <div class="text-[var(--text-color)]">Data Sholat Wajib</div>
+      </template>
+      <template #title="{ data }">
+        {{ dateDayIndo(data.tanggal)}}
+      </template>
+      <template #content="{ data }">
+        <div class="flex items-center"
+          @click="data.show_detail = !data.show_detail">
+          <icons v-if="data.show_detail" icon="fe:arrow-down" class="text-[12px]"/>
+          <icons v-else icon="fe:arrow-up" class="text-[12px]"/>
+          Sholat Wajib {{ (
+            (data.shubuh > 0 ? 2 : 0) + (data.dhuhur > 0 ? 4 : 0) + (data.asar > 0 ? 4 : 0) + (data.maghrib > 0 ? 3 : 0) + (data.isya > 0 ? 4 : 0) 
+          ) }} Raka'at
+        </div>
+        <ol v-show="data.show_detail"
+          class="pl-[30px] italic mt-0 mb-1">
+          <li v-for="ind in ['shubuh','dhuhur','asar','maghrib','isya']"
+            class="pl-1">
+            <div class="flex items-center gap-x-3">
+              Sholat {{ ucFirst(ind) }} ( {{ getLabel(data[ind]) }} ) 
+              <template v-if="data[ind] >= 25">
+                <star :count="getCount(data[ind])" width="12px"
+                  class="gap-x-[2px]"/>
+              </template>
+            </div>
+          </li>
+        </ol>
+      </template>
+    </statistic-data>
   </div>
 </template>
 
@@ -217,19 +197,17 @@
 
 <script>
 import { mapState, mapActions } from 'pinia';
-import Chart from '@/pages/components/DataChart.vue'
 import { topMenu } from '@/helpers/menus.js'
 import FilterAnggota from '../../components/FilterAnggota.vue';
-import ListData from '@/pages/components/ListData.vue';
 import DragScroll from '@/components/DragScroll.vue';
+import StatisticData from '@/pages/components/StatisticData.vue';
 
 export default {
   name: "sholat",
   components: {
-    Chart,
-    ListData,
     FilterAnggota,
     DragScroll,
+    StatisticData,
   },
   data: function() {
     return {
@@ -278,7 +256,6 @@ export default {
         total_score:'',
       },
       sholat: topMenu.sholatWajib,
-      showData:'list',
       collapseInput:false,
       syncWith:{},
     };
@@ -427,6 +404,7 @@ export default {
           let res = result.data
           this.datas[1].id = res.id
           this.getLast()
+          this.$refs.statisticDataSholat.updateChart()
         })
         .catch(err => {
           
@@ -492,15 +470,8 @@ export default {
       this.setTanggalInitial()
       this.setDataInitial()
       this.getLast()
-      setTimeout(() => {
-        this.updateChart();
-      }, 400);
       // this.formKey++
     },
-    updateChart(){
-      if (this.showData == 'chart') this.$refs.wajibChartData?.getChart();
-      if (this.showData == 'list') this.$refs.wajibListData?.getData(true);
-    }
   },
   created: function() {
     this.tanggal = this.dateNow()

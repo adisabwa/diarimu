@@ -33,7 +33,7 @@
       table="mu_quran_tarjamah"
       @saved="$refs.statisticDataQuran.updateChart()">
       <template #header>
-       Setoran Hafalan Hari Ini
+       Tadabbur Qur'an
       </template>
     </form-quran>
     <statistic-data ref="statisticDataQuran"
@@ -53,7 +53,7 @@
       })"
       >
       <template #header>
-        <div>Data Baca Tarjamah Qur'an</div>
+        <div class="text-[var(--text-color)]">Data Tadabbur Qur'an</div>
       </template>
     </statistic-data>
   </div>

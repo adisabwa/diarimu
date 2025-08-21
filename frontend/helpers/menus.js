@@ -3,6 +3,7 @@ import { baseUrl } from "@/config/url";
 
 let topMenu = {
   quranBaca: {
+    beforeUrl:'quran/baca/get_before',
     url:'quran/baca',
     label:"Baca Qur'an",
     route:'quran-baca',
@@ -12,6 +13,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/quran.png',
   },
   quranHafal: {
+    beforeUrl:'quran/hafal/get_before',
     url:'quran/hafal',
     label:"Hafal Qur'an",
     route:'quran-hafal',
@@ -21,8 +23,9 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/memorization.png',
   },
   quranTarjamah: {
+    beforeUrl:'quran/tarjamah/get_before',
     url:'quran/tarjamah',
-    label:"Tarjamahan Qur'an",
+    label:"Tadabbur Qur'an",
     route:'quran-tarjamah',
     color:'bg-sky-200',
     shadowColor:'shadow-sky-600',
@@ -30,6 +33,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/kajian.png',
   },
   sholatWajib: {
+    beforeUrl:'sholat/wajib/get_before',
     url:'sholat/wajib',
     label:"Sholat Wajib",
     route:'sholat-wajib',
@@ -39,6 +43,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/mosque.png',
   },
   sholatSunnah: {
+    beforeUrl:'sholat/sunnah/get_before',
     url:'sholat/sunnah',
     label:"Sholat Sunnah",
     route:'sholat-sunnah',
@@ -48,6 +53,7 @@ let topMenu = {
     image:baseUrl + 'assets/images/icons/prayer-rug.png',
   },
   infaqShadaqah: {
+    beforeUrl:'infaq/shadaqah/get_before',
     url:'infaq/shadaqah',
     label:"Infaq / Shadaqah",
     route:'shadaqah',
@@ -89,6 +95,18 @@ let organizationMenu = {
 }
 
 let facilityMenu = {
+  quranBest: {
+    label:"Quran Best",
+    route:'',
+//     app:`intent://open#Intent;scheme=quranbest;package=com.quranbest.app;action=android.intent.action.VIEW;
+// category=android.intent.category.BROWSABLE;end`,
+    app: "https://qbest.id/qbcom-download",
+    url:'https://play.google.com/store/apps/details?id=com.quranbest.app&hl=id',
+    color:'bg-red-200',
+    shadowColor:'shadow-red-600',
+    textColor:'text-orange-500',
+    image:baseUrl + 'assets/images/icons/quranBest.webp',
+  },
   bacaanSholat: {
     url:'facility/sholat',
     label:"Bacaan Sholat",

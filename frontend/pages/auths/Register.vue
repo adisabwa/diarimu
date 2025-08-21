@@ -43,14 +43,12 @@
       </div>
     </div>
 </template>
-  
+
 <script>
-  import Form from '@/components/Form.vue'
   
 export default {
   name: 'register',
   components:{
-    'form-comp' : Form,
   },
   data() {
     return {
@@ -88,7 +86,7 @@ export default {
         password: this.formValue.password,
       }
       // console.log(payload)
-      authStore.login(payload, true)
+      useAuthStore().login(payload, true)
         .then(() => {
           this.$router.push({name:'dashboard'})
         })

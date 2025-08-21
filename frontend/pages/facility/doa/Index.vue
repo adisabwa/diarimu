@@ -22,20 +22,20 @@
           class="[&_input]:placeholder:text-center *:rounded-[10px]"
           clearable/>
       </div>
-      <div class="body-data py-3 px-4 max-h-[calc(100vh-210px)] overflow-y-auto">
+      <div class="body-data py-3 px-4 max-h-[calc(100vh-240px)] overflow-y-auto">
         <transition-group name="fade"
-          enter-active-class="animate"
-          leave-active-class="animate"
-          enter-from-class="opacity-50 -translate-y-full"
+          enter-active-class=""
+          leave-active-class=""
+          enter-from-class="absolute opacity-100 -translate-y-full"
           enter-to-class="opacity-100"
           leave-from-class="opacity-100"
-          leave-to-class="opacity-50 translate-y-full"
+          leave-to-class="absolute opacity-100 translate-y-full"
           @after-leave="scrollToCoordinate('.body-data', 0, 1, 'top')">
           <div v-if="showList" class="grid grid-cols-2 gap-x-4">
             <template v-for="(_datas, key) in [dataFavorites,dataNormal]">
               <div v-if="_datas.length > 0" 
                 class="col-span-2 sticky top-0 z-[10]
-                text-center bg-white text-slate-500 mt-4 mb-2 py-3
+                text-center bg-white text-slate-500 mt-0 mb-2 py-3
                 ">
                 <span>{{ key == 0 ? 'Doa Favorit' : 'Data Doa Lengkap' }}</span>
               </div>
@@ -138,9 +138,7 @@
 </template>
   
   <script>
-  import { mapState } from 'pinia';
   import { facilityMenu } from '@/helpers/menus.js'
-import { data } from 'jquery';
   
   export default {
     name: "bacaan-doa",
@@ -164,7 +162,7 @@ import { data } from 'jquery';
      
     },  
     computed: {
-      ...mapState({
+      ...mapState(useAuthStore, {
         user: 'loggedUser',
       }),    
       dataFilter(){

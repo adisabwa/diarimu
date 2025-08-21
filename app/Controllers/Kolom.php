@@ -29,9 +29,15 @@ class Kolom extends BaseController
         foreach ($datas as $key => $data) {
           $options = [];
           if (!empty($data->pilihan)) {
+			// var_dump($data->nama_kolom);
             try {
                 $options = unserialize($data->pilihan);
+                if (!is_array($options)) {
+                  throw new \Exception('Data is not array');
+                }
+                // var_dump('serialize', $options);
             } catch (\Throwable $e) {
+				        // var_dump($e);
                 $pilihan = explode(',',$data->pilihan);
                 if (count($pilihan) > 1) {
                     foreach ($pilihan as $opt) {

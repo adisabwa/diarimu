@@ -3,7 +3,7 @@
 		<div id="management" class="max-w-[1100px] mx-6 sm:mx-auto bg-white bg-opacity-[0.9] 
 			border-solid border border-gray-300">
 			<div class="flex flex-col items-center align-middle
-			h-fit pt-32 pb-6 flex-1 px-5 sm:px-0
+			h-fit pt-32 pb-6 flex-1 px-5
 			text-center text-[20px]">
 				<div class="font-montserrat
 					text-[40px] sm:text-7xl font-[500] text-emerald-800 leading-[1.3]">

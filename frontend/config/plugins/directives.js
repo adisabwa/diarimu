@@ -235,11 +235,69 @@ const dragScroll = {
     },
   }
 
+const doubleClickDirective = {
+  beforeMount(el, binding) {
+    let clickCount = 0;
+    let timer;
+
+    el.addEventListener('click', (event) => {
+      clickCount++;
+      if (clickCount === 1) {
+        timer = setTimeout(() => {
+          clickCount = 0; // Reset after single click timeout
+        }, 300); // Adjust timeout as needed
+      } else if (clickCount === 2) {
+        clearTimeout(timer);
+        clickCount = 0; // Reset after double click
+        binding.value(event); // Call the provided function
+      }
+    });
+  },
+}
+
+const holdClickDirective = {
+  beforeMount(el, binding) {
+    let holdTimer = null;
+    const duration = binding.arg ? parseInt(binding.arg) : 600; // default 600ms
+
+    const start = (e) => {
+      if (e.type === 'click' && e.button !== 0) return; // only left-click
+      holdTimer = setTimeout(() => {
+        binding.value?.(e);
+      }, duration);
+    };
+
+    const cancel = () => {
+      clearTimeout(holdTimer);
+    };
+
+    el.addEventListener('mousedown', start);
+    el.addEventListener('touchstart', start);
+    el.addEventListener('mouseup', cancel);
+    el.addEventListener('mouseleave', cancel);
+    el.addEventListener('touchend', cancel);
+    el.addEventListener('touchcancel', cancel);
+
+    el.__hold_cleanup__ = () => {
+      el.removeEventListener('mousedown', start);
+      el.removeEventListener('touchstart', start);
+      el.removeEventListener('mouseup', cancel);
+      el.removeEventListener('mouseleave', cancel);
+      el.removeEventListener('touchend', cancel);
+      el.removeEventListener('touchcancel', cancel);
+    };
+  },
+  beforeUnmount(el) {
+    el.__hold_cleanup__?.();
+  },
+}
   export default {
     install(app) {
       app.directive('click-outside', clickOutsideDirective);
       app.directive('click-exclude-id', clickExcludeIdDirective);
       app.directive('drag-scroll', dragScroll);
+      app.directive('double-click', doubleClickDirective);
+      app.directive('hold-click', holdClickDirective);
       // Add more directives here if needed
     }
   };

@@ -7,6 +7,19 @@ let listFunction = {
   openLink(link){
     window.open(link,'_blank');
   },
+  openApp({linkApp, linkWeb}) {
+    const now = Date.now();
+    setTimeout(() => {
+      if (Date.now() - now < 1500) {
+        // If app is not opened, redirect to Play Store
+        if (linkWeb)
+          window.open(linkWeb,'_blank');
+      }
+    }, 1000);
+    console.log('Opening app:', linkApp, 'or web:', linkWeb);
+    // Try open app
+    window.open(linkApp,'_blank');
+  },
   copyText(link) {
     console.log(link)
     const textArea = document.createElement("textarea");

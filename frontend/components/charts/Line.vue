@@ -41,6 +41,8 @@ export default {
 		statistic: {
 			type:[Array, Object],
 			default: {
+        labels:[],
+        datasets:[],
 			}
 		},
 		max:{
@@ -62,10 +64,14 @@ export default {
 	},
 	watch: {
 		statistic: {
+      immediate: true,
 			handler(newVal, oldVal){
+        if (!newVal) return
         let size = this.coalesce[this.options?.scales?.y?.ticks?.stepSize, 1];
 				this.options.scales.y.suggestedMax = parseInt(this.max) + (size)
         this.options.scales.y.suggestedMin = parseInt(this.min) - (size)
+        console.log(this.chart)
+        if (!this.chart) return
 				this.chart.options = this.options;
 				this.chart.update();
 				setTimeout(this.updateLegend, 100) // wait for chart to render
@@ -165,7 +171,7 @@ export default {
 	},
 	computed: {
 		chart() {
-			return this.$refs.line.chart
+			return this.$refs.line?.chart
 		},
 	},
 	methods: {

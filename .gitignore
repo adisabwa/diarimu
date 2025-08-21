@@ -16,5 +16,5 @@ writable/cache/*
 node_modules
 stats.html
 
-package-lock.json
-composer-lock.json
+package.lock
+composer.lockn
