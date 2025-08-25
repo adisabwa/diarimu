@@ -2,85 +2,47 @@
 
 namespace Modules\Quran\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class QuranHafalModel extends Model
+class QuranHafalModel extends BaseModel
 {
-    protected $table         = 'mu_quran_hafal';
-    protected $primaryKey = 'id';
-
-    protected $protectFields = false;
-    protected $useAutoIncrement = true;
-    protected $returnType    = 'object';
-
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    protected function initialize()
+    public function __construct()
     {
+        parent::__construct();
 
+        $this->table = 'mu_quran_hafal';
+        $this->selects = ['total_ayat data_chart'];
+        $this->relations = [
+            'id_anggota' => [
+                'foreign_key' => 'id_anggota',
+                'table' => 'mu_anggota',
+                'selects' => [
+                    'id',
+                    'nama',
+                ]
+            ],
+            'surat_mulai' => [
+                'foreign_key' => 'surat_mulai',
+                'table' => 'mu__surat_quran',
+                'alias' => 'sq1',
+                'selects' => [
+                    'nama_latin nama_surat_mulai',
+                ]
+            ],
+            'surat_selesai' => [
+                'foreign_key' => 'surat_selesai',
+                'table' => 'mu__surat_quran',
+                'alias' => 'sq2',
+                'selects' => [
+                    'nama_latin nama_surat_selesai',
+                ]
+            ],
+        ];
     }
 
-    
     public function get_last($id_anggota)
     {
-        $data = $this->db->table('mu_quran_hafal qb')
-                    ->select("qb.*, qb.total_ayat data_chart, s.nama, 
-                        sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
-                    ->join('mu_anggota s','qb.id_anggota=s.id')
-                    ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
-                    ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
-                    ->orderBy('qb.tanggal desc,surat_selesai desc,surat_mulai desc')
-                    ->where('qb.id_anggota', $id_anggota)
-                    ->get()
-                    ->getRowObject();
-        // var_dump($data);
+        $data = $this->getDataWhere(whereAnd: [ 'id_anggota' => $id_anggota], order: 'qb.tanggal desc,surat_selesai desc,surat_mulai desc');
         return $data;
-    }
-
-
-    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0, $groupBy = ['id'], $whereIn = [])
-    {
-        $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
-        $whereOr = empty($whereOr) ? '1=1' : $whereOr;
-
-        $builder = $this->db->table('mu_quran_hafal qb')
-                    ->select("qb.*, qb.total_ayat data_chart, s.nama, 
-                        sq.nama_latin nama_surat_mulai, sq2.nama_latin nama_surat_selesai")
-                    ->join('mu_anggota s','qb.id_anggota=s.id')
-                    ->join('mu__surat_quran sq','qb.surat_mulai=sq.id')
-                    ->join('mu__surat_quran sq2','qb.surat_selesai=sq2.id')
-                    ->where($whereAnd)
-                    ->where($whereAnd);
-
-        foreach($whereIn as $key => $in) {
-            $builder->whereIn($key, $in);
-        }
-
-        return $builder->groupStart()
-                            ->orWhere($whereOr)
-                        ->groupEnd()
-                        ->orderBy($order)
-                        ->groupBy($groupBy)
-                        ->limit($limit, $offset)
-                        ->get()
-                        ->getResult();
-
-        return $data;
-    }
-
-    
-    public function getSummary($where = [])
-    {
-        return $this->db->table('daiq_list_iqab li')
-                        ->select("q.tingkat_iqab, tanggal, count(li.id) jumlah")
-                        ->join("daiq_iqab q","q.id=li.id_iqab")
-                        ->where($where)
-                        ->groupBy('LEFT(tanggal, 7), tingkat_iqab')
-                        ->orderBy('tanggal, tingkat_iqab')
-                        ->get()
-                        ->getResultObject();
     }
 }

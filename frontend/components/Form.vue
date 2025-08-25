@@ -668,7 +668,7 @@ export default {
             // console.log(d.nama_kolom, d.default, d.input)
             vm.form[d.nama_kolom] = vm.isEmpty(d.default) ? (d.input == 'array' ? [] : '') : d.default;
             vm.errors[d.nama_kolom] = d.input == 'array' ? [] : '';
-            vm.original[d.nama_kolom] = false;
+            vm.original[d.nama_kolom] = this.showOriginal;
             if (d.input == 'file') {
               vm.links[d.nama_kolom] = '';
             }

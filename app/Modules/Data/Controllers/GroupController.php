@@ -19,22 +19,9 @@ class GroupController extends BaseDataController
         $this->modelAnggota = model('GroupAnggotaModel');
     }
 
-    public function index()
+    public function index($return = TRUE)
     {
-        $where = $this->request->getGetPost('where') ?? [];
-        $or = $this->request->getGetPost('or') ?? [];
-        $in = $this->request->getGetPost('in') ?? [];
-        $order = $this->request->getGetPost('order') ?? [];
-        $limit = $this->request->getGetPost('limit') ?? 5;
-        $offset = $this->request->getGetPost('offset') ?? 0;
-
-        $order = implode(",", $order);
-        $user = userdata();
-        $role = $user->role ?? '';
-        $id_anggota = $user->id;
-        $id_unit = $user->id_unit;
-        $data = $this->model->getAll($where, $or, $in, 'type desc, nama asc', $limit, $offset);
-        // var_dump($this->model->getLastQuery());
+        $data = parent::index(true);
 
         return $this->respondCreated($this->grouping_data($data));
     }
@@ -49,7 +36,7 @@ class GroupController extends BaseDataController
                 'id_anggota'    => $val->id_anggota,
                 'type'    => $val->type,
             ];
-        }, $this->modelAnggota->getAll(['id_group' => $id]) );
+        }, $this->modelAnggota->getAll(whereAnd:['id_group' => $id], order: 'nama asc') );
 
         return $this->respondCreated(($data));
     }

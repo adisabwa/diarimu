@@ -18,22 +18,6 @@ class BasePageController extends BaseDataController
         $this->modelAnggota = model('AnggotaModel');
     }
 
-    public function index()
-    {
-        $where = $this->request->getGetPost('where') ?? [];
-        $whereOr = $this->request->getGetPost('or') ?? [];
-        $whereIn = $this->request->getGetPost('in') ?? [];
-        $limit = $this->request->getGetPost('limit') ?? 5;
-        $offset = $this->request->getGetPost('offset') ?? 0;
-        $grouping = $this->request->getGetPost('grouping') ?? ['id'];
-
-        $data = $this->model->getAll($where,$whereOr,'tanggal desc, id',
-        $limit, $offset, $grouping, $whereIn);
-
-        return $this->respondCreated($data);
-
-    }
-
     public function get_before()
     {
         $postData = $this->request->getGetPost();
@@ -126,8 +110,8 @@ class BasePageController extends BaseDataController
                     ->setTitle('Ashoi-Mu');
         $data = $this->createChart(return_data: true);
         $columns = excelColumnRange('A', 'ZZ');
-        return $this->respondCreated($data);
-        return;
+        // return $this->respondCreated($data);
+        // return;
         $activeWorksheet = $workbook->getActiveSheet();
         $activeWorksheet->mergeCells('A1:A2');
         $activeWorksheet->setCellValue('A1', 'No');

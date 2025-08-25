@@ -43,7 +43,6 @@ class Autoload extends AutoloadConfig
         APP_NAMESPACE => APPPATH, // For custom app namespace
         'Config'      => APPPATH . 'Config',
         'Modules\Quran'      => APPPATH . 'Modules/Quran',
-        'Modules\Psb'      => APPPATH . 'Modules/Psb',
         'Modules\Data'      => APPPATH . 'Modules/Data',
         'Modules\Infaq'      => APPPATH . 'Modules/Infaq',
         'Modules\Sholat'      => APPPATH . 'Modules/Sholat',

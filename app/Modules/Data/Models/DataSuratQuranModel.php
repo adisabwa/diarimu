@@ -2,32 +2,17 @@
 
 namespace Modules\Data\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class DataSuratQuranModel extends Model
+class DataSuratQuranModel extends BaseModel
 {
-    protected $table         = 'mu__surat_quran';
-    protected $primaryKey = 'id';
-
-    protected $useAutoIncrement = true;
-    protected $returnType    = 'object';
-
-    protected $protectFields = false;
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    protected function initialize()
+    public function __construct()
     {
+        parent::__construct();
 
+        $this->table = 'mu__surat_quran';
     }
 
-    public function getTableName()
-    {
-        return $this->table;
-    }
-    
     public function getOptions($where = [])
     {
       $options = [];
@@ -52,7 +37,7 @@ class DataSuratQuranModel extends Model
       }
       return $options;
     }
-
+    
     public function countAyat($surat_mulai, $ayat_mulai, $surat_selesai, $ayat_selesai)
     {
       $total_ayat = $this->db->table($this->table.' p')

@@ -2,29 +2,44 @@
 
 namespace Modules\Data\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class GroupModel extends Model
+class GroupModel extends BaseModel
 {
-    protected $table         = 'mu_group';
-    protected $primaryKey = 'id';
-
-    protected $useAutoIncrement = true;
-    protected $returnType    = 'object';
-
-    protected $protectFields = false;
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    protected function initialize()
+    public function __construct()
     {
+        parent::__construct();
 
+        $this->table = 'mu_group';
+        $this->selects = ['id'];
+        $this->relations = [
+            'id_group' => [
+                'foreign_key' => 'id_group',
+                'table' => 'mu_group_anggota',
+                'alias' => 'ga',
+                'selects' => [
+                    '*',
+                    'id id_ga',
+                ]
+            ],
+        ];
     }
 
+    public function getOptions($where = [])
+    {
+      return $this->getOptionsData($where, function($d) { return $d->nama_group; });
+    }
     
-    public function getAll($whereAnd = [], $whereOr = [], $whereIn = [], $order = '', $limit = 0, $offset = 0)
+    public function getAll(
+        array $whereAnd = [], 
+        array $whereOr = [], 
+        array $whereIn = [], 
+        array $orWhereIn = [], 
+        array $groupBy = [],  
+        string $order = '', 
+        int $limit = 0, 
+        int $offset = 0,  
+        $relations = NULL)
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
@@ -43,9 +58,9 @@ class GroupModel extends Model
         }
           $subQuery = $subQuery->groupBy('g.id')
                               ->limit($limit, $offset);
-
+        // var_dump($subQuery->getCompiledSelect());
         $data = $this->db->table('mu_group_anggota ga')
-                    ->select("ga.*, g.*, ga.id id_ga, s.nama")
+                    ->select("ga.id_group, ga.id_anggota, ga.type, g.*, ga.id id_ga, s.nama, '' as tanggal")
                     ->join("({$subQuery->getCompiledSelect()}) g",'ga.id_group=g.id')
                     ->join('mu_anggota s','ga.id_anggota=s.id')
                     // ->where($whereAnd)
@@ -57,41 +72,5 @@ class GroupModel extends Model
                     ->getResultObject();
 
         return $data;
-    }
-
-    
-    public function getData($id)
-    {
-        $data = $this->db->table('mu_group_anggota ga')
-                    ->select("ga.*, g.*, ga.id id_ga, s.nama")
-                    ->join("mu_group g",'ga.id_group=g.id')
-                    ->join('mu_anggota s','ga.id_anggota=s.id')
-                    ->where("g.id", $id)
-                    ->get()
-                    ->getResultObject();
-
-        return $data;
-    }
-
-    public function getTableName()
-    {
-        return $this->table;
-    }
-    
-    public function getOptions($where = [])
-    {
-      $options = [];
-      $data = $this->db->table('mu_group p')
-                    ->select('*')
-                    ->where($where)
-                    ->get()
-                    ->getResult();
-      foreach ($data as $key => $d) {
-        $options[] = (object)[
-          'value' => "$d->id",
-          'label' => "$d->nama_group"
-        ];
-      }
-      return $options;
     }
 }

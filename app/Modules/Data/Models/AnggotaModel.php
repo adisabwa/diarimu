@@ -2,31 +2,45 @@
 
 namespace Modules\Data\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class AnggotaModel extends Model
+class AnggotaModel extends BaseModel
 {
-    protected $table         = 'mu_anggota';
-    protected $primaryKey = 'id';
-
-    protected $protectFields = false;
-    protected $useAutoIncrement = true;
-    // protected $returnType    = \App\Entities\Prodi::class;
-    protected $returnType    = 'object';
-
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    protected function initialize()
+    public function __construct()
     {
+        parent::__construct();
 
+        $this->table = 'mu_anggota';
+        $this->selects = ['id id_anggota'];
+        $this->relations = [
+            'id_unit' => [
+                'foreign_key' => 'id_unit',
+                'table' => 'mu__unit_kerja',
+                'type' => 'left',
+                'selects' => [
+                    'unit_kerja',
+                    'bidang',
+                ]
+            ],
+            'id_anggota' => [
+                'foreign_key' => 'id',
+                'local_key' => 'id_anggota',
+                'table' => 'mu_group_anggota',
+                'type' => 'left',
+                'conditions' => [
+                  'type' => 'mentor',
+                ],
+                'selects' => [
+                    'id_group',
+                    "IF({f}.id IS NULL,'0','1') is_mentor",
+                ]
+            ],
+        ];
     }
-    
-    public function getTableName()
+
+    public function getOptions($where = [])
     {
-        return $this->table;
+      return $this->getOptionsData($where, function($d) { return "$d->nama ($d->unit_kerja)"; });
     }
 
     public function login($email = '', $no_hp = '', $password = '')
@@ -68,60 +82,6 @@ class AnggotaModel extends Model
         $data->role = 'user';
       // var_dump($this->db->getLastQuery(), $data);        
         return $data;
-    }
-    
-    public function getAll($whereAnd = [], $whereOr = [], $order = '')
-    {
-        $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
-        $whereOr = empty($whereOr) ? '1=1' : $whereOr;
+    }    
 
-        $data = $this->db->table('mu_anggota i')
-                    ->select("i.*, i.id id_anggota, uk.unit_kerja, uk.bidang, ga.id_group, IF(ga.id IS NULL,'0','1') is_mentor")
-                    ->join("mu_group_anggota ga","ga.id_anggota=i.id AND ga.type='mentor'","left")
-                    ->join("mu__unit_kerja uk","uk.id=i.id_unit","left")
-                    ->where($whereAnd)
-                    ->groupStart()
-                        ->orWhere($whereOr)
-                    ->groupEnd()
-                    ->orderBy($order)
-                    ->get()
-                    ->getResultObject();
-
-        return $data;
-    }
-
-    public function getOptions($where = [])
-    {
-      $options = [];
-      $data = $this->db->table('mu_anggota p')
-                    ->select('*')
-                    ->where($where)
-                    ->orderBy('nama')
-                    ->get()
-                    ->getResult();
-                    
-      foreach ($data as $key => $d) {
-        $options[] = (object)[
-          'value' => "$d->id",
-          'label' => "$d->nama"
-        ];
-      }
-      return $options;
-    }
-    
-    
-    public function getData($id)
-    {
-     
-      $data = $this->db->table('mu_anggota i')
-      ->select("i.*, i.id id_anggota, uk.unit_kerja, uk.bidang, ga.id_group, IF(ga.id IS NULL,'0','1') is_mentor")
-                  ->join("mu_group_anggota ga","ga.id_anggota=i.id AND ga.type='mentor'","left")
-                    ->join("mu__unit_kerja uk","uk.id=i.id_unit","left")
-                  ->where("i.id", $id)
-                  ->groupBy('i.id')
-                  ->get()
-                  ->getRow();
-                  
-      return $data;
-    }
 }

@@ -2,50 +2,19 @@
 
 namespace Modules\Data\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class GroupActivityModel extends Model
+class DataUnitModel extends BaseModel
 {
-    protected $table         = 'mu_group_activity';
-    protected $primaryKey = 'id';
-
-    protected $useAutoIncrement = true;
-    protected $returnType    = 'object';
-
-    protected $protectFields = false;
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    protected function initialize()
+    public function __construct()
     {
+        parent::__construct();
 
+        $this->table = 'mu_group_activity';
     }
 
-    
-    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0)
+    public function getOptions($where = [])
     {
-        $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
-        $whereOr = empty($whereOr) ? '1=1' : $whereOr;
-
-        $data = $this->db->table('mu_group_activity qb')
-                    ->select("qb.*")
-                    ->where($whereAnd)
-                    ->groupStart()
-                        ->orWhere($whereOr)
-                    ->groupEnd()
-                    ->orderBy($order)
-                    ->limit($limit, $offset)
-                    ->get()
-                    ->getResultObject();
-
-        return $data;
+      return $this->getOptionsData($where, function($d) { return $d->unit_kerja; });
     }
-
-    public function getTableName()
-    {
-        return $this->table;
-    }
-
 }

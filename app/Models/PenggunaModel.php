@@ -1,46 +1,20 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Data\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class PenggunaModel extends Model
+class PenggunaModel extends BaseModel
 {
-    protected $table         = 'mu_anggota';
-    protected $primaryKey = 'id';
-
-    protected $useAutoIncrement = true;
-    // protected $returnType    = \App\Entities\Pengguna::class;
-    protected $returnType    = 'object';
-
-    protected $protectFields = false;
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    // protected $db;
-
-    protected function initialize()
+    public function __construct()
     {
-        // $this->db = $this->builder();
+        parent::__construct();
+
+        $this->table = 'mu_anggota';
     }
-    
-    
+
     public function getOptions($where = [])
     {
-      $options = [];
-      $data = $this->where($where)
-                    ->get()
-                    ->getResult();
-                    
-      foreach ($data as $key => $d) {
-        $options[] = (object)[
-          'value' => "$d->id",
-          'label' => "$d->nama"
-        ];
-      }
-      return $options;
+      return $this->getOptionsData($where, function($d) { return $d->nama; });
     }
-
 }
