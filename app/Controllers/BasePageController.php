@@ -46,8 +46,7 @@ class BasePageController extends BaseDataController
         return $this->respondCreated(get_date_interval($tanggal ?? $now, $now));
     }
 
-    
-    public function createChart($attr = 'data_chart')
+    public function createChart(string $attr = 'data_chart', bool $return_data = false)
     {
         $postData = $this->request->getGetPost();
         $type = $postData['tipe'] ?? 'week';
@@ -109,6 +108,63 @@ class BasePageController extends BaseDataController
         
         // $datasets = array_values($datasets);
         $labels = array_values($labels);
-        return $this->respondCreated(compact('labels','datasets','max','min'));
+        $compact = compact('labels','datasets','max','min');
+        if ($return_data)
+            return $compact;
+        return $this->respondCreated($compact);
+    }
+
+    public function download(
+        string $filename = 'DATA-REKAP',
+        string $data_label = 'Tanggal / Jumlah Ayat'
+    )
+    {
+        // var_dump($filename);exit;
+        $workbook = new Spreadsheet();
+        $workbook->getProperties()
+                    ->setCreator('Codev-App')
+                    ->setTitle('Ashoi-Mu');
+        $data = $this->createChart(return_data: true);
+        $columns = excelColumnRange('A', 'ZZ');
+        return $this->respondCreated($data);
+        return;
+        $activeWorksheet = $workbook->getActiveSheet();
+        $activeWorksheet->mergeCells('A1:A2');
+        $activeWorksheet->setCellValue('A1', 'No');
+        $activeWorksheet->mergeCells('B1:B2');
+        $activeWorksheet->setCellValue('B1', 'Nama');
+        $activeWorksheet->mergeCells('C1:'.$columns[count($data['labels'])].'1');
+        $activeWorksheet->setCellValue('C1', $data_label);
+        foreach ($data['labels'] as $key => $label) {
+            $activeWorksheet->setCellValue($columns[$key+2].'2', $label);
+        }
+        $row = 3;
+        foreach ($data['datasets'] as $key => $stat) {
+            $activeWorksheet->setCellValue('A'.$row, $key+1);
+            $activeWorksheet->setCellValue('B'.$row, $stat->label);
+            foreach ($stat->data as $k => $d) {
+                $activeWorksheet->setCellValue($columns[$k+2].$row, $d);
+            }
+            $row++;
+        }
+
+        for ($i = 'A'; $i !=  $activeWorksheet->getHighestColumn(); $i++) {
+            $activeWorksheet->getColumnDimension($i)->setAutoSize(TRUE);
+        }
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$filename.'.xls"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+        $writer = IOFactory::createWriter($workbook, 'Xls');
+        // ob_end_clean();
+        $writer->save('php://output');
+
     }
 }

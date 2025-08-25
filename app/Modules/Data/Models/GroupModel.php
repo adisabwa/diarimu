@@ -24,19 +24,24 @@ class GroupModel extends Model
     }
 
     
-    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0)
+    public function getAll($whereAnd = [], $whereOr = [], $whereIn = [], $order = '', $limit = 0, $offset = 0)
     {
         $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
         $whereOr = empty($whereOr) ? '1=1' : $whereOr;
 
         $subQuery =  $this->db->table('mu_group g')
-                              ->select('g.*')
+                              ->select('g.*, u.unit_kerja, u.bidang')
                               ->join('mu_group_anggota ga','ga.id_group=g.id')
+                              ->join('mu__unit_kerja u','g.id_unit=u.id','left')
                               ->where($whereAnd)
                               ->groupStart()
                                   ->orWhere($whereOr)
-                              ->groupEnd()
-                              ->groupBy('g.id')
+                              ->groupEnd();
+
+        foreach ($whereIn as $key => $value) {
+           $subQuery = $subQuery->whereIn($key, $value);
+        }
+          $subQuery = $subQuery->groupBy('g.id')
                               ->limit($limit, $offset);
 
         $data = $this->db->table('mu_group_anggota ga')

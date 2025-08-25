@@ -70,7 +70,7 @@
           </teleport>
         </div>
       </div>
-      <div class="absolute w-full h-[285px] left-0 top-[0px] z-[0]
+      <div class="absolute w-full h-[285px] left-0 top-[0px] z-[0] border-0
         bg-[length:345px] bg-repeat bg-bottom"
         :style="{
           backgroundImage:`url('${$baseUrl}/assets/images/dashboard.png')`,

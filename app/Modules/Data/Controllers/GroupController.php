@@ -23,6 +23,7 @@ class GroupController extends BaseDataController
     {
         $where = $this->request->getGetPost('where') ?? [];
         $or = $this->request->getGetPost('or') ?? [];
+        $in = $this->request->getGetPost('in') ?? [];
         $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 5;
         $offset = $this->request->getGetPost('offset') ?? 0;
@@ -32,7 +33,7 @@ class GroupController extends BaseDataController
         $role = $user->role ?? '';
         $id_anggota = $user->id;
         $id_unit = $user->id_unit;
-        $data = $this->model->getAll($where, $or, 'type desc, nama asc', $limit, $offset);
+        $data = $this->model->getAll($where, $or, $in, 'type desc, nama asc', $limit, $offset);
         // var_dump($this->model->getLastQuery());
 
         return $this->respondCreated($this->grouping_data($data));
@@ -62,6 +63,9 @@ class GroupController extends BaseDataController
             if (empty($results[$ind])) {
                 $results[$ind] = (object) [
                     'id' => $d->id,
+                    'id_unit' => $d->id_unit,
+                    'unit_kerja' => $d->unit_kerja,
+                    'bidang' => $d->bidang,
                     'nama_group' => $d->nama_group,
                     'anggota' => [],
                     'show'  => false,

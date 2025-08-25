@@ -33,25 +33,29 @@
           [--button-color:theme(colors.teal.200)]
           font-sans max-h-screen mt-2
         "
+        nama-id="id_unit"
         :id-anggota="idAnggota"
         href="data/group"
         hrefDelete="data/group/delete"
-        box-class="px-2 mb-4"
+        box-class="px-1 mb-4"
         @edit-data="(({id}) => {
           dataId = id
           showAdd = true
         })"
         @delete-data="submittedData">
         <template #title="{ data }">
-          <div class="text-[16px] mb-1">
+          <div class="text-[16px] leading-[1.3]">
             Kel. {{ data.nama_group }}
           </div>
-          <el-divider class="m-0"/>
+          <div class="text-[13px] leading-[1.3] mt-1 font-semibold">
+            Unit {{ data.unit_kerja }}
+          </div>
+          <el-divider class="my-2"/>
         </template>
         <template #content="{ data }">
           <div class="text-[13px] font-semibold
             flex items-center justify-between
-            py-1 pb-2
+            pb-2
             "
             @click="data.show = !data.show">
             <div>
@@ -59,7 +63,7 @@
               <span class="italic"> ( {{data.anggota.filter(r => r.type == 'mentor').length }} Mentor & 
               {{ data.anggota.filter(r => r.type == 'anggota').length }} Anggota )</span>
             </div>
-            <icons :icon="data.show ? 'fe:arrow-down' : 'fe:arrow-up'" 
+            <icons :icon="data.show ? 'fe:arrow-up' : 'fe:arrow-down'" 
               class="ml-1 text-[12px]"/>
           </div>
           <div :class="['animate bg-white px-2  overflow-hidden',
@@ -83,12 +87,12 @@
     <teleport to="body">
       <el-dialog v-model="showAdd" draggable
         :append-to-body="true"
-        class="w-fit max-w-[80%] py-3
+        class="w-fit max-w-[90%] max-sm:w-[90%] py-3
           bg-gradient-to-tr from-white from-50% to-teal-100"
         header-class="font-bold text-[16px]"
         body-class="text-[14px]">
         <template #header>
-          <div>Data Shadaqah</div>
+          <div>Data Kelompok</div>
         </template>
         <form-comp ref="formGroup"
           class="[&_*]:rounded-[15px]"
@@ -203,6 +207,8 @@ export default {
             var res = result.data;
             this.dataId = -1
             this.fields = this.fillAndAddObjectValue(this.fields, res)
+            this.fields.id_unit.default = this.idAnggota
+            this.fields.id_unit.readonly = true
             // console.log(this.fields)
             this.formKey++
             this.loading = false
@@ -216,7 +222,7 @@ export default {
   },
   created: function() {
     this.getInitial()
-    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
+    this.idAnggota = useAuthStore()?.loggedUser?.id_unit
   },
   mounted(){
   }

@@ -1,17 +1,19 @@
 <template>
   <div ref="floatingSelect">
     <el-input v-model="labelModel" :placeholder="placeholder" 
+      v-show="showInput"
       :clearable="clearable"
       :size="size"
+      :readonly="readonly"
       @clear="clearData"
-      @click="showModal = true"
+      @click="showSelect = true && !readonly"
       :input-style="{color: multiple ? 'lightgray' : 'black'}">
       <template #prepend v-if="prefix">
         {{ prefix }}
       </template>
     </el-input>
     <teleport to="body">
-      <el-dialog v-model="showModal"
+      <el-dialog v-model="showSelect"
         :class="['min-w-[250px] max-w-[80%] p-0 py-4 mt-28',
           type == 'scroll' ? 'mt-40' : '',
         ]"
@@ -75,16 +77,19 @@ export default {
     size:{type:[String], default:'',},
     filterable:{type:[Boolean], default:false,},
     clearable:{type:[Boolean], default:false,},
+    readonly:{type:[Boolean], default:false,},
     multiple:{type:[Boolean], default:false,},
     allowCreate:{type:[Boolean], default:false,},
+    showInput:{type:[Boolean], default:true,},
     options:{type:[Array, Object], default:[],},
     type:{type:[String], default:'select',},
     prefix:{type:[String], default:'',},
+    emptyValue:{type:[String], default:'',},
   },
   data: function() {
     return {
       vModel:'',
-      showModal:false,
+      showSelect:false,
       searchData:'',
       labelModel:'',
       listOptions:[],
@@ -115,7 +120,7 @@ export default {
     },  
   },
   watch:{
-    showModal:{
+    showSelect:{
       immediate: true,
         async handler(val) {
         // console.log(val, this.vModel)
@@ -144,9 +149,13 @@ export default {
     vModel:{
       deep: true,
       handler(val) {
-        // console.log('model', val)
-        this.selectOption(val)
-        this.$emit('update:value', val)
+        if (val === null)
+          this.vModel = ''
+        else {
+          // console.log('model', val)
+          this.selectOption(val)
+          this.$emit('update:value', val)
+        }
       },
     },
     value: {
@@ -167,6 +176,13 @@ export default {
         opt.forEach(d => {
           d.name = pre + ' ' + d.label
         })
+        if (this.emptyValue){
+          opt.unshift({
+            value:'',
+            label:'Semua ' + this.placeholder
+          })
+        }
+        // console.log(opt)
         this.listOptions = opt
         this.selectOption(this.vModel)
       }
@@ -196,6 +212,9 @@ export default {
       }
       // console.log('selectOption', this.labelModel)
     },
+    openSelect(){
+      this.showSelect = true
+    },
     clickData(val, show = false){
       // console.log('clickData', val)
       if (this.multiple) {
@@ -208,7 +227,7 @@ export default {
       } else {
         this.vModel = val
       }
-      this.showModal = show
+      this.showSelect = show
     },
     isClick(val){
       // console.log('isClick', val)

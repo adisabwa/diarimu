@@ -33,6 +33,7 @@ $routes->group('quran/baca', [
     // $routes->add('upload', [Quran::class, 'upload']);
     $routes->add('delete/(:any)', [Quran::class, 'delete/$1']);
     $routes->add('dashboard', [Quran::class, 'dashboard']);
+    $routes->add('download', [Quran::class, 'download']);
     // $routes->add('status/(:any)/(:any)', [Quran::class, 'status/$1/$2']);
     // $routes->add('status_many', [Quran::class, 'status_many']);
     // $routes->add('delete_many', [Quran::class, 'delete_many']);

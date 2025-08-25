@@ -2,7 +2,7 @@
 	<div 
     ref="scrollContainer"
 		v-infinite-scroll="loadingData"
-		class="min-h-[200px] max-h-[50vh] overflow-y-auto px-6 "
+		class="min-h-[200px] max-h-[50vh] overflow-y-auto px-4 "
 		:infinite-scroll-disabled="disabledScroll"
 		infinite-scroll-delay="1000"
 		infinite-scroll-distance="10">
@@ -46,7 +46,7 @@
 					animate
 					h-full w-fit flex items-center`,
           s.showButton ? 'translate-x-0' : 'translate-x-[125px]']" 
-					v-if="['user','super-admin'].includes(user.role)">
+					v-if="rolesEdit.length == 0 || rolesEdit.includes(user.role)">
 					<el-button
 						class="rounded-full h-[40px] w-[40px]
 						border border-solid border-[var(--border-color)]
@@ -93,8 +93,13 @@ export default {
       type:[String, Number],
       default:'',
     },
+    params:{
+      type:Object,
+      default:()=>{},
+    },
     boxClass:{type:String,default:''},
     groupBy:{type:Array, default:[]},
+    rolesEdit:{type:Array, default:[]},
     orderBy:{type:Array, default:['tanggal desc','nama','id desc']},
     datas:{type:[Array, Object], default:[]}
   },

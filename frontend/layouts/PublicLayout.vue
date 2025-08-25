@@ -1,12 +1,8 @@
 <template>
   <div id="main-layout" class="bg-white">
     <div class="animate fixed top-0 z-50 w-full">
-<<<<<<< HEAD
       <el-header class="h-full w-full relative p-0 "
         @click="$router.push({ name: 'default' })">
-=======
-      <el-header class="h-full w-full relative p-0 " @click="$router.push({name:'default'})">
->>>>>>> 05393b39c1c87cdac11296edf22a919f5e7744b2
         <div class="add-play h-full w-full bg-[#11716d]
           animate in [--transY:-60px]"></div>
         <div class="add-play h-[90px] w-full 

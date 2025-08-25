@@ -1,11 +1,16 @@
+<style lang="postcss" scoped>
+:deep(.required) {
+  @apply after:content-['*'] after:text-red-600 after:ml-1 after:text-[120%]
+}
+</style>
 <template>
 	<div class="">
     <el-form :label-width="labelWidth" :label-position="labelPosition" v-loading="saving" :inline="inline"
       :class="[gridClass,formClass]">
     <slot name="before" :errors="errors" :form="form" :fields="fieldsData"></slot>
       <template  v-for="(field, ind) in fieldsData">
-        <el-form-item :class="['grow-0', gridItemClass(field?.span), formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
-          v-show="resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom)"
+        <el-form-item :class="['grow-0', gridItemClass(field?.colspan), formItemClass, formItemClass[field.nama_kolom], formItemClass['all']]"
+          v-show="field.hidden != '1' && (resolvedShowColumns.length > 0 ? resolvedShowColumns.includes(field.nama_kolom) : !resolvedPassColumns.includes(field.nama_kolom))"
           :error="field.input == 'array' ? '' : errors[field.nama_kolom]">
           <template #label v-if="showLabel">
             <span :class="[field.required == '1' ? 'required' : '','leading-[1.5] mt-2', labelClass]"> {{ field.label }} </span>
@@ -18,19 +23,24 @@
             <template v-if="field.input == 'input' || isEmpty(field.input)">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 :class="['w-full',inputClass]" 
-                @change="searchData(ind); changedValue(field.nama_kolom)" @input="form[field.nama_kolom] = runFunction(field.function_input, form[field.nama_kolom])"
+                @change="searchData(ind); changedValue(field.nama_kolom)" @input="form[field.nama_kolom] = runFunction({
+                  func:field.function_input, 
+                  data:form[field.nama_kolom]
+                })"
                 :size="size"
+                :readonly="field.readonly"
                 :style="{width:field.width_input + ' !important'}">
                 <template #prepend v-if="!isEmpty(field.prepend)"> {{ field.prepend }}</template>
                 <template #apppend v-if="!isEmpty(field.apppend)"> {{ field.append }}</template>  
               </el-input>
             </template> 
-            <template v-else-if="field.input == 'password'">
+              <template v-else-if="field.input == 'password'">
               <el-input v-model="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 :class="['w-full in-password',inputClass]" 
                 type="password" show-password
                 @change="changedValue(field.nama_kolom)"
                 :size="size"
+                :readonly="field.readonly"
                 :style="{width:field.width_input + ' !important'}">
                 <template #prefix>
                   <icons icon="material-symbols:lock-outline" />
@@ -42,6 +52,7 @@
                 @change="changedValue(field.nama_kolom)"
                 :class="['w-full',inputClass]" 
                 :size="size"
+                :readonly="field.readonly"
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
             <template v-else-if="field.input == 'number'">
@@ -50,6 +61,7 @@
                 type="number"
                 @change="changedValue(field.nama_kolom)"
                 :size="size"
+                :readonly="field.readonly"
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
             <template v-else-if="field.input == 'textarea'">
@@ -58,17 +70,20 @@
                 type="textarea" row="3"
                 @change="changedValue(field.nama_kolom)"
                 :size="size"
+                :readonly="field.readonly"
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
             <template v-else-if="['select','select-multiple','scroll'].includes(field.input)">
               <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label}`" 
-                filterable clearable
+                :filterable="field?.filterable ?? true" :clearable="field?.clearable ?? true"
                 :allow-create="field.allow_create"
                 :class="['w-full',inputClass]" 
                 :size="size"
+                :readonly="field.readonly"
+                :empty-value="field.emptyValue"
                 @change="changedValue(field.nama_kolom)"
-                :style="{width:(field.width_input.split('-')[1] ?? '') + ' !important'}"  
-                :type="field.input.split('-')[0]"
+                :style="{width:((field.width_input ?? '').split('-')[1] ?? '') + ' !important'}"  
+                :type="(field.input ?? '').split?.('-')[0]"
                 :options="field.options"
                 :prefix="field.prepend">
                 <template v-if="field.allow_add" #footer>
@@ -101,23 +116,28 @@
               </teleport>
             </template>
             <template v-else-if="field.input.includes('select-double')">
+              <!-- {{ field }} -->
               <floating-select v-model:value="field.parentSelect" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label1}`" 
                 :class="['w-full',inputClass]" 
-                filterable clearable
+                :filterable="field?.filterable ?? true" :clearable="field?.clearable ?? true"
                 @change="form[field.nama_kolom] = null; changedValue(field.nama_kolom)"
                 :size="size"
+                :readonly="field.readonly"
+                :empty-value="field.emptyValue"
                 :options="field.options"
-                :type="field.input.split('/')[1]?.split('-')[0]"
-                :style="{width:(field.width_input.split('-')[0] ?? '') + ' !important'}"
+                :type="(field.input ?? '').split('/')[1]?.split('-')[0]"
+                :style="{width:((field.width_input ?? '').split('-')[0] ?? '') + ' !important'}"
                 :prefix="field.prepend1">
               </floating-select>
               <floating-select v-model:value="form[field.nama_kolom]" :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Pilih ${field.label2}`" 
-                filterable clearable
+                :filterable="field?.filterable ?? true" :clearable="field?.clearable ?? true"
                 :class="['w-full',inputClass]" 
                 @change="changedValue(field.nama_kolom)"
                 :size="size"
-                :type="field.input.split('/')[1]?.split('-')[1]"
-                :style="{width:(field.width_input.split('-')[1] ?? '') + ' !important'}"  
+                :readonly="field.readonly"
+                :empty-value="field.emptyValue"
+                :type="(field.input ?? '').split('/')[1]?.split('-')[1]"
+                :style="{width:((field.width_input ?? '').split('-')[1] ?? '') + ' !important'}"  
                 :options="field.options[field.parentSelect]?.options"
                 :prefix="field.prepend2">
                 <template v-if="field.allow_add" #footer>
@@ -152,6 +172,7 @@
             <template v-else-if="field.input=='radio'">
               <el-radio-group v-model="form[field.nama_kolom]"
                 :class="[inputClass]" 
+                :readonly="field.readonly"
                 @change="changedValue(field.nama_kolom)"
                 :style="{width:field.width_input + ' !important'}">
                 <template 
@@ -167,8 +188,9 @@
                 v-model:value="form[field.nama_kolom]"
                 value-format="YYYY-MM-DD"
                 format="DD MMMM YYYY"
-                clearable 
+                :clearable="field?.clearable ?? true" 
                 :size="size"
+                :readonly="field.readonly"
                 @change="changedValue(field.nama_kolom)"
                 :style="{width:field.width_input + ' !important'}"
               />
@@ -178,12 +200,13 @@
                 :placeholder="!isEmpty(field.placeholder) ? field.placeholder : `Masukkan ${field.label}`"
                 :class="['w-full',inputClass]" 
                 v-model="form[field.nama_kolom]"
-                clearable 
+                :clearable="field?.clearable ?? true" 
                 value-format="YYYY-MM-DD"
                 format="DD MMMM YYYY"
                 @change="changedValue(field.nama_kolom)"
                 @blur="changeData"
                 :size="size"
+                :readonly="field.readonly"
                 :style="{width:field.width_input + ' !important'}"/>
             </template>
             <template v-else-if="field.input == 'file'">
@@ -213,9 +236,9 @@
               </div>
             </template>
             <template v-else-if="field.input == 'array'">
-              <div>
+              <div class="w-full">
                 <div v-for="(recData, ind) in form[field.nama_kolom]"
-                  class="flex flex-col gap-y-0"
+                  class="flex flex-col gap-y-0 relative"
                   :style="{width:field.width_input + ' !important'}">
                   <form-comp ref="formItem"
                     class="mb-0"
@@ -232,12 +255,12 @@
                     input-class="[&_*]:rounded-[15px]"
                     :show-required-text="false">
                   </form-comp>  
-                  <div class="ml-3 mt-1 mb-2 flex items-baseline">
+                  <div class="ml-3 mt-2 mb-2 flex items-baseline">
                     <el-button text class="text-sky-500
                       p-0 h-auto text-[12px]"
                       @click="() => {
                         let array = form[field.nama_kolom]
-                        console.log(array, ind)
+                        // console.log(array, ind)
                         form[field.nama_kolom].splice(ind, 0, 
                           JSON.parse(JSON.stringify(array[ind]))
                         )
@@ -258,7 +281,7 @@
         </el-form-item>
       </template>
       <slot :errors="errors" :form="form" :fields="fieldsData"></slot>
-      <div class="text-md mt-10" v-if="showRequiredText">
+      <div class="text-md mt-2 col-span-6" v-if="showRequiredText">
         <span class="text-red-500">)*</span> isian harus diisi
       </div>
     </el-form>
@@ -273,7 +296,7 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, Teleport } from 'vue'
 
 export default {
   name: 'Form',
@@ -386,7 +409,7 @@ export default {
       original:{},
       fieldsData:{},
       dataId:null,
-      fileList:[],
+      files:{},
       // initial:true,
     };
   },
@@ -416,7 +439,7 @@ export default {
     },
     formValue: {
       handler(newVal, oldVal) {
-        console.log('form-value', newVal)
+        // console.log('form-value', newVal)
       },
       deep: false, // Watch nested properties
     },
@@ -436,13 +459,14 @@ export default {
   },
   computed: {
     resolvedPassColumns(){
+      let pass = []
       if (Array.isArray(this.passColumns) && this.passColumns.length > 0)
-        return this.passColumns 
+        pass = [...pass, ...(this.passColumns ?? [])]
       
       if (Array.isArray(this?.sharedState?.passColumns) && this?.sharedState?.passColumns?.length > 0)
-        return this?.sharedState?.passColumns
-      
-       return []
+        pass = [...pass, ...(this?.sharedState?.passColumns ?? [])]
+
+       return pass
     },
     resolvedShowColumns(){
       if (Array.isArray(this.showColumns) && this.showColumns.length > 0)
@@ -459,6 +483,7 @@ export default {
   },
   methods: {
     gridItemClass(span){
+      // console.log(span)
       if (this.isEmpty(span))
         return 'col-span-' + this.cols
       else
@@ -505,7 +530,7 @@ export default {
       }   
     },
     async getData(where, changeId){
-      console.log('get-data', this.initial)
+      // console.log('get-data', this.initial)
       await this.settingFields();
       if (this.hrefGet == '') 
         return
@@ -544,7 +569,7 @@ export default {
           // console.log(psb, this.form)
         })
         .catch(err => {
-          console.log(err)
+          // console.log(err)
           this.saving = false;
           var res = err.response;
           var code = res.status;
@@ -560,8 +585,8 @@ export default {
       return (file, fileList) => {
         const rawFile = file.raw; // Access the raw file
         const refInstance = this.$refs[refName]; // Get the ref instance
-
-        this.fileList[refName] = rawFile
+        
+        this.files[refName] = rawFile
       };
     },
     resetOptions(ind, link){
@@ -584,16 +609,11 @@ export default {
       form.id = this.dataId
       form = this.convertNullToEmptyString(form)
       var formData = window.jsonToFormData(form); 
-      Object.values(this.fieldsData).forEach(d => {
-        if (d.input == 'file' && d.change) {
-          let fileRaw = this.fileList[d.nama_kolom]
-          if (fileRaw) {
-            formData.delete(d.nama_kolom) // Remove existing file if any
-            formData.append(d.nama_kolom, fileRaw)
-          }
-        }
-      })
-      console.log('form-data', form, formData)
+
+      Object.keys(this.files).forEach(key => {
+        formData.set(key, this.files[key]);
+      });
+
       this.$http.post(this.href, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       } )
@@ -613,7 +633,7 @@ export default {
           if (code == '400') {
             // Populating error message
             this.fillAndAddObjectValue(this.errors, res.data.messages);
-            console.log(res.data.messages, this.errors)
+            // console.log(res.data.messages, this.errors)
             if (this.showNotification)
               this.$notify.error({
                 title: 'Gagal',
@@ -640,11 +660,13 @@ export default {
         vm.links = {};
         vm.original = {};
         vm.fieldsData = {};
+        vm.files = {}
 
         Object.values(vm.fields).forEach(d => {
           if (d.from_user == '1' || d.from_user == undefined) {
             vm.fieldsData[d.nama_kolom] = d;
-            vm.form[d.nama_kolom] = d.default ?? (d.input == 'array' ? [] : '');
+            // console.log(d.nama_kolom, d.default, d.input)
+            vm.form[d.nama_kolom] = vm.isEmpty(d.default) ? (d.input == 'array' ? [] : '') : d.default;
             vm.errors[d.nama_kolom] = d.input == 'array' ? [] : '';
             vm.original[d.nama_kolom] = false;
             if (d.input == 'file') {
@@ -682,6 +704,6 @@ export default {
 }
 :deep(.el-form-item__error) {
   margin-top: 3px;
-  position: relative;
+  position: static;
 }
 </style>
