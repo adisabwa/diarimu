@@ -103,7 +103,7 @@
           href-get="data/group/get"
           @saved="submittedData" 
           :pass-columns="['mu_group_anggota']"
-          @error="saving=false"
+          @error="errorData"
           size="large"
           :show-submit="false"
           label-position="top"
@@ -144,13 +144,16 @@
                       }
                     })
                   }"/>
-                <ol class="text-[15px] italic pl-6 m-0 leading-[1.5] mt-2
+                <ol :id="'list-'+tipe" class="text-[15px] italic pl-6 m-0 leading-[1.5] mt-2
                   max-h-[150px] w-full overflow-y-auto">
                   <template v-for="(i, key) in form['mu_group_anggota']">
                     <li v-if="i?.type == tipe"
                       class="pl-1">
                       <div>
-                        {{ runFunction(null, i?.id_anggota, fields['mu_group_anggota']?.fields?.id_anggota?.options) }}
+                        {{ runFunction({
+                          data:i?.id_anggota, 
+                          options:fields['mu_group_anggota']?.fields?.id_anggota?.options
+                        }) }}
                       </div>
                       <div v-if="errors['mu_group_anggota']?.[key]?.id_anggota"
                         class="text-red-500 text-[12px]">
@@ -219,6 +222,14 @@ export default {
       this.showAdd = false
       setTimeout(this.$refs.listGroup?.getData?.(), 1000)
     },
+    errorData(){
+      console.log('error')
+      this.saving = false
+      setTimeout(() => {
+        this.scrollElement('#list-mentor','.text-red-500',0.5, 'top')
+        this.scrollElement('#list-anggota','.text-red-500',0.5, 'top')
+      },1000)
+    }
   },
   created: function() {
     this.getInitial()

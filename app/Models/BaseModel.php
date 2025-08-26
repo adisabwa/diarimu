@@ -30,7 +30,7 @@ class BaseModel extends Model
         parent::__construct();
 
         helper('auth');
-        $this->userId = userdata()->id_guru ?? (userdata()->id ?? 0) * -1; // adjust if using another auth system
+        $this->userId = userdata()->id ?? -1; // adjust if using another auth system
     }
 
     protected function initialize()

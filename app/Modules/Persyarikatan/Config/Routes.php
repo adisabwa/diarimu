@@ -12,6 +12,7 @@ $routes->group('persyarikatan', [
     $routes->add('dashboard', [Persyarikatan::class, 'dashboard']);    
     $routes->add('dashboard_count', [Persyarikatan::class, 'dashboard_count']);    
     $routes->add('get_before', [Persyarikatan::class, 'get_before']);
+    $routes->add('download', [Persyarikatan::class, 'download']);
     $routes->add('delete/(:any)', [Persyarikatan::class, 'delete/$1']);
 
 });

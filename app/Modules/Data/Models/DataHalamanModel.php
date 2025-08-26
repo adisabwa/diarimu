@@ -4,7 +4,7 @@ namespace Modules\Data\Models;
 
 use App\Models\BaseModel;
 
-class DataBacaanSholatModel extends BaseModel
+class DataHalamanModel extends BaseModel
 {
     public function __construct()
     {

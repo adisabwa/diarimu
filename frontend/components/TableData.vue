@@ -82,7 +82,11 @@
             </template>
             <template #default="scope">
               <template v-if="!field.hide_content">
-                {{ runFunction(field.function, isEmpty(field.view_kolom) ? scope.row[field.nama_kolom] : scope.row[field.view_kolom], field.options)  }}
+                {{ runFunction({
+                  _func:field.function, 
+                  data: isEmpty(field.view_kolom) ? scope.row[field.nama_kolom] : scope.row[field.view_kolom],
+                  options: field.options
+                })  }}
               </template>
               <slot :name="field.nama_kolom+'-inside'" :scope="scope" :field="field"></slot>
             </template>
@@ -274,7 +278,10 @@
                 for (var i = 0; i < keys.length; i++) {
                   let ind = keys[i]
                   let field = fields[ind]
-                  let text = vm.runFunction(field.function, data[field.nama_kolom])
+                  let text = vm.runFunction({
+                    func:field.function, 
+                    data:data[field.nama_kolom]
+                  })
                   if (text?.toLowerCase()?.includes(q)) {
                     exist = true
                     break
@@ -282,7 +289,10 @@
                 }
               } else {
                 let field = fields[vm.searchField]
-                let text = vm.runFunction(field.function, data[field.nama_kolom])
+                let text = vm.runFunction({
+                  func:field.function, 
+                  data:data[field.nama_kolom]
+                })
                 if (text?.toLowerCase()?.includes(q))
                   exist = true
               }

@@ -17,7 +17,6 @@ class QuranTarjamahModel extends BaseModel
                 'foreign_key' => 'id_anggota',
                 'table' => 'mu_anggota',
                 'selects' => [
-                    'id',
                     'nama',
                 ]
             ],
@@ -42,7 +41,7 @@ class QuranTarjamahModel extends BaseModel
 
     public function get_last($id_anggota)
     {
-        $data = $this->getDataWhere(whereAnd: [ 'id_anggota' => $id_anggota], order: 'qb.tanggal desc,surat_selesai desc,surat_mulai desc');
+        $data = $this->getDataWhere(whereAnd: [ 'id_anggota' => $id_anggota], order: 'tanggal desc,surat_selesai desc,surat_mulai desc');
         return $data;
     }
 }

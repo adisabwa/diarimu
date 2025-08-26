@@ -22,6 +22,11 @@
           </template>
         </el-select>
       </div>
+      <div class="mb-2" @click="downloadExcel">
+        <el-button size="small" type="success">
+          <icons icon="ri:file-excel-line" /> Unduh Excel
+        </el-button>
+      </div>
       <div class="mb-4 relative w-full min-h-[calc(100vh-400px)]">
         <div v-if="!isEmpty(statistic.datasets)"
           class="absolute w-full h-full overflow-auto">
@@ -73,6 +78,10 @@
         default:{},
       },
       href:{
+        type:[String],
+        default:null,
+      },
+      hrefDownload:{
         type:[String],
         default:null,
       },
@@ -137,6 +146,18 @@
           this.$refs.dateSelect.focus();
         });
       },
+      async downloadExcel(){
+        // return;
+        let dates = this.filter.dates.split('/')
+        let params = {
+          start:dates[0],
+          end:dates[1],
+          tipe:this.filter.tipe,
+          id_anggota:this.idAnggota
+        }
+        params = new URLSearchParams(params).toString();
+        this.openLink(this.$siteUrl + '/' + this.hrefDownload + '?' + params,'_blank')
+      },        
       async getChart(){
         // return;
         let dates = this.filter.dates.split('/')
@@ -163,7 +184,7 @@
                 position: 'bottom-right',
               });
             })
-      }
+        }
       },
       mounted(){
       this.filter.tipe = 'week'

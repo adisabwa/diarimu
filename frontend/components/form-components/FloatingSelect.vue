@@ -50,7 +50,10 @@
         :class="['flex justify-center items-center gap-4 p-4 rounded-xl ']">
           <div class="cursor-pointer relative h-[130px] w-[150px] mx-auto">
             <icons icon="fe:arrow-up" class="absolute z-[20] left-1/2 -translate-x-1/2"/>
-            <ScrollPicker :options="optionsFilter" v-model:modelValue="vModel" />
+            <ScrollPicker :options="optionsFilter" v-model:modelValue="vModel" 
+              @click="(val) => {
+                showSelect = false;
+              }"/>
             <icons icon="fe:arrow-down" class="absolute z-[20] bottom-0 left-1/2 -translate-x-1/2"/>
           </div>
         </div>
@@ -186,6 +189,12 @@ export default {
         this.listOptions = opt
         this.selectOption(this.vModel)
       }
+    },
+    optionsFilter(val){
+        // console.log('filter', val)
+      if (this.showSelect && this.type == 'scroll' && val.length > 0) {
+        this.vModel = val[0]?.value ?? ''
+      }
     }
   },
   methods:{
@@ -253,6 +262,10 @@ export default {
     if (this.multiple && !Array.isArray(this.vModel)) {
       this.vModel = []
     }
+    jquery('.vue-scroll-picker-layer-selection').on('click', function(){
+      console.log('click-select')
+      this.showSelect = falses
+    })
   },
 
 }

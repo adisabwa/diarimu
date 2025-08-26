@@ -22,7 +22,6 @@ class DataJuzModel extends BaseModel
           $option->ayat_mulai = $d->ayat_mulai;
           $option->surat_selesai = $d->surat_selesai;
           $option->ayat_selesai = $d->ayat_selesai;
-          $option->juz = $d->juz;
           $option->halaman_mulai = $d->halaman_mulai;
           $option->halaman_selesai = $d->halaman_selesai;
 

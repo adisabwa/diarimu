@@ -50,6 +50,7 @@
       <TableData v-if="showData == 'table'" 
         ref="TableData" 
         :href="hrefDashboard"
+        :hrefDownload="hrefDownload || (href + '/download')"
         :id-anggota="idAnggota"
         :add-options="{}"
         class="px-4"/>
@@ -74,6 +75,7 @@
       idAnggota:{type:[String, Number],default:'-1'},
       href:{type:String,default:''},
       hrefDashboard:{type:String,default:''},
+      hrefDownload:{type:String,default:''},
       hrefDelete:{type:String,default:''},
       addOptionsChart:{type:Object,default:{}},
       groupBy:{type:Array, default:[]},

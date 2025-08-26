@@ -192,6 +192,7 @@ let listFunction = {
   scrollElement(parent, destination, duration = 2, scroll = 'left', rerun = false, onDone = null){
     parent = jquery(parent)[0];
     let el = jquery(parent).find(destination)[0];
+    // console.log(parent, destination, jquery(parent).find(destination))
     if (el) {
       var pos = getOffsetWithinContainer(jquery(el), jquery(parent));
       let coordinate = scroll == 'left' ? pos.left : pos.top;

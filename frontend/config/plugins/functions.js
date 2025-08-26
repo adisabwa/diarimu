@@ -53,10 +53,10 @@ export default {
       let ind = keys[i]
       app.config.globalProperties[ind] = listFunction[ind]
     }
-    app.config.globalProperties.runFunction = (_func, data, options = []) => {
+    app.config.globalProperties.runFunction = ({func, data, options = []}) => {
       let listFunction = app.config.globalProperties
-      // console.log(listFunction, _func)
-      if (listFunction.isEmpty(_func)) {
+      console.log(listFunction.isEmpty(func), func)
+      if (listFunction.isEmpty(func)) {
         if (listFunction.isEmpty(options))
           return data
         else {
@@ -67,7 +67,7 @@ export default {
           }
         }
       } else { 
-        return ( typeof _func == 'string' ? listFunction[_func](data) : _func(data) )
+        return ( typeof func == 'string' ? listFunction[func](data) : func(data) )
       }
       return data
     }

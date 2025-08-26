@@ -43,9 +43,9 @@
         [--bg-button-color:theme(colors.sky.100)]
         [--button-color:theme(colors.sky.200)]"
       :id-anggota="idAnggota"
-      href-dashboard="quran/hafal/dashboard"
-      href="quran/hafal"
-      href-delete="quran/hafal/delete"
+      href-dashboard="quran/tarjamah/dashboard"
+      href="quran/tarjamah"
+      href-delete="quran/tarjamah/delete"
       @edit-data="(({id}) => {
         console.log('edit data', id)
         dataId = id;

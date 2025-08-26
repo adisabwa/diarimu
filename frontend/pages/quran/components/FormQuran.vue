@@ -137,10 +137,10 @@ export default {
           // console.log(res, this.fields)
           this.fields.tanggal.default = this.dateNow()
           this.fields.id_anggota.default = this.idAnggota
-          this.fields.juz_mulai.span = 3
-          this.fields.juz_selesai.span = 3
-          this.fields.halaman_mulai.span = 3
-          this.fields.halaman_selesai.span = 3
+          this.fields.juz_mulai.colspan = 3
+          this.fields.juz_selesai.colspan = 3
+          this.fields.halaman_mulai.colspan = 3
+          this.fields.halaman_selesai.colspan = 3
           this.formKey++
           this.loading = false
         }).
@@ -156,13 +156,13 @@ export default {
     },
     updateSuratAyat(type, surat, ayat) {
       const field = `surat_${type}-ayat_${type}`;
-      console.log(this.initial)
+      // console.log(this.initial)
       if (this.initial)
         return
       this.updateField(field, `${surat}-${ayat}`, surat);
     },
     changedValue({ field, parent, value, option}){
-      console.log('value', field)
+      // console.log('value', field)
       switch (field) {
         case 'surat_mulai-ayat_mulai':
           this.updateField('juz_mulai', value, parent, this.searchFromAyat);
@@ -249,3 +249,11 @@ export default {
   },
 }
 </script>
+
+<style lang="postcss" scoped>
+  :deep(.el-input-group__prepend) {
+    @apply
+      px-2 md:px-5
+    !important;
+  }
+</style>

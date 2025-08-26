@@ -59,6 +59,7 @@ $routes->group('quran/hafal', [
     $routes->add('save_data', [QuranHafal::class, 'save_data']);
     $routes->add('merge_data', [QuranHafal::class, 'merge_data']);
     $routes->add('get_before', [QuranHafal::class, 'get_before']);
+    $routes->add('download', [QuranHafal::class, 'download']);
     $routes->add('delete/(:any)', [QuranHafal::class, 'delete/$1']);
 });     
 
@@ -74,6 +75,7 @@ $routes->group('quran/tarjamah', [
     $routes->add('store', [QuranTarjamah::class, 'save'], [ 'filter' => 'api-validation:mu_quran_tarjamah']);
     $routes->add('dashboard', [QuranTarjamah::class, 'dashboard']);
     $routes->add('get_before', [QuranTarjamah::class, 'get_before']);
+    $routes->add('download', [QuranTarjamah::class, 'download']);
     $routes->add('delete/(:any)', [QuranTarjamah::class, 'delete/$1']);
 });
 

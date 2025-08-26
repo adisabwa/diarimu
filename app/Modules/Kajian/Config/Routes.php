@@ -12,6 +12,7 @@ $routes->group('kajian', [
     $routes->add('dashboard', [Kajian::class, 'dashboard']);    
     $routes->add('dashboard_count', [Kajian::class, 'dashboard_count']);    
     $routes->add('get_before', [Kajian::class, 'get_before']);
+    $routes->add('download', [Kajian::class, 'download']);
 
 });
 
