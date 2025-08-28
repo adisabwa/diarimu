@@ -56,7 +56,6 @@ export default {
   data: function() {
     return {
       id:'',
-      optionsAnggota:[],
 		}
 	},
   watch:{

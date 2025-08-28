@@ -2,73 +2,89 @@
   <div id="persyarikatan" class="pt-[50px] translate-y-[-10px] px-0">
     <FilterAnggota v-if="user.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="submittedData"/>
-    <el-card class="relative overflow-hidden
-        bg-gradient-to-tr from-white/[0.8] from-40% to-indigo-200/[0.7] rounded-[10px]
-      z-[0]
-        font-montserrat
-      mb-3 p-0" 
-      header-class="px-6 pt-6 pb-2 text-[15px] font-montserrat font-bold text-center"
-      body-class="py-4 px-0">
-      <template #header>
-        <span>Kegiatan Persyarikatan</span>
-        <img :src="persyarikatan.image" height="90px" width="90px"
-            class="absolute z-[-1] top-[-10px] right-[-15px]
-              opacity-[0.5]"/>
-      </template>
-      <div class="px-8"
-        v-if="['user','super-admin'].includes(user.role)">
-        <el-button class="rounded-full w-full
-          font-montserrat
-          mb-4
-          bg-indigo-700
-          text-white
-          active:scale-90"
-          @click="showAdd = true; dataId = -1;
-          this.getInitial()">
-          <icons icon="mdi:plus" />Tambah Data
-        </el-button>
-      </div>
-      
-      <ListData ref="persyarikatanListData"
-        class="[--text-color:theme(colors.indigo.900)]
+    <statistic-list class="bg-white/[0.9] rounded-[10px] mb-3 p-0
+          [--text-color:theme(colors.indigo.900)]
           [--bg-color:theme(colors.indigo.50)]
           [--border-color:theme(colors.indigo.400)]
           [--bg-button-color:theme(colors.indigo.100)]
           [--button-color:theme(colors.indigo.200)]
-          max-h-[70vh]
-        "
-        :id-anggota="idAnggota"
-        href="persyarikatan"
-        href-delete="persyarikatan/delete"
-        @edit-data="(({id}) => {
-          dataId = id
-          showAdd = true
-        })">
-        <template #subtitle="{ data }">
-          {{ dateDayIndo(data.tanggal)}}
-        </template>
-        <template #title="{ data }">
-          <div class="text-[16px] ">
-            {{ ucFirst(data.kegiatan) }}
-          </div>
-          <div class="text-[13px]">
-            {{ ucFirst(data.lokasi) }}
-          </div>
-        </template>
-        <template #content="{ data }">
-          <div class="text-[12px]">
-            Diselenggarakan oleh {{ ucFirst(data.penyelenggara) }}
-          </div>
-          <div class="text-[12px]">
-            Materi : {{ ucFirst(data.isi) }}
-          </div>
-        </template>
-      </ListData>
-    </el-card>
+          [&_#list-data]:bg-gradient-to-tr 
+          [&_#list-data]:from-white/[0.8] 
+          [&_#list-data]:from-40% 
+          [&_#list-data]:to-indigo-200/[0.7]"
+      ref="statisticListPersyarikatan"
+      :key="'statisticListPersyarikatan'+formKey"
+      :id-anggota="idAnggota"
+      href-dashboard="persyarikatan/dashboard"
+      href="persyarikatan"
+      :group-by="['tanggal','id_anggota']"
+      href-delete="persyarikatan/delete"
+      @edit-data="({id}) => {
+        showAdd = true;
+        dataId = id
+      }"
+      :add-options-chart="{
+        scales: {
+          y: {
+            title:{
+              display:true, 
+              text: 'Jumlah Kegiatan',
+            },
+            ticks: {
+              font: {
+                size: 10
+              },
+              stepSize:1,
+            }
+          }
+        },
+      }"
+      >
+      <template #headerList>
+        <span>Kegiatan Persyarikatan</span>
+        <img :src="persyarikatan.image" height="90px" width="90px"
+            class="absolute z-[-1] top-[-10px] right-[-15px]
+              opacity-[0.5]"/> 
+        <div class="px-8"
+          v-if="['user','super-admin'].includes(user?.role)">
+          <el-button class="rounded-full w-full
+            font-montserrat
+            mt-4
+            bg-indigo-700
+            text-white
+            active:scale-90"
+            @click="showAdd = true; dataId = -1">
+            <icons icon="mdi:plus" />Tambah Data
+          </el-button>
+        </div>
+      </template>
+      <template #subtitle="{ data }">
+        {{ dateDayIndo(data.tanggal)}}
+      </template>
+      <template #title="{ data }">
+        <div class="text-[16px] ">
+          {{ ucFirst(data.kegiatan) }}
+        </div>
+        <div class="text-[13px]">
+          {{ ucFirst(data.lokasi) }}
+        </div>
+      </template>
+      <template #content="{ data }">
+        <div class="text-[12px]">
+          Diselenggarakan oleh {{ ucFirst(data.penyelenggara) }}
+        </div>
+        <div class="text-[12px]">
+          Materi : {{ ucFirst(data.isi) }}
+        </div>
+      </template>
+      <template #header>
+        <div class="text-[var(--text-color)]">Statistik Kegiatan Persyarikatan</div>
+      </template>
+    </statistic-list>
     <teleport to="body">
       <el-dialog v-model="showAdd" draggable
         :append-to-body="true"
-        class="w-fit max-w-[90%] py-3
+        class="w-fit min-w-[300px] max-w-[90%] py-3
           bg-gradient-to-tr from-white from-50% to-indigo-100"
         header-class="font-bold text-[16px]"
         body-class="">
@@ -102,66 +118,29 @@
         </template>
       </el-dialog>
     </teleport>
-    <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-5"
-      header="Statistik Kegiatan Persyarikatan"
-      header-class="py-3 font-bold text-[18px] text-center" >
-    <chart ref="persyarikatanChartData" 
-      href="persyarikatan/dashboard"
-      :add-options="{
-        scales: {
-          y: {
-            title:{
-              display:true, 
-              text: 'Jumlah Kegiatan',
-            },
-            ticks: {
-              font: {
-                size: 10
-              },
-              stepSize:1,
-            }
-          }
-        },
-      }"
-      :id-anggota="idAnggota"
-        :key="'persyarikatanChartData'+formKey">
-      </chart>
-    </el-card>
   </div>
 </template>
   
   <script>
   import { mapState } from 'pinia';
   import FilterAnggota from '@/pages/components/FilterAnggota.vue';
-  import ListData from '@/pages/components/ListData.vue';
-  import Chart from '@/pages/components/DataChart.vue'
+  import StatisticList from '@/pages/components/StatisticList.vue';
   import { organizationMenu } from '@/helpers/menus.js'
   
   export default {
     name: "persyarikatan",
     components: {
-      Chart,
-      ListData,
+      StatisticList,
       FilterAnggota,
     },
     data: function() {
       return {
         loading: false,
         showAdd: false,
-        tipeInfaq:'0',
+        tipePersyarikatan:'0',
         idAnggota:'-1',
         formKey:1,
         dataId:-1,
-        lastData:{
-          tanggal:'',
-          surat_mulai:'',
-          surat_selesai:'',
-          nama_surat_mulai:'',
-          nama_surat_selesai:'',
-          ayat_mulai:'',
-          ayat_selesai:'',
-        },
         fields:{
         },
         formValue:{},
@@ -194,11 +173,6 @@
       getInitial: async function() {
         let vm = this
         this.loading = true;
-        // await this.$http.get('/persyarikatan/get_last')
-        //   .then(result => {
-        //     var res = result.data;
-        //     this.lastData = this.fillAndAddObjectValue(this.lastData, res)
-        //   });
         
         await this.$http.get('/kolom/preparation?table=mu_kegiatan_persyarikatan&grouping=0&input=0')
           .then(result => {
@@ -222,10 +196,7 @@
         // setTimeout(this.updateChart(), 1000)
       },
       updateChart(){
-        console.log('chart')
-        this.$refs.persyarikatanListData?.getData?.(true)
-        this.$refs.persyarikatanChartData?.getChart?.()
-
+        this.$refs?.statisticListPersyarikatan?.updateChart()
       }
     },
     created: function() {

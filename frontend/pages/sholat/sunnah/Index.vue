@@ -241,7 +241,7 @@
       :id-anggota="idAnggota"
       href-dashboard="sholat/sunnah/dashboard"
       href="sholat/sunnah"
-      :group-by="['tanggal']"
+      :group-by="['tanggal','id_anggota']"
       href-delete="sholat/sunnah/delete"
       :add-options-chart="{
         scales:{

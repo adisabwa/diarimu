@@ -79,7 +79,7 @@ class AnggotaModel extends BaseModel
           $data->allowed_roles = $allowed_roles;
         }
 
-        $data->role = 'user';
+        // $data->role = 'user';
       // var_dump($this->db->getLastQuery(), $data);        
         return $data;
     }    

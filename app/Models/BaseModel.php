@@ -92,8 +92,12 @@ class BaseModel extends Model
         foreach ($attr as $key => $value) {
             if (empty($value))
                 continue;
+
+            $no_line = strpos($value, '{n}');
             $pos = strpos($value, '{f}');
-            if ($pos !== false) {
+            if ($no_line !== false) {
+                $new_attr[] = str_replace('{n}','', $value);
+            } else if ($pos !== false) {
                 $new_attr[] = str_replace('{f}',$table, $value);
             } else {
                 $new_attr[] = "$table.$value";

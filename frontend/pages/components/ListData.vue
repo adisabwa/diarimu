@@ -2,7 +2,7 @@
 	<div 
     ref="scrollContainer"
 		v-infinite-scroll="loadingData"
-		class="min-h-[200px] max-h-[50vh] overflow-y-auto px-4 "
+		class="min-h-[200px] max-h-[50vh] overflow-y-scroll px-4 "
 		:infinite-scroll-disabled="disabledScroll"
 		infinite-scroll-delay="1000"
 		infinite-scroll-distance="10">
@@ -172,7 +172,7 @@ export default {
             return d
           })
           this.listData = [...this.listData, ...res]
-          // console.log(this.listData)
+          console.log(this.listData)
           this.showName = this.idAnggota.split(',').length > 1
           this.loadingScroll = false
           // console.log('no-more', res.length < this.limit)

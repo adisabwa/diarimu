@@ -20,105 +20,29 @@
           font-semibold text-[12px] leading-[1]">Rek. Infaq</div>
       </div>
     </teleport>
-    <el-card class="relative overflow-hidden
-        bg-gradient-to-tr from-white/[0.8] from-40% to-teal-200/[0.7] rounded-[10px]
-      z-[0]
-        font-montserrat
-      mb-3 p-0" 
-      header-class="px-6 pt-6 pb-2 text-[15px] font-montserrat font-bold text-center"
-      body-class="py-4 px-0">
-      <template #header>
-        <span>Data Infaq Anda</span>
-        <img :src="infaq?.image" height="90px" width="90px"
-            class="absolute z-[-1] top-[-10px] right-[-15px]
-              opacity-[0.5]"/>
-      </template>
-      <div class="px-8"
-        v-if="['user','super-admin'].includes(user?.role)">
-        <el-button class="rounded-full w-full
-          font-montserrat
-          mb-4
-          bg-teal-700
-          text-white
-          active:scale-90"
-          @click="showAdd = true; dataId = -1">
-          <icons icon="mdi:plus" />Tambah Data
-        </el-button>
-      </div>
-      
-      <ListData ref="infaqListData"
-        class="[--text-color:theme(colors.teal.900)]
+    
+    <statistic-list class="bg-white/[0.9] rounded-[10px] mb-3 p-0
+          [--text-color:theme(colors.teal.900)]
           [--bg-color:theme(colors.teal.50)]
           [--border-color:theme(colors.teal.400)]
           [--bg-button-color:theme(colors.teal.100)]
           [--button-color:theme(colors.teal.200)]
-          max-h-[70vh]
-        "
-        :id-anggota="idAnggota"
-        href="infaq/shadaqah"
-        href-delete="infaq/shadaqah/delete"
-        @edit-data="(({id}) => {
-          dataId = id
-          showAdd = true
-        })">
-        <template #subtitle="{ data }">
-          {{ dateDayIndo(data?.tanggal)}}
-        </template>
-        <template #title="{ data }">
-          <div class="text-[20px]">
-            {{ data?.tipe == '0' ? 'Tanpa Nominal' : toIDR(data?.jumlah) }}
-          </div>
-        </template>
-        <template #content="{ data }">
-          {{ data?.keterangan }}
-        </template>
-      </ListData>
-    </el-card>
-    <teleport to="body">
-      <el-dialog v-model="showAdd" draggable
-        :append-to-body="true"
-        class="w-fit max-w-[90%] py-3
-          bg-gradient-to-tr from-white from-50% to-teal-100"
-        header-class="font-bold text-[16px]"
-        body-class="">
-        <template #header>
-          <div>Data Shadaqah</div>
-        </template>
-        <form-comp ref="formInfaq"
-          class=""
-          :key="'form-shadaqah-'+formKey"
-          :fields="fields" 
-          v-model:id="dataId"
-          v-model:form-value="formValue" 
-          href="infaq/shadaqah/store"
-          href-get="infaq/shadaqah/get"
-          :show-columns="[...['tipe','tanggal'],
-            ...(formValue.tipe == '1' ? ['jumlah','keterangan'] : [])]"
-          @saved="submittedData" 
-          @error="saving=false"
-          size="large"
-          :show-submit="false"
-          label-position="top"
-          :show-required-text="false">
-        </form-comp>  
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="showAdd = false">Batal</el-button>
-            <el-button type="primary" @click="$refs?.formInfaq?.submitForm()"
-              class="bg-teal-700">
-              Simpan
-            </el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </teleport>
-    <el-card class="bg-white/[0.9] rounded-[10px] mb-3 p-0"
-      body-class="py-3 px-5"
-      header="Statistik Sadaqah"
-      header-class="py-3 font-bold text-[18px] text-center" >
-    <chart ref="infaqChartData" 
-      :href="href"
-      :add-options="{
+          [&_#list-data]:bg-gradient-to-tr 
+          [&_#list-data]:from-white/[0.8] 
+          [&_#list-data]:from-40% 
+          [&_#list-data]:to-teal-200/[0.7]"
+      ref="statisticListInfaq"
+      :key="'statisticListInfaq'+formKey"
+      :id-anggota="idAnggota"
+      :href-dashboard="hrefDashboard"
+      href="infaq/shadaqah"
+      :group-by="['tanggal','id_anggota']"
+      href-delete="infaq/shadaqah/delete"
+      @edit-data="({id}) => {
+        showAdd = true;
+        dataId = id
+      }"
+      :add-options-chart="{
         scales: {
           y: {
             title:{
@@ -156,35 +80,101 @@
           }
         }
       }"
-      :id-anggota="idAnggota"
-        :key="'infaqChartData'+formKey">
-        <template #filter="{filter}">
-          <el-select size="small" v-model="chartType" placeholder="Jenis Grafik"
-            @change="formKey++; $refs?.infaqChartData?.getChart()">
-            <el-option value="dashboard" label="Nominal Infaq" />
-            <el-option value="dashboard_count" label="Jumlah Infaq" />
-          </el-select>
+      >
+      <template #headerList>
+        <span>Data Infaq Anda</span>
+        <img :src="infaq?.image" height="90px" width="90px"
+            class="absolute z-[-1] top-[-10px] right-[-15px]
+              opacity-[0.5]"/>  
+        <div class="px-8"
+          v-if="['user','super-admin'].includes(user?.role)">
+          <el-button class="rounded-full w-full
+            font-montserrat
+            mt-4
+            bg-teal-700
+            text-white
+            active:scale-90"
+            @click="showAdd = true; dataId = -1">
+            <icons icon="mdi:plus" />Tambah Data
+          </el-button>
+        </div>
+      </template>
+      <template #header>
+        <div class="text-[var(--text-color)]">Statistik Shadaqah</div>
+      </template>
+      <template #subtitle="{ data }">
+        {{ dateDayIndo(data?.tanggal)}}
+      </template>
+      <template #title="{ data }">
+        <div class="text-[20px]">
+          {{ data?.tipe == '0' ? 'Tanpa Nominal' : toIDR(data?.jumlah) }}
+        </div>
+      </template>
+      <template #content="{ data }">
+        {{ data?.keterangan }}
+      </template>
+      <template #chartFilter="{filter}">
+        <el-select size="small" v-model="chartType" placeholder="Jenis Grafik"
+          @change="$refs?.statisticListInfaq?.updateChartDirect('chart', true)">
+          <el-option value="dashboard" label="Nominal Infaq" />
+          <el-option value="dashboard_count" label="Jumlah Infaq" />
+        </el-select>
+      </template>
+    </statistic-list>
+    <teleport to="body">
+      <el-dialog v-model="showAdd" draggable
+        :append-to-body="true"
+        class="w-fit min-w-[300px] max-w-[90%] py-3
+          bg-gradient-to-tr from-white from-50% to-teal-100"
+        header-class="font-bold text-[16px]"
+        body-class="">
+        <template #header>
+          <div>Data Shadaqah</div>
         </template>
-      </chart>
-    </el-card>
+        <form-comp ref="formInfaq"
+          class=""
+          :key="'form-shadaqah-'+formKey"
+          :fields="fields" 
+          v-model:id="dataId"
+          v-model:form-value="formValue" 
+          href="infaq/shadaqah/store"
+          href-get="infaq/shadaqah/get"
+          :show-columns="[...['tipe','tanggal'],
+            ...(formValue.tipe == '1' ? ['jumlah','keterangan'] : [])]"
+          @saved="submittedData" 
+          @error="saving=false"
+          size="large"
+          :show-submit="false"
+          label-position="top"
+          :show-required-text="false">
+        </form-comp>  
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="showAdd = false">Batal</el-button>
+            <el-button type="primary" @click="$refs?.formInfaq?.submitForm()"
+              class="bg-teal-700">
+              Simpan
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </teleport>
   </div>
 </template>
  
 <script>
   import { mapState } from 'pinia';
   import FilterAnggota from '@/pages/components/FilterAnggota.vue';
-  import ListData from '@/pages/components/ListData.vue';
-  import Chart from '@/pages/components/DataChart.vue'
   import Lazismu from '@/pages/infaq/LazisPage.vue'
+  import StatisticList from '@/pages/components/StatisticList.vue';
   import { topMenu } from '@/helpers/menus.js'
   
   export default {
     name: "infaq",
     components: {
-      Chart,
-      ListData,
       FilterAnggota,
       Lazismu,
+      StatisticList,
     },
     data: function() {
       return {
@@ -225,7 +215,7 @@
       ...mapState(useAuthStore,{
         user: 'loggedUser',
       }),
-      href(){
+      hrefDashboard(){
         return "infaq/shadaqah/" + this.chartType
       }
       
@@ -260,10 +250,7 @@
         setTimeout(this.updateChart(), 1000)
       },
       updateChart(){
-        console.log('chart')
-        this.$refs.infaqListData?.getData?.()
-        this.$refs.infaqChartData?.getChart?.()
-
+        this.$refs?.statisticListInfaq?.updateChart()
       }
     },
     created: function() {

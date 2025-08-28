@@ -34,8 +34,8 @@ class BasePageController extends BaseDataController
     {
         $postData = $this->request->getGetPost();
         $type = $postData['tipe'] ?? 'week';
-        $end = $postData['end'] ?? date('Y-m-d');
-        $start = $postData['start'] ?? date('Y-m-d');
+        $end = empty($postData['end']) ? date('Y-m-d') : $postData['end'];
+        $start = empty($postData['start']) ? date('Y-m-d') : $postData['start'];
         $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
         $where_anggota = "id_anggota IN ($id_anggota)";
         $anggotas = $this->modelAnggota->where(["id IN ($id_anggota)" => NULL])->findAll();
@@ -50,6 +50,7 @@ class BasePageController extends BaseDataController
         );
         $_data = [];
         // var_dump($data);
+        // var_dump($this->model->getLastQuery());
         foreach ($data as $key => $d) {
             $d->id_anggota = "$d->id_anggota-$d->nama";
             if (empty($_data[$d->id_anggota][$d->tanggal])) {

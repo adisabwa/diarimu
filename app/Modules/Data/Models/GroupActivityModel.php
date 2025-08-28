@@ -4,7 +4,7 @@ namespace Modules\Data\Models;
 
 use App\Models\BaseModel;
 
-class DataUnitModel extends BaseModel
+class GroupActivityModel extends BaseModel
 {
     public function __construct()
     {

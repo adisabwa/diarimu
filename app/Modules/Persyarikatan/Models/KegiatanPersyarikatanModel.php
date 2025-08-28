@@ -2,49 +2,32 @@
 
 namespace Modules\Persyarikatan\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class KegiatanPersyarikatanModel extends Model
+class KegiatanPersyarikatanModel extends BaseModel
 {
-    protected $table         = 'mu_kegiatan_persyarikatan';
-    protected $primaryKey = 'id';
-
-    protected $protectFields = false;
-    protected $useAutoIncrement = true;
-    protected $returnType    = 'object';
-
-    protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    protected function initialize()
+    public function __construct()
     {
+        parent::__construct();
 
+        $this->table = 'mu_kegiatan_persyarikatan';
+        $this->selects = [
+            '{n} 1 as data_chart'
+        ];
+        $this->relations = [
+            'id_anggota' => [
+                'foreign_key' => 'id_anggota',
+                'table' => 'mu_anggota',
+                'selects' => [
+                    'nama','nbm'
+                ]
+            ],
+        ];
     }
 
-    public function getAll($whereAnd = [], $whereOr = [], $order = '', $limit = 0, $offset = 0, $groupBy = ['id'], $whereIn = [])
+    public function getOptions($where = [])
     {
-        $whereAnd = empty($whereAnd) ? '1=1' : $whereAnd;
-        $whereOr = empty($whereOr) ? '1=1' : $whereOr;
-
-        $builder = $this->db->table('mu_kegiatan_persyarikatan f')
-                    ->select('f.*, 1 as data_chart, s.nama, s.nbm')
-                    ->join('mu_anggota'.' s','s.id=f.id_anggota')
-                    ->where($whereAnd);
-
-        foreach($whereIn as $key => $in) {
-            $builder->whereIn($key, $in);
-        }
-
-        return $builder->groupStart()
-                            ->orWhere($whereOr)
-                        ->groupEnd()
-                        ->orderBy($order)
-                        ->groupBy($groupBy)
-                        ->limit($limit, $offset)
-                        ->get()
-                        ->getResult();
+      return $this->getOptionsData($where, function($d) { return $d->unit_kerja; });
     }
 
     public function getOptionsTipe()
@@ -71,10 +54,5 @@ class KegiatanPersyarikatanModel extends Model
 
 
         return $options;
-    }
-
-    public function getTableName()
-    {
-        return $this->table;
     }
 }

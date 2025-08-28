@@ -31,7 +31,7 @@
               <td >Anggota</td>
               <td width="20" class="text-center">:</td>
               <td class="font-normal">
-                <ol class="text-[13px] pl-4 m-0">
+                <ol class="text-[13px] pl-8 m-0 max-h-[30vh] overflow-y-auto">
                   <template v-for="(i, key) in data.anggota">
                     <li class="pl-1"
                       v-if="key > 0">{{ i.nama }}</li>
@@ -89,7 +89,7 @@
     <teleport to="body">
       <el-dialog v-model="showAdd" draggable
         :append-to-body="true"
-        class="w-fit max-w-[80%] py-3
+        class="w-fit min-w-[300px] max-w-[80%] py-3
           bg-gradient-to-tr from-white from-50% to-teal-100"
         header-class="font-bold text-[16px]"
         body-class="text-[14px]">
