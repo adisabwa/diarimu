@@ -25,14 +25,15 @@ class InfaqController extends BasePageController
     {
         return $this->createChart();
     }
-    
-    public function dashboard_count()
-    {
-        return $this->createChart('count');
-    }
 
     public function get_before()
     {
         return parent::get_before();
+    }
+
+    public function download()
+    {
+        $label = $this->request->getGetPost('label') ?? 'Nominal';
+        return $this->downloadData('DATA-INFAQ', "Tanggal / $label Infaq");
     }
 }

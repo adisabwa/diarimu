@@ -40,7 +40,14 @@ class AnggotaModel extends BaseModel
 
     public function getOptions($where = [])
     {
-      return $this->getOptionsData($where, function($d) { return "$d->nama ($d->unit_kerja)"; });
+      return $this->getOptionsData($where, 
+        function($d) { return "$d->nama ($d->unit_kerja)"; },
+        function($option, $data) { 
+          $option->id_unit = $data->id_unit;
+          $option->id_group = $data->id_group;
+          $option->unit_kerja = $data->unit_kerja;
+          return $option;
+        });
     }
 
     public function login($email = '', $no_hp = '', $password = '')

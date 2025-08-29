@@ -7,7 +7,7 @@
           <div class="w-full overflow-hidden h-[70px] absolute z-[51] top-[1px]">
             <div id="top" class="add-play bg-cover bg-bottom
               h-[70px] w-[1200px] 
-              translate-x-[calc(50vw-50%)] sm:-translate-x-[calc(575px)]"
+              translate-x-[calc(50vw-50%)] sm:-translate-x-[calc(480px)]"
                 :style="`background-image:url('${$baseUrl}assets/images/top.png')`"></div>
             </div>
         </div>

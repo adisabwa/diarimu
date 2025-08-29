@@ -14,7 +14,7 @@
     </el-input>
     <teleport to="body">
       <el-dialog v-model="showSelect"
-        :class="['min-w-[250px] max-w-[80%] p-0 py-4 mt-28',
+        :class="['min-w-[300px] max-w-[80%] p-0 py-4 mt-28',
           type == 'scroll' ? 'mt-40' : '',
         ]"
         header-class="flex items-center"

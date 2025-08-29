@@ -15,6 +15,12 @@ class DataUnitModel extends BaseModel
 
     public function getOptions($where = [])
     {
-      return $this->getOptionsData($where, function($d) { return $d->unit_kerja; });
+      return $this->getOptionsData($where, 
+        function($d) { return $d->unit_kerja; },
+        function($option, $data) { 
+          $option->bidang = $data->bidang;
+          return $option;
+        }
+      );
     }
 }

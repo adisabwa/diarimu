@@ -156,6 +156,7 @@
         title:{display:true, text:'Total Score'},
         ticks: {stepSize:50}
       }}}"
+      y-label-table="Total Score"
       @edit-data="editData">
       >
       <template #header>

@@ -47,6 +47,10 @@ export default {
       type:[Object],
       default:{},
     },
+    params:{
+      type:[Object],
+      default(){ return {} },
+    },
     href:{
       type:[String],
       default:null,
@@ -121,7 +125,8 @@ export default {
             start:dates[0],
             end:dates[1],
             tipe:this.filter.tipe,
-            id_anggota:this.idAnggota
+            id_anggota:this.idAnggota,
+            ...this.params,
           }
         })
           .then(res => {

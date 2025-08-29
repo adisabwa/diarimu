@@ -91,6 +91,7 @@ export default {
     vModel(val){
       // console.log(val)
       this.selectOption(val)
+      this.resetData()
       this.$emit('update:value', val)
     },
     value: {

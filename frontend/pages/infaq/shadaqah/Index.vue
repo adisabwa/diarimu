@@ -34,26 +34,29 @@
       ref="statisticListInfaq"
       :key="'statisticListInfaq'+formKey"
       :id-anggota="idAnggota"
-      :href-dashboard="hrefDashboard"
+      href-dashboard="infaq/shadaqah/dashboard"
       href="infaq/shadaqah"
       :group-by="['tanggal','id_anggota']"
       href-delete="infaq/shadaqah/delete"
+      :paramsTable="{attr: chartAttr, label: (chartAttr=='data_chart' ? 'Nominal' : 'Jumlah')}"
+      :paramsChart="{attr: chartAttr}"  
       @edit-data="({id}) => {
         showAdd = true;
         dataId = id
       }"
+      :y-label-table="chartAttr=='data_chart' ? 'Nominal Infaq' : 'Jumlah Infaq'"
       :add-options-chart="{
         scales: {
           y: {
             title:{
               display:true, 
-              text: (chartType=='dashboard' ? 'Nominal Infaq' : 'Jumlah Infaq'),
+              text: (chartAttr=='data_chart' ? 'Nominal Infaq' : 'Jumlah Infaq'),
             },
             ticks: {
               font: {
                 size: 10
               },
-              stepSize:(chartType=='dashboard' ? 100000 : 1),
+              stepSize:(chartAttr=='data_chart' ? 100000 : 1),
               callback: function(value) {
                 // Custom formatting: add a dollar sign
                 let val = ''
@@ -113,11 +116,12 @@
       <template #content="{ data }">
         {{ data?.keterangan }}
       </template>
-      <template #chartFilter="{filter}">
-        <el-select size="small" v-model="chartType" placeholder="Jenis Grafik"
+      <template v-for="slotName in ['chartFilter','tableFilter']"
+        v-slot:[slotName]="{filter}">
+        <el-select size="small" v-model="chartAttr" placeholder="Jenis Grafik"
           @change="$refs?.statisticListInfaq?.updateChartDirect('chart', true)">
-          <el-option value="dashboard" label="Nominal Infaq" />
-          <el-option value="dashboard_count" label="Jumlah Infaq" />
+          <el-option value="data_chart" label="Nominal Infaq" />
+          <el-option value="count" label="Jumlah Infaq" />
         </el-select>
       </template>
     </statistic-list>
@@ -178,7 +182,7 @@
     },
     data: function() {
       return {
-        chartType:'dashboard',
+        chartAttr:'data_chart',
         showLazismu:false,
         loading: false,
         showAdd: false,
@@ -215,9 +219,6 @@
       ...mapState(useAuthStore,{
         user: 'loggedUser',
       }),
-      hrefDashboard(){
-        return "infaq/shadaqah/" + this.chartType
-      }
       
     },
     methods: {

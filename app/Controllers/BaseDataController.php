@@ -27,7 +27,7 @@ class BaseDataController extends BaseController
         $order = $this->request->getGetPost('order') ?? [];
         $limit = $this->request->getGetPost('limit') ?? 0;
         $offset = $this->request->getGetPost('offset') ?? 0;
-        $grouping = $this->request->getGetPost('grouping') ?? ['id'];
+        $grouping = $this->request->getGetPost('grouping') ?? [                       ];
         
         $order = implode(",", $order);
 

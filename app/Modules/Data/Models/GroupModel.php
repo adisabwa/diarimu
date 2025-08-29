@@ -27,7 +27,15 @@ class GroupModel extends BaseModel
 
     public function getOptions($where = [])
     {
-      return $this->getOptionsData($where, function($d) { return $d->nama_group; });
+      return $this->getOptionsData($where, 
+        function($d) { return $d->nama_group." ($d->unit_kerja)" ; },
+        function($option, $data) { 
+          $option->id_unit = $data->id_unit;
+          $option->bidang = $data->bidang;
+          $option->unit_kerja = $data->unit_kerja;
+          return $option;
+        }
+      );
     }
     
     public function getAll(
@@ -68,9 +76,10 @@ class GroupModel extends BaseModel
                     //     ->orWhere($whereOr)
                     // ->groupEnd()
                     ->orderBy($order)
+                    ->groupBy($groupBy)
                     ->get()
                     ->getResultObject();
-
+        // var_dump($this->db->getLastQuery());
         return $data;
     }
 }

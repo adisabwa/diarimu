@@ -17,9 +17,10 @@
         :id-anggota="idAnggota"
         :href="href"
         :href-delete="hrefDelete"
+        :roles-edit="['super-admin','user']"
         :group-by="groupBy"
-        @edit-data="(({id}) => {
-          $emit('editData', {id})
+        @edit-data="((data) => {
+          $emit('editData', data)
         })">
         <template #subtitle="{ data }">
           <slot name="subtitle" :data="data" />
@@ -57,6 +58,7 @@
         :href="hrefDashboard"
         :id-anggota="idAnggota"
         :add-options="addOptionsChart"
+        :params="paramsChart"
         class="px-4">
          <template #filter="{filter}" v-if="$slots.chartFilter">
           <slot name="chartFilter" :filter="filter" />
@@ -68,8 +70,13 @@
         :href="hrefDashboard"
         :hrefDownload="hrefDownload || (href + '/download')"
         :id-anggota="idAnggota"
-        :add-options="{}"
-        class="px-4"/>
+        :y-label="yLabelTable"
+        :params="paramsTable"
+        class="px-4">
+        <template #filter="{filter}" v-if="$slots.tableFilter">
+          <slot name="tableFilter" :filter="filter" />
+        </template>
+      </TableData>
     </el-card>
   </div>
 </template>
@@ -94,7 +101,10 @@
       hrefDashboard:{type:String,default:''},
       hrefDownload:{type:String,default:''},
       hrefDelete:{type:String,default:''},
+      yLabelTable:{type:String,default:''},
       addOptionsChart:{type:Object,default:{}},
+      paramsChart:{type:Object,default:{}},
+      paramsTable:{type:Object,default:{}},
       groupBy:{type:Array, default:[]},
     },
     data: function() {

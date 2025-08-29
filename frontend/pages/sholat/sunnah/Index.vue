@@ -250,11 +250,12 @@
             ticks: {stepSize:2}
           }}}"
         @edit-data="((res) => {
+          console.log(res)
           tanggal = res.tanggal;
-          console.log(tanggal)
           setTanggalInitial();
           setDataInitiall();
         })"
+      y-label-table="Total Rakaat"
       >
       <template #header>
         <div class="text-[var(--text-color)]">Data Sholat Sunnah</div>

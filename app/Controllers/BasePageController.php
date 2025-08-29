@@ -30,13 +30,16 @@ class BasePageController extends BaseDataController
         return $this->respondCreated(get_date_interval($tanggal ?? $now, $now));
     }
 
-    public function createChart(string $attr = 'data_chart', bool $return_data = false)
+    public function createChart(bool $return_data = false)
     {
         $postData = $this->request->getGetPost();
+        $attr = $postData['attr'] ?? 'data_chart';
         $type = $postData['tipe'] ?? 'week';
         $end = empty($postData['end']) ? date('Y-m-d') : $postData['end'];
         $start = empty($postData['start']) ? date('Y-m-d') : $postData['start'];
-        $id_anggota = $postData['id_anggota'] ?? userdata()->id_anggota;
+        $id_anggota = $postData['id_anggota'];
+        $id_anggota = empty($id_anggota) ? userdata()->id_anggota : $id_anggota;
+        // var_dump($id_anggota);
         $where_anggota = "id_anggota IN ($id_anggota)";
         $anggotas = $this->modelAnggota->where(["id IN ($id_anggota)" => NULL])->findAll();
 
@@ -99,9 +102,14 @@ class BasePageController extends BaseDataController
         return $this->respondCreated($compact);
     }
 
-    public function download(
+    public function download()
+    {
+        return $this->downloadData();
+    }
+
+    public function downloadData(
         string $filename = 'DATA-REKAP',
-        string $data_label = 'Tanggal / Jumlah Ayat'
+        string $data_label = 'Tanggal / Jumlah Ayat',
     )
     {
         // var_dump($filename);exit;

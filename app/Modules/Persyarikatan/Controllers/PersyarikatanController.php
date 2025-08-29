@@ -35,4 +35,9 @@ class PersyarikatanController extends BasePageController
     {
         return parent::get_before();
     }
+
+    public function download()
+    {
+        return $this->downloadData('DATA-KEGIATAN-PERSYARIKATAN', "Tanggal / Jumlah Kegiatans");
+    }
 }

@@ -37,7 +37,7 @@
                     <td rowspan="2" >Nama</td>
                     <td :colspan="statistic.labels.length"
                         class="text-left">
-                        Tanggal / Jumlah Ayat
+                        Tanggal / {{ yLabel}}
                     </td>
                 </tr>
                 <tr class="bg-[var(--bg-color)]">
@@ -73,10 +73,6 @@
         type:[String, Number],
         default:null,
       },
-      addOptions:{
-        type:[Object],
-        default:{},
-      },
       href:{
         type:[String],
         default:null,
@@ -84,6 +80,14 @@
       hrefDownload:{
         type:[String],
         default:null,
+      },
+      yLabel:{
+        type:[String],
+        default:'Jumlah Ayat',
+      },
+      params:{
+        type:[Object],
+        default(){ return {} },
       },
     },
     components: {
@@ -153,7 +157,8 @@
           start:dates[0],
           end:dates[1],
           tipe:this.filter.tipe,
-          id_anggota:this.idAnggota
+          id_anggota:this.idAnggota,
+          ...this.params,
         }
         params = new URLSearchParams(params).toString();
         this.openLink(this.$siteUrl + '/' + this.hrefDownload + '?' + params,'_blank')
@@ -166,7 +171,8 @@
               start:dates[0],
               end:dates[1],
               tipe:this.filter.tipe,
-              id_anggota:this.idAnggota
+              id_anggota:this.idAnggota,
+              ...this.params,
             }
           })
             .then(res => {

@@ -23,6 +23,7 @@
         showAdd = true;
         dataId = id
       }"
+      y-label-table="Jumlah Kegiatan"
       :add-options-chart="{
         scales: {
           y: {

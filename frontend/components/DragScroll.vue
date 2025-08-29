@@ -38,6 +38,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    snapType: {
+      type: String,
+      default: 'nearest',
+    },
     syncWith: {
       // Accept a single ref or an array of refs
       type: [Object, Array],
@@ -67,7 +71,9 @@ export default {
       lastTime: 0,
       runningTime:0,
       animationFrame: null,
+      // directionLocked: null,
       move:'both',
+      movementCount:0,
       sourceScroll:'scroll',
     };
   },
@@ -183,22 +189,22 @@ export default {
          console.log('check', this.move)
       }       
 
-      if (this.directionLocked === null) {
-        this.directionLocked = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical'
-      }
+      // if (this.directionLocked === null) {
+      //   this.directionLocked = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical'
+      // }
 
-      if (this.directionLocked === 'horizontal') {
-        dy = 0; // Lock vertical movement
-      } else if (this.directionLocked === 'vertical') {
-        dx = 0; // Lock horizontal movement
-      }
+      // if (this.directionLocked === 'horizontal') {
+      //   dy = 0; // Lock vertical movement
+      // } else if (this.directionLocked === 'vertical') {
+      //   dx = 0; // Lock horizontal movement
+      // }
       this.velocityX = dx / dt;
       this.velocityY = dy / dt;
       
       if ( ['x','both'].includes(this.axis) && ['x','both'].includes(this.move))  
-        // el.scrollLeft -= dx;
+        el.scrollLeft -= dx;
       if ( ['y','both'].includes(this.axis) && ['y','both'].includes(this.move)) 
-        // el.scrollTop -= dy;
+        el.scrollTop -= dy;
 
       console.log(this.runningTime, this.axis, this.move, dx, dy, el.scrollLeft, el.scrollTop)
       this.lastX = x;
@@ -226,15 +232,34 @@ export default {
 
       const scroll = this.axis === 'y' ? el.scrollTop : el.scrollLeft;
 
-      let closestChild = null;
-      let closestDist = Infinity;
-      for (const child of snapChildren) {
-        const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
-        const dist = Math.abs(offset - scroll);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closestChild = child;
+      //snap to nearest child
+      if (this.snapType == 'nearest') {
+        let closestChild = null;
+        let closestDist = Infinity;
+        for (const child of snapChildren) {
+          const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
+          const dist = Math.abs(offset - scroll);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestChild = child;
+          }
         }
+      }
+
+      // //snap to direction child
+      
+      if (this.snapType == 'direction') {
+        const startPos = this.axis === 'y' ? this.startY : this.startX;
+        const endPos = this.axis === 'y' ? this.lastY : this.lastX;
+        const nextChild = endPos - startPos > 0 ? 0.1 : -0.1
+        // for (const child of snapChildren) {
+        //   const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
+        //   const dist = Math.abs(offset - scroll);
+        //   if (dist < closestDist) {
+        //     closestDist = dist;
+        //     closestChild = child;
+        //   }
+        // }
       }
 
       // console.log(closestChild)
