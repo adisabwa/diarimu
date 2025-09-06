@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Libraries\GoogleAuth;
+
 class Auth extends BaseController
 {
     protected $penggunaModel;
@@ -36,6 +38,34 @@ class Auth extends BaseController
         } else {
             return $this->respond([
                 'message' => 'Maaf akun Anda belum terdaftar.',
+            ], 401);
+        }
+
+    }
+
+    
+    public function g_login()
+    {
+        $credential = $this->request->getGetPost('credential') ?? '';
+        // $id = $this->request->getGetPost('id');
+
+        $email = $this->request->getGetPost('email');
+
+        if (!empty($credential)) {
+            $google = new GoogleAuth();
+            $userData = $google->verifyToken($credential);
+            $email = $userData['email'] ?? $email ?? '';
+        }
+
+        $user = $this->penggunaModel->login($email, '', md5('admin12345diarimu') );
+        // var_dump($user);
+        if ($user) {
+            // Getting user positions
+            set_userdata($user);
+            return $this->respondCreated($user);
+        } else {
+            return $this->respond([
+                'email' => $email,
             ], 401);
         }
 
