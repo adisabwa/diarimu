@@ -158,7 +158,7 @@ class BaseModel extends Model
     {
         $data = $this->getAll(whereAnd: $whereAnd, whereOr: $whereOr, whereIn: $whereIn, orWhereIn: $orWhereIn, order: $order, limit: $limit, offset: $offset);
 
-        // var_dump($whereAnd, $data);
+        // var_dump($whereAnd);
         if ($data) {
             return $data[0];    
         } else {

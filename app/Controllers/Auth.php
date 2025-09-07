@@ -6,12 +6,12 @@ use App\Libraries\GoogleAuth;
 
 class Auth extends BaseController
 {
-    protected $penggunaModel;
+    public $model;
 
     public function __construct()
     {
         
-        $this->penggunaModel = model('AnggotaModel');
+        $this->model = model('AnggotaModel');
         // helper('auth');
     }
 
@@ -30,7 +30,7 @@ class Auth extends BaseController
                 'message' => $message,
             ], 401);
         }
-        $user = $this->penggunaModel->login($email, $hp, md5($password));
+        $user = $this->model->login($email, $hp, md5($password));
         if ($user) {
             // Getting user positions
             set_userdata($user);
@@ -42,7 +42,6 @@ class Auth extends BaseController
         }
 
     }
-
     
     public function g_login()
     {
@@ -57,7 +56,11 @@ class Auth extends BaseController
             $email = $userData['email'] ?? $email ?? '';
         }
 
-        $user = $this->penggunaModel->login($email, '', md5('admin12345diarimu') );
+        return $this->respond([
+            'email' => $email,
+        ], 401);
+
+        $user = $this->model->login($email, '', md5('admin12345diarimu') );
         // var_dump($user);
         if ($user) {
             // Getting user positions
@@ -119,13 +122,11 @@ class Auth extends BaseController
 
         return $this->respondCreated($userdata);
     }
-
-
     
     public function reset()
     {
         $user = userdata();
-        $user = $this->penggunaModel->login($user->email, $user->no_hp, $user->password);
+        $user = $this->model->login($user->email, $user->no_hp, $user->password);
         
         if ($user) {
             // Getting user positions
@@ -136,6 +137,69 @@ class Auth extends BaseController
             return $this->respond([
                 'message' => 'Maaf akun Anda belum terdaftar.',
             ], 401);
+        }
+    }
+
+    public function send_request_reset() 
+    {
+        $phone = $this->request->getGetPost('phone');
+        $email = $this->request->getGetPost('email');
+
+        $user = $this->model->login($email, $phone, md5('admin12345diarimu') );
+
+        if ($user) {
+            $body = view('email-reset', compact('user'));
+            // echo $body;
+            // exit;
+            $mailer = service('mailer');
+            // var_dump($email);
+            $ok = $mailer->send(
+                $email,                                 // to
+                'Reset Password',                    // subject
+                $body, // HTML
+                [
+                    // 'attachments' => [WRITEPATH.'uploads/invoice.pdf'],
+                    // 'cc' => ['team@your-domain.tld' => 'Team'],
+                    // 'bcc' => ['audit@your-domain.tld'],
+                ]
+            );
+
+            if ($ok) {
+                return $this->respondCreated($user);
+            } else {
+                return $this->respond([
+                    'message' => 'Server mengalami masalah',
+                ], 401);
+            }
+        } else {
+            return $this->respond([
+                'message' => 'Maaf tidak akun dengan email ini. Silahkan masukkan no telepon dan email baru',
+            ], 401);
+        }
+    }
+
+    public function reset_password()
+    {
+        $md5_id = $this->request->getGetPost('key') ?? '-1';
+        $md5_id = md5(2);
+
+        $data = $this->model->getDataWhere(whereAnd:[
+            'md5({f}.id)' => $md5_id,
+        ]);
+        
+        if ($data) {
+            $new_password = substr($data->password, 0, 5);
+            $update = $this->model->update($data->id, [
+                'password' => md5($new_password)
+            ]);
+
+            if ($update) {
+                return redirect()->to(site_url());
+            } else {
+                exit('Tidak dapat mengubah password');
+            }
+        } else {
+            exit('Data tidak ada');
         }
     }
 }

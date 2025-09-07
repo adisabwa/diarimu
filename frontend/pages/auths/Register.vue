@@ -74,6 +74,8 @@ export default {
               element.placeholder += ' (Opsional) '
           }
           this.fields = res
+          let email = this.$route?.query?.email
+          this.fields.email.default = email
           this.formKey++
           this.saving = false
         });
@@ -82,6 +84,7 @@ export default {
       console.log(data)
       this.saving = false
       let payload = {
+        email: this.formValue.email,
         no_hp: this.formValue.no_hp,
         password: this.formValue.password,
       }

@@ -43,6 +43,8 @@ $routes->group('auth', static function ($routes) {
     $routes->add('unauthorized', 'Auth::unauthorized');
     $routes->add('change_role', 'Auth::change_role');
     $routes->add('reset', 'Auth::reset');
+    $routes->add('reset_password', 'Auth::reset_password');
+    $routes->add('send_request_reset', 'Auth::send_request_reset');
 });
 
 //----------------------Data Pengguna-----------------------------//
@@ -63,6 +65,10 @@ $routes->add('get-files', 'FileController::getFile');
 
 //-----------------------------------------------------------------------//
 
+//----------------------------Mail Controller------------------------------
+$routes->add('mail', 'MailController::send');
+
+//-----------------------------------------------------------------------//
 
 //-----------------------------Pengaturan Kolom Data------------------------
 $routes->group('kolom', static function ($routes) {

@@ -20,7 +20,7 @@ CI_ENVIRONMENT = development
 # VITE
 #--------------------------------------------------------------------
 
-VITE_GOOGLE_CLIENT_ID="772505936971-2t8uagmune1okfadm411cdjb0s04k3el.apps.googleusercontent.com"
+VITE_GOOGLE_CLIENT_ID=
 VITE_MODE = 'development'
 VITE_BASE_URL = '/diarimu/public/'
 VITE_BASE_URL_PROD = '/diarimu/'
