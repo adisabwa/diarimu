@@ -18,7 +18,7 @@
           <el-upload
             class="upload-demo mt-4"
             ref="upload" drag
-            :action="`${$siteUrl}/${link}/upload${params}`"
+            :action="`${$siteUrl}/${href}/upload${params}`"
             :on-change="handleChange" :on-success="handleSuccess" :on-error="handleError"
             :file-list="fileList"  :auto-upload="false">
             <icons icon="material-symbols:cloud-upload" class="text-5xl text-blue-600"/>
@@ -88,7 +88,7 @@ export default {
       type:String,
       default:'Peminatan',
     },
-    link: {
+    href: {
       type:String,
       default:'data/peminatan',
     },
@@ -179,7 +179,7 @@ export default {
       });
     },
     downloadTemplate:  function() {
-      window.open(`${this.$siteUrl}${this.link}/template`,"_blank");
+      window.open(`${this.$siteUrl}${this.href}/template`,"_blank");
     },
   }
 }

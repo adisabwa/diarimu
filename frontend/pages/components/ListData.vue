@@ -156,13 +156,14 @@ export default {
       }
       this.$http.get(this.href, {
           params: {
-            in:{
+            orIn:{
               [this.namaId]: this.idAnggota?.split(',') ?? [],
             },
             order:this.orderBy,
             limit:this.limit,
             offset:this.offset,
             grouping:this.groupBy,
+            ...this.params,
           }
         }).then(result => {
           var res = result.data;
@@ -173,7 +174,7 @@ export default {
           })
           this.listData = [...this.listData, ...res]
           console.log(this.listData)
-          this.showName = this.idAnggota.split(',').length > 1
+          this.showName = this.idAnggota?.split(',').length > 1
           this.loadingScroll = false
           // console.log('no-more', res.length < this.limit)
           if (res.length < this.limit) {
