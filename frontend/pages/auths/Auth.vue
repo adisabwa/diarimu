@@ -20,6 +20,9 @@
           <template v-else>
             <el-divider class="m-3 mx-0"/>
           </template>
+          <GoogleLogin :callback="doGLogin" 
+            class="w-full" />
+          <el-divider class="m-3 mx-0"/>
           <div class="flex flex-col gap-y-3 mt-2">
             <el-input 
               size="large" 
@@ -92,6 +95,28 @@ export default {
       if (!this.isEmpty(this.form.no_hp) && !this.isEmpty(this.form.password)) {
         this.doLogin();
       }
+    },
+    doGLogin(result) {
+      this.loading = true;
+      this.authStore.gLogin({credential:result.credential}, true)
+        .then(res => {
+          this.loading = false;
+          this.redirect();
+        }).catch(err => {
+          this.loading = false;
+          const res = err.response;
+          console.log(err)
+          if (res.status == 401) {
+            this.errorMessage = res.data.message;
+            this.errorLogin = true;
+          } else {
+            this.$notify.error({
+              title: 'Gagal',
+              message: 'Terjadi kesalahan pada server',
+              position: 'bottom-right'
+            });
+          }
+        });
     },
     doLogin() {
       this.loading = true;

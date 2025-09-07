@@ -35,6 +35,23 @@ export const useAuthStore = defineStore('auth', {
         });
       }); 
     },
+    async gLogin(payload: any, save = true) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: "POST",
+          url: siteUrl + "/auth/g_login",
+          data: jsonToFormData(payload),
+        }).then(response => {
+          deleteCookie(COOKIE_NAME)
+          const userData = JSON.stringify(response.data);
+          this.setUserData(userData, save)
+          resolve(response);
+        }).catch(error => {
+          this.clearUserData()
+          reject(error);
+        });
+      }); 
+    },
     changeRole(payload: any, save = true) {
       return new Promise((resolve, reject) => {
         axios({

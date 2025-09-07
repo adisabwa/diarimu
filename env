@@ -20,9 +20,10 @@ CI_ENVIRONMENT = development
 # VITE
 #--------------------------------------------------------------------
 
+VITE_GOOGLE_CLIENT_ID="772505936971-2t8uagmune1okfadm411cdjb0s04k3el.apps.googleusercontent.com"
 VITE_MODE = 'development'
-VITE_BASE_URL = '/ashoimu/public/'
-VITE_BASE_URL_PROD = '/ashoimu/'
+VITE_BASE_URL = '/diarimu/public/'
+VITE_BASE_URL_PROD = '/diarimu/'
 VITE_PORT = 5140
 
 #--------------------------------------------------------------------
@@ -31,7 +32,7 @@ VITE_PORT = 5140
 
 # app.baseURL = ''
 # If you have trouble with `.`, you could also use `_`.
-app_baseURL = 'http://localhost/ashoimu/public/'
+app_baseURL = 'http://localhost/diarimu/public/'
 # app_baseURL = 'https://codev-app.my.id/ashoimu/'
 # app.forceGlobalSecureRequests = false
 # app.CSPEnabled = false
@@ -49,7 +50,7 @@ app_baseURL = 'http://localhost/ashoimu/public/'
 # database.default.port = 3306
 
 database.default.hostname = localhost
-database.default.database = ashoimu
+database.default.database = diarimu
 database.default.username = admin
 database.default.password = lihatdilayar
 database.default.DBDriver = MySQLi
