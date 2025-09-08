@@ -3,113 +3,60 @@
   <div id="sholat relative" class="pt-[50px] sm:pt-5">
     <FilterAnggota v-if="user.role != 'user'" 
       v-model:id-anggota="idAnggota" @change="reloadData"/>
-    <el-card v-show="['user','super-admin'].includes(user.role)"
-      class="rounded-[10px]
-      bg-gradient-to-tr from-white/[0.8] from-30% to-purple-200/[0.7] 
-      mb-3 p-0"
-      body-class="relative p-0"
-      header-class="relative p-0">
+    <InputScroll ref="inputScroll"
+      :id-anggota="idAnggota"
+      :data-tanggal="tanggal"
+      class="[--bg-start-color:white]
+        [--bg-end-color:theme(colors.purple.100)]"
+      @create-data="getData"
+      :default-data="dataSholat">
       <template #header>
         <img :src="sholat.image" height="90px" width="90px"
-            class="absolute z-[0] top-[0px] right-[-20px]
-              opacity-[0.5]"/>
-        <DragScroll id="header-scroll" ref="headerScroll" 
-          :syncWith="syncWith?.header" class="relative px-0 py-4 font-bold text-[18px] overflow-x-scroll" >
-          <div v-if="editTanggal" class="text-center">
-            <date-wheel-picker
-              ref="editTanggal"
-              id="editTanggal"
-              class="w-fit mx-auto"
-              v-model:value="tanggal"
-              value-format="YYYY-MM-DD"
-              format="DD MMMM YYYY"
-              clearable 
-              size="large"
-              @change="editTanggal = false;
-                setTanggalInitial();
-                setDataInitial();"
-            />
-          </div>
-          <div v-else class="w-[300%] flex">
-            <div v-for="(t, key) in tanggals" 
-              :id="'header'+key"
-              class="snap-center w-full px-4 text-center">
-              <div @click="changeTanggal">
-                <span 
-                  >{{ dateDayIndo(t) }}</span>
+          class="absolute z-[0] top-[0px] right-[-20px]
+            opacity-[0.5]"/>
+      </template>
+      <template #default="{ data, tanggal }">
+        <template v-for="sholat in data.sholats">
+          <div :class="`${setStatusColor(sholat.value)}
+            pt-4 pb-3 mb-4 px-7 mx-auto
+            rounded-[15px] min-w-[240px] max-w-[300px]
+            shadow-md
+            relative flex gap-x-3 items-center`">
+            <div class="text-[18px] font-bold leading-[1.3] w-full">
+              <div>{{ ucFirst(sholat.nama_kolom) }}</div>
+              <div class="text-[12px] font-semibold opacity-70">
+                {{ getLabel(sholat.value) }}
               </div>
             </div>
-          </div>
-        </DragScroll>
-        <icons @click="scrollHeader(-1)"
-          class="m-0 text-[35px] pointer z-[999]
-            absolute top-1/2 -translate-y-1/2 left-5"
-          icon="iconamoon:arrow-left-2-bold"/>
-        <icons @click="scrollHeader(1)"
-          class="m-0 text-[35px] pointer z-[999]
-            absolute top-1/2 -translate-y-1/2 right-5" 
-          icon="iconamoon:arrow-right-2-bold"/>
-      </template>
-      <div class="mt-1 text-center active:scale-90 cursor-pointer"
-        @click="collapseInput = !collapseInput">
-        <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
-        <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
-      </div>
-      <DragScroll id="body-scroll" ref="bodyScroll"
-        :syncWith="syncWith?.body" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-screen pt-0 pb-6', `relative px-0 
-        animate
-        flex    
-        overflow-x-scroll`]"
-        @scrollEnd="handleAfterScroll">
-        <template v-for="(_data, ind) in datas">
-          <el-container :id="'body'+ind" class="shrink-0 snap-center font-montserrat
-            px-5 w-full
-            relative
-            grid grid-cols-1"
-            v-loading="loadings[ind]">
-            <template v-for="sholat in _data.sholats">
-              <div :class="`${setStatusColor(sholat.value)}
-                pt-4 pb-3 mb-4 px-7 mx-auto
-                rounded-[15px] min-w-[240px] max-w-[300px]
-                shadow-md
-                relative flex gap-x-3 items-center`">
-                <div class="text-[18px] font-bold leading-[1.3] w-full">
-                  <div>{{ ucFirst(sholat.nama_kolom) }}</div>
-                  <div class="text-[12px] font-semibold opacity-70">
-                    {{ getLabel(sholat.value) }}
-                  </div>
-                </div>
-                <div class="flex gap-x-1 mx-3">
-                  <star :count="getCount(sholat.value)"/>
-                </div>
-                <el-dropdown
-                  trigger="click"
-                  @command="(res) => {
-                    sholat.value = res
-                    saveData(ind, sholat.nama_kolom)
-                  }"
-                  :popper-class="`${setStatusColor(sholat.value)}`"
-                  class="h-[40px]">
-                  <el-button class="rounded-full h-full w-[40px]">
-                    <icons icon="mdi:edit" class="m-0"/>
-                  </el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <template v-for="o in options">
-                        <el-dropdown-item :command="o.value"
-                          :class="`${o.value == sholat.value ? 'font-bold' : ''}`">
-                          {{ o.label }} ( {{ o.value }} ) 
-                        </el-dropdown-item>
-                      </template>
-                    </el-dropdown-menu>
+            <div class="flex gap-x-1 mx-3">
+              <star :count="getCount(sholat.value)"/>
+            </div>
+            <el-dropdown
+              trigger="click"
+              @command="(res) => {
+                sholat.value = res
+                saveData(data, tanggal, sholat.nama_kolom)
+              }"
+              :popper-class="`${setStatusColor(sholat.value)}`"
+              class="h-[40px]">
+              <el-button class="rounded-full h-full w-[40px]">
+                <icons icon="mdi:edit" class="m-0"/>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <template v-for="o in options">
+                    <el-dropdown-item :command="o.value"
+                      :class="`${o.value == sholat.value ? 'font-bold' : ''}`">
+                      {{ o.label }} ( {{ o.value }} ) 
+                    </el-dropdown-item>
                   </template>
-                </el-dropdown>
-              </div>
-            </template>
-          </el-container>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
         </template>
-      </DragScroll>
-    </el-card>
+      </template>
+    </InputScroll>
     <el-card v-show="['user','super-admin'].includes(user.role)"
       class="relative w-full
       overflow-hidden
@@ -200,27 +147,21 @@
 import { mapState, mapActions } from 'pinia';
 import { topMenu } from '@/helpers/menus.js'
 import FilterAnggota from '../../components/FilterAnggota.vue';
-import DragScroll from '@/components/DragScroll.vue';
+import InputScroll from '../components/InputScroll.vue';
 import StatisticData from '@/pages/components/StatisticData.vue';
 
 export default {
   name: "sholat",
   components: {
     FilterAnggota,
-    DragScroll,
+    InputScroll,
     StatisticData,
   },
   data: function() {
     return {
-      loading: false,
-      editTanggal:false,
-      dataId:-1,
       idAnggota:null,
       formKey:1,
-      tanggals:[],
       tanggal:'',
-      datas:[],
-      loadings:[false, false, false],
       dataSholat: {
         id:'-1',
         tanggal:'',
@@ -247,7 +188,6 @@ export default {
           },
         }
       },
-      tipe:'',
       lastData:{
         tanggal:'',
         total_score:'',
@@ -257,20 +197,10 @@ export default {
         total_score:'',
       },
       sholat: topMenu.sholatWajib,
-      collapseInput:false,
-      syncWith:{},
     };
   },
   watch: {
-    editTanggal(val){
-      let vm = this
-      setTimeout(() => {
-        vm.setHeaderToCenter()
-      }, 50);
-    },
-    dataId(val){
-
-    }
+    
   },  
   computed: {
     ...mapState(useAuthStore, {
@@ -278,6 +208,51 @@ export default {
     }),
   },
   methods: {
+    getData: async function({data, tanggal, id}) {
+      let vm = this
+      let where = {
+        id_anggota: vm.idAnggota,
+      }
+      if (id != -1) {
+        where.id = id
+      } else {
+        where.tanggal = tanggal
+      }
+      // setTimeout(() => {
+        vm.$http.get('sholat/wajib/get_where', {
+            params: {
+              where: where
+            }
+          })
+            .then(res => {
+              let data = res.data
+              let updateData = JSON.parse(JSON.stringify(this.dataSholat))
+              updateData.id = data?.id ?? -1
+              updateData.tanggal = data?.tanggal ?? ''
+              let keys = Object.keys(vm.dataSholat.sholats)
+              keys.forEach(( k, ind) => {
+                if (data[k] !== null) {
+                  updateData.sholats[k].value = parseInt(data[k])
+                } 
+                else {
+                  updateData.sholats[k].value = null
+                }
+                // console.log(index, k, vm.datas[index][k])
+              })
+              this.$refs.inputScroll.changeData(tanggal, updateData)
+            })
+            .catch(err => {
+              console.log(err)
+              this.$refs.inputScroll.changeData(tanggal)
+              vm.$notify({
+                type:'error',
+                title: 'Gagal',
+                message: 'Tidak dapat mengambil data',
+                position: 'bottom-right',
+              });
+            })
+      // }, 1000)
+    },
     getLast(){
       this.resetObjectValue(this.lastData)
       this.resetObjectValue(this.bestData)
@@ -293,107 +268,18 @@ export default {
         })
     },
     async editData({tanggal}){
-      // console.log(tanggal)
+      console.log(tanggal)
       this.tanggal = tanggal
-      this.setTanggalInitial();
-      this.setDataInitial();
       window.scrollTo({
         top:0,
         behavior: 'smooth',
       })
     },
-    setTanggalInitial(){
-      this.tanggals = [
-        this.addDay(this.tanggal, -1),
-        this.tanggal,
-        this.addDay(this.tanggal, 1),
-      ]
-    },
-    setDataInitial(){
-      this.datas = [];
-      for (let index = 0; index < this.tanggals.length; index++) {
-        this.datas[index] = JSON.parse(JSON.stringify(this.dataSholat))
-        this.getData(index)
-      }
-    },
-    changeTanggalData(course = -1){
-      // console.log(course)
-      let vm = this
-      vm.tanggal = vm.addDay(vm.tanggal, course)
-      for (let i = 0; i < vm.tanggals.length; i++) {
-        vm.tanggals[i] = vm.addDay(vm.tanggals[i], course)
-      }
-      // unset(vm.datas[-1])
-      // unset(vm.datas[3])
-      let n_data = JSON.parse(JSON.stringify(vm.dataSholat))
-      if (course == -1) {
-        vm.datas.pop()
-        vm.datas.unshift(n_data)
-        vm.getData(1)
-      } else {
-        vm.datas.shift()
-        vm.datas.push(n_data)
-        vm.getData(2)
-      }
-    },
-    getData: async function(index, id = -1) {
-      let vm = this
-      vm.loading = true;
-      vm.loadings[index] = true;
-      let where = {
-        id_anggota: vm.idAnggota,
-      }
-      if (id != -1) {
-        where.id = id
-      } else {
-        where.tanggal = vm.tanggals[index]
-      }
-      // setTimeout(() => {
-        vm.$http.get('sholat/wajib/get_where', {
-            params: {
-              where: where
-            }
-          })
-            .then(res => {
-              let data = res.data
-              vm.datas[index].id = this.coalesce([data?.id,-1])
-              vm.datas[index].tanggal = this.coalesce([data?.tanggal,''])
-              if (id != -1)
-                vm.tanggals[index] = vm.datas[index].tanggal
-              let keys = Object.keys(vm.dataSholat.sholats)
-              keys.forEach(( k, ind) => {
-                if (data[k] !== null) {
-                  vm.datas[index].sholats[k].value = parseInt(data[k])
-                } 
-                else {
-                  vm.datas[index].sholats[k].value = null
-                }
-                // console.log(index, k, vm.datas[index][k])
-              })
-              setTimeout(() => {
-                vm.loading = false
-                vm.loadings[index] = false;
-              }, 300);
-            })
-            .catch(err => {
-              console.log(err, index, vm.datas[index])
-              vm.loadings[index] = false;
-              vm.loading = false
-              vm.$notify({
-                type:'error',
-                title: 'Gagal',
-                message: 'Tidak dapat mengambil data',
-                position: 'bottom-right',
-              });
-            })
-      // }, 1000)
-    },
-    saveData(ind, kolom){
-      let data = this.datas[ind]
+    saveData(data, tanggal, kolom){
       let form = {
         id:data.id,
         id_anggota:this.idAnggota,
-        tanggal:this.tanggals[ind],
+        tanggal:tanggal,
       }
       form[kolom] = data.sholats[kolom].value
       console.log(form)
@@ -403,94 +289,28 @@ export default {
       } )
         .then(result => {
           let res = result.data
-          this.datas[1].id = res.id
+          this.$refs.inputScroll.changeData(tanggal, {
+            id: res.id
+          })
           this.getLast()
           this.$refs.statisticDataSholat.updateChart()
         })
         .catch(err => {
-          
+          console.log(err)
         });
     },
-    changeTanggal(){
-      let vm = this
-      vm.editTanggal = true;
-      // console.log('change', this.tanggal)
-      setTimeout(() => {
-        vm.jquery('#editTanggal .el-input__inner')[0].focus();
-        this.$refs.editTanggal.showModal = true
-      }, 100);
-    },
-    setHeaderToCenter(){
-      let vm = this
-      let body = vm.jquery('#body-scroll');
-      let bcenter = vm.jquery('#body1');
-      body[0].scrollLeft = bcenter[0].offsetLeft
-
-      if (vm.editTanggal) return
-      let header = vm.jquery('#header-scroll');
-      let center = vm.jquery('#header1');
-      header[0].scrollLeft = center[0].offsetLeft
-
-      console.log('center', body[0].scrollLeft,  bcenter[0].offsetLeft, header[0].scrollLeft)
-    },
-    scrollHeader(course = -1){
-      let duration = 0.7
-      let vm = this
-      // console.log(course)
-      // vm.removeClass('#header-scroll','snap-x snap-mandatory')
-      if (course == -1) {
-        vm.scrollElement('#header-scroll','#header0',duration)
-      } else {
-        vm.scrollElement('#header-scroll','#header2',duration)
-      }
-      // setTimeout(() => {
-      //   vm.addClass('#header-scroll','snap-x snap-mandatory')
-      // }, duration * 1000 + 100);
-    },
-    handleAfterScroll(){
-      // console.log('handle-after')
-      let vm = this
-      if (vm.editTanggal == true)
-        return
-      let header = this.jquery('#header-scroll')[0]
-      let right = this.jquery('#header2')[0]
-      // console.log(header.scrollLeft)
-      if (header.scrollLeft == 0) {
-        this.changeTanggalData(-1)
-        this.setHeaderToCenter()
-      } else if (header?.scrollLeft == right?.offsetLeft) {
-        this.changeTanggalData(1)
-        this.setHeaderToCenter()
-      }
-      // setTimeout(() => {
-        vm.loadings[0] = vm.loadings[1] = vm.loadings[2] = false
-      // }, 500);
-    },  
     reloadData(){
       // console.log(this.idAnggota)
-      this.setTanggalInitial()
-      this.setDataInitial()
+      this.$refs.inputScroll.resetData()
       this.getLast()
       // this.formKey++
     },
   },
   created: function() {
-    this.tanggal = this.dateNow()
-    // this.tanggal = '2025-05-01'
-    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
-    useDataStore()?.getAllAnggotaInGroup()
-    this.setTanggalInitial()
-    this.setDataInitial()
-    this.getLast()
   },
   mounted: function() {
-    let vm = this
-    this.setHeaderToCenter()
-    // window.addEventListener('scroll', this.handleScroll);
-    this.syncWith = {
-      header:[this.$refs.bodyScroll],
-      body:[this.$refs.headerScroll],
-    }
+    this.idAnggota = useAuthStore()?.loggedUser?.id_anggota
+    this.getLast()
   },
   unmounted(){
     // window.removeEventListener('scroll', this.handleScroll);

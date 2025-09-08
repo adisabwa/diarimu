@@ -139,14 +139,19 @@ export default {
   },
 	methods:{
     setOptionsFromAnggota(val){
-      console.log('setOptions')
-      let anggota = this.options.id_anggota.filter(d => d.value == val)[0] ?? {}
-      // if (anggota.length > 0)
-      //   this.formValue.id_anggota = anggota[0]?.id ?? ''
-      let group = this.options.id_group.filter(d => d.value == anggota?.id_group)[0] ?? {}
-      let unit = this.options.id_unit.filter(d => d.value == group?.id_unit || d.value == anggota?.id_unit)[0] ?? {}
-      let bidang = this.options.bidang.filter(d => d.value == unit?.bidang)[0] ?? {}
-      
+      let vals = (val ?? '').split(',')
+      this.formValue.id_anggota = vals.length > 1 ? 'all' : val
+      // this.block = true
+      // let anggota = this.options.id_anggota.filter(d => d.value == val)[0] ?? {}
+      // console.log('setOptions', val, this.options.id_anggota, anggota, anggota?.value)
+      // this.formValue.id_anggota = anggota?.value ?? val
+      // let group = this.options.id_group.filter(d => d.value == anggota?.id_group)[0] ?? {}
+      // let unit = this.options.id_unit.filter(d => d.value == group?.id_unit || d.value == anggota?.id_unit)[0] ?? {}
+      // let bidang = this.options.bidang.filter(d => d.value == unit?.bidang)[0] ?? {}
+      // // console.log('get-anggotaa', anggota, this.formValue)
+      // setTimeout(() => {
+      //   this.block = false
+      // }, 1000)
     },
     getAllValue(col){
       let opt = this.fields[col].options.filter(d => d.value !== 'all')
@@ -160,15 +165,15 @@ export default {
 
       let selected = this.formValue[searchValue] ?? '-1'
       let arr = selected == 'all' ? this.getAllValue(searchValue) : [selected]
-      // console.log(arr, arr.length)
+      // console.log(searchValue, arr, arr.length)
       let selectedAnother = this.formValue[anotherSearchValue] ?? '-1'
       let arrAnother = selectedAnother == 'all' ? this.getAllValue(anotherSearchValue) : [selectedAnother]
-      // console.log(arrAnother)
+      // console.log(anotherSearchValue, arrAnother)
       if (searchValue) {
         opt = this.options[optionType].filter(d => {
           // console.log(arr, arr.includes(d[searchValue]), arr.length, arrAnother.includes(d[anotherSearchValue]))
           return arr.includes(d[searchValue]) ||
-            (arr.length > 0 ?
+            (arr.length < 2 ?
             false :
             arrAnother.includes(d[anotherSearchValue]))
         })
@@ -184,8 +189,9 @@ export default {
         }],
         ...opt,
       ]
-      // console.log(all)
-      this.formValue[optionType] = getFromUser ? this.user[optionType] : 'all'
+      // console.log(optionType, defaultValue) 
+      // defaultValue = false
+      this.formValue[optionType] = (getFromUser ? this.user[optionType] : 'all')
     },
     async getInitial(){
       await this.$http.get('/data/unit/options')
@@ -202,7 +208,7 @@ export default {
           this.setOptions('bidang', false)        
           this.setOptions('id_unit','bidang')
           this.setOptions('id_group','id_unit')
-          this.setOptions('id_anggota','id_group','id_unit')
+          this.setOptions('id_anggota','id_group','id_unit', this.idAnggota)
         })
     }
 	},

@@ -142,7 +142,7 @@ export default {
       },
       saveAuth:true,
       authStore:authStore,
-      resetPassword:true,
+      resetPassword:false,
       showPhone:false,
     };
   },

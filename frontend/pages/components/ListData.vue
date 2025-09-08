@@ -154,18 +154,18 @@ export default {
         this.noMoreScrolling = false
         this.listData = []
       }
-      this.$http.get(this.href, {
-          params: {
-            orIn:{
-              [this.namaId]: this.idAnggota?.split(',') ?? [],
-            },
-            order:this.orderBy,
-            limit:this.limit,
-            offset:this.offset,
-            grouping:this.groupBy,
-            ...this.params,
-          }
-        }).then(result => {
+      let params = {
+        orIn:{
+          [this.namaId]: this.idAnggota?.split(',') ?? [],
+        },
+        order:this.orderBy,
+        limit:this.limit,
+        offset:this.offset,
+        grouping:this.groupBy,
+        ...this.params,
+      }
+      params = window.jsonToFormData(params)
+      this.$http.post(this.href, params).then(result => {
           var res = result.data;
           res = res.map(d => {
             d.show = false
@@ -173,7 +173,7 @@ export default {
             return d
           })
           this.listData = [...this.listData, ...res]
-          console.log(this.listData)
+          // console.log(this.listData)
           this.showName = this.idAnggota?.split(',').length > 1
           this.loadingScroll = false
           // console.log('no-more', res.length < this.limit)

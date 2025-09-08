@@ -20,7 +20,7 @@ import { at } from 'lodash';
 
 export default {
   name: 'DragScroll',
-  emits:['drag-start','drag-move','drag-end','snap','momentum-end','scroll','scroll-start','scroll-end'],
+  emits:['drag-start','drag-move','drag-end','snap','momentum-end','scroll','scroll-start','scroll-end','click'],
   props: {
     oneDirection: {
       type: Boolean,
@@ -71,6 +71,8 @@ export default {
       lastTime: 0,
       runningTime:0,
       animationFrame: null,
+      bypassMomentum: false,
+      dragThreshold: 20, // pixels
       // directionLocked: null,
       move:'both',
       movementCount:0,
@@ -163,6 +165,7 @@ export default {
       this.endDrag();
     },
     startDrag(x, y) {
+      // console.log('drag')
       this.isDragging = true;
       this.cancelMomentum();
       this.startX = this.lastX = x;
@@ -186,7 +189,7 @@ export default {
       this.runningTime += dt
       if (this.runningTime > 200 && this.oneDirection && this.move === 'both') {
          this.move = this.directionY > this.directionX ? 'y' : 'x'
-         console.log('check', this.move)
+        //  console.log('check', this.move)
       }       
 
       // if (this.directionLocked === null) {
@@ -206,7 +209,7 @@ export default {
       if ( ['y','both'].includes(this.axis) && ['y','both'].includes(this.move)) 
         el.scrollTop -= dy;
 
-      console.log(this.runningTime, this.axis, this.move, dx, dy, el.scrollLeft, el.scrollTop)
+      // console.log(this.runningTime, this.axis, this.move, dx, dy, el.scrollLeft, el.scrollTop)
       this.lastX = x;
       this.lastY = y;
       this.lastTime = now;
@@ -214,11 +217,22 @@ export default {
     },
     endDrag() {
       if (!this.isDragging) return;
+      const distX = Math.abs(this.lastX - this.startX);
+      const distY = Math.abs(this.lastY - this.startY);
+
       this.isDragging = false;
-      this.$emit('drag-end');
-      this.applyMomentum();
+      if (distX < this.dragThreshold && distY < this.dragThreshold) {
+        // console.log('click detected');
+        this.$emit('click');
+      } else {
+        // console.log('drag detected');
+        this.$emit('drag-end');
+        this.applyMomentum();
+      }
     },
     snapToChild() {
+      console.log('snap')
+      this.isSnapping = true;
       // return this.tryEmitScrollEnd();
       const el = this.$refs.container;
       const children = Array.from(el.children);
@@ -227,14 +241,20 @@ export default {
         return ['start', 'center', 'end'].includes(align);
       };
 
+      console.log(children)
       const snapChildren = children.filter(isSnapChild);
       if (!snapChildren.length) return;
 
-      const scroll = this.axis === 'y' ? el.scrollTop : el.scrollLeft;
+      const scroll = this.axis === 'y' ? el.scrollTop : el.scrollLeft
+      const startPos = this.axis === 'y' ? this.startY : this.startX
+      const endPos = this.axis === 'y' ? this.lastY : this.lastX
+      const movementDirection = endPos - startPos > 0 ? -1 : 1
 
       //snap to nearest child
+      let closestChild = null;
+      let closestStartChild = null
+      // console.log(this.snapType)
       if (this.snapType == 'nearest') {
-        let closestChild = null;
         let closestDist = Infinity;
         for (const child of snapChildren) {
           const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
@@ -244,46 +264,52 @@ export default {
             closestChild = child;
           }
         }
+        // console.log(closestChild)
       }
 
       // //snap to direction child
       
       if (this.snapType == 'direction') {
-        const startPos = this.axis === 'y' ? this.startY : this.startX;
-        const endPos = this.axis === 'y' ? this.lastY : this.lastX;
-        const nextChild = endPos - startPos > 0 ? 0.1 : -0.1
-        // for (const child of snapChildren) {
-        //   const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
-        //   const dist = Math.abs(offset - scroll);
-        //   if (dist < closestDist) {
-        //     closestDist = dist;
-        //     closestChild = child;
-        //   }
-        // }
+        let currentIndex = 0;
+        let closestDist = Infinity;
+        for (const [index, child] of snapChildren.entries())  {
+          const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
+          const dist = Math.abs(offset - scroll);
+          if (dist < closestDist) {
+            closestDist = dist;
+            currentIndex = index;
+          }
+        }
+        let newIndex = currentIndex + movementDirection;
+        closestChild = snapChildren[newIndex] ?? snapChildren[currentIndex]
+        console.log(snapChildren, currentIndex, movementDirection, newIndex, closestChild)
       }
 
-      // console.log(closestChild)
-      if (!closestChild) return;
+      // return
+      if (!closestChild) {
+        return this.finishSnapping()
+      }
       const targetOffset = this.axis === 'y' ? closestChild.offsetTop : closestChild.offsetLeft;
       const direction = this.axis === 'y' ? 'top' : 'left'
 
-      console.log(targetOffset, this.axis)
-      this.isSnapping = true;
-      this.scrollToCoordinate(el, targetOffset, 0.3, direction, false, () => {
-        this.$emit('snap', {
-          offset: targetOffset,
-          el: closestChild
-        });
-        this.isSnapping = false;
-        this.tryEmitScrollEnd(); // snapping done
+      // console.log(targetOffset, this.axis)
+      this.scrollToCoordinate(el, targetOffset, 0.3, direction, false, this.finishSnapping(targetOffset, closestChild));
+    },
+    finishSnapping(targetOffset = 0, closestChild = null){
+      this.$emit('snap', {
+        offset: targetOffset,
+        el: closestChild
       });
+      this.isSnapping = false;
+      // console.log('finish-snapping')
+      this.tryEmitScrollEnd(); // snapping done
     },
     onScroll(e) {
-      // console.log('scroll', this.syncWith, this.$refs)
+      // console.log('start-scroll')
       if (this.disableEmit) return;
 
       const el = this.$refs.container;
-
+      
       // 🔄 Emit scroll position
       this.$emit('scroll', {
         scrollLeft: el.scrollLeft,
@@ -295,16 +321,20 @@ export default {
       if (!this._syncing && this.syncWith) {
         this._syncing = true;
 
+        // console.log(this.syncWith)
         const targets = Array.isArray(this.syncWith)
           ? this.syncWith
           : [this.syncWith];
 
+        // console.log('targets', targets)
         targets.forEach(targetRef => {
+          // console.log(targetRef)
           if (
             targetRef &&
             targetRef !== this &&
             typeof targetRef.setScroll === 'function'
           ) {
+            // console.log(targetRef)
             targetRef.setScroll({
               left: el.scrollLeft,
               top: el.scrollTop,
@@ -326,8 +356,9 @@ export default {
       // 🛑 Reset scroll-end timeout
       clearTimeout(this.scrollTimeout);
       this.scrollTimeout = setTimeout(() => {
-        if (!this.isDragging) {
-          this.applyMomentum();
+        // console.log('check-drag', this.isDragging, this.bypassMomentum)
+        if (!this.isDragging && !this.bypassMomentum) {
+            this.applyMomentum();
         } else {
           this.tryEmitScrollEnd();
         }
@@ -338,10 +369,13 @@ export default {
       // console.log('tryEmitScrollEnd', this.isDragging, this.isMomentum, this.isSnapping);
       if (!this.isDragging && !this.isMomentum && !this.isSnapping) {
         this.isScrolling = false;
+        this.bypassMomentum = false;
         this.$emit('scroll-end');
       }
     },
     setScroll({ left, top }) {
+      this.bypassMomentum = true;
+      // console.log('set scroll')
       const el = this.$refs.container;  
       // console.log(el)
       if (typeof left === 'number') el.scrollLeft = left;

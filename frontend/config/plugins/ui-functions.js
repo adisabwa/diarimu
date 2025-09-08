@@ -99,6 +99,7 @@ function scrollToCoordinate(parent, coordinate, duration, scroll = 'left', rerun
     if( t < 1 && continueAnimating) {
         reqAnim = window.requestAnimationFrame(animateScroll);
     } else {
+        console.log('done-scrolling')
         onDone && onDone();
     }
   };
