@@ -56,9 +56,9 @@ class Auth extends BaseController
             $email = $userData['email'] ?? $email ?? '';
         }
 
-        return $this->respond([
-            'email' => $email,
-        ], 401);
+        // return $this->respond([
+        //    'email' => $email,
+        // ], 401);
 
         $user = $this->model->login($email, '', md5('admin12345diarimu') );
         // var_dump($user);
@@ -149,8 +149,9 @@ class Auth extends BaseController
 
         if ($user) {
             $body = view('email-reset', compact('user'));
-            // echo $body;
-            // exit;
+			//var_dump($user);
+            //echo $body;
+            //exit;
             $mailer = service('mailer');
             // var_dump($email);
             $ok = $mailer->send(
@@ -180,8 +181,8 @@ class Auth extends BaseController
 
     public function reset_password()
     {
-        $md5_id = $this->request->getGetPost('key') ?? '-1';
-        $md5_id = md5(2);
+        $md5_id = $this->request->getGetPost('id') ?? '-1';
+        // $md5_id = md5(2);
 
         $data = $this->model->getDataWhere(whereAnd:[
             'md5({f}.id)' => $md5_id,
@@ -191,8 +192,7 @@ class Auth extends BaseController
             $new_password = substr($data->password, 0, 5);
             $update = $this->model->update($data->id, [
                 'password' => md5($new_password)
-            ]);
-
+            ]);;
             if ($update) {
                 return redirect()->to(site_url());
             } else {
