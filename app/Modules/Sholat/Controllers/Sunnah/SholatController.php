@@ -20,21 +20,22 @@ class SholatController extends BasePageController
         $postData = $this->request->getGetPost();
         $tanggal = $postData['tanggal'];
 
-        $data = $this->model->getAll([
-            'id_anggota' => $postData['id_anggota'],
+        $data = $this->model->getAll(whereAnd: [
+            'id_anggota' => $postData['id_anggota'] ?? userdata()->id,
             'tanggal' => $tanggal,
-        ]);
+        ], groupBy: ['id']);
 
         $keys = [];
         foreach ($data as $key => $d) {
             $keys[$d->id_sholat] = $key;
         }
-
+        // var_dump($data, $keys);
         $sholats = $this->data->findAll();
         // $sholats = [$sholats[0]];
         $datas = [];
         foreach ($sholats as $key => $d) {
             $exist = isset($keys[$d->id]);
+            // var_dump($d->id, $exist);
             if (!$exist && $d->type != 'main') continue;
             $datas[$d->id] = (object) [
                 'ref'           => "dropdown$tanggal$d->nama_sholat",

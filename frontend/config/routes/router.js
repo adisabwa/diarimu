@@ -59,8 +59,8 @@ routes.beforeEach(async (to, from, next) => {
     
     // If login, dont enter login and default=
     // console.log(to)
-    if (loggedUser.role != '' && ['login','default'].includes(to.name)) {
-      next({name:'dashboard'})
+    if (loggedUser.role == '' && !['login','default'].includes(to.name)) {
+      next({name:'default'})
     } else if (to.matched.some(record => record.meta.requiresAuth)) {
       if (loggedUser.role == '') {
         // window.alert('Silahkan login terlebih dahulu')

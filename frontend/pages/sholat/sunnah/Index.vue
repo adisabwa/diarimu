@@ -43,7 +43,7 @@
                 flex gap-2 items-center"
                   @click="sholat.do = !sholat.do;
                   sholat.edit = false;
-                  saveData(ind, key)">
+                  saveData(data, tanggal, key)">
                 <icons v-if="sholat.do"
                   class="m-0 text-[30px]"
                   icon="material-symbols:check-circle-outline"/>
@@ -82,7 +82,7 @@
                   <template #prefix>
                     <icons icon="mdi:check" class="text-[16px] m-0
                       px-1 active:scale-75"
-                      @click="saveData(ind, key); sholat.edit = false"/>  
+                      @click="saveData(data, tanggal, key); sholat.edit = false"/>  
                   </template>
                 </el-input-number> 
                 <div class="text-[12px] mt-1 font-semibold">Raka'at</div>     
@@ -98,7 +98,7 @@
             animate [--duration:0.5s]
             cursor-pointer
             active:scale-75"
-            @click="showAdd = true">
+            @click="showAddDialog(tanggal)">
             <icons icon="mdi:plus" class="text-[18px]" />
             <span class="font-semibold">Sholat Lainnya</span>
         </div>
@@ -278,6 +278,10 @@ export default {
     },
   },
   methods: {
+    showAddDialog(tanggal){
+      this.showAdd = true
+      this.tanggal = tanggal
+    },
     getLabelSholat(sholat){
       // console.log(sholat)
       let data = sholat.split('-')
@@ -342,12 +346,13 @@ export default {
           
         });
     },
-    addInput(){
+    async addInput(){
       let ind = 1
       let kolom = this.sholatSunnah.findIndex(res => res.id == this.sunnahAdd)
       let sholat = this.sholatSunnah[kolom]
-      console.log(sholat)
-      this.datas[ind][sholat.id] = {
+      console.log(sholat, this.tanggal)
+      let data = {}
+      data[sholat.id] = {
         "id_sholat": sholat.id,
         "nama_sholat": sholat.nama_sholat,
         "do": true,
@@ -355,15 +360,16 @@ export default {
         "rakaat": 2,
         "min": 2,
       }
-      this.saveData(1, sholat.id)
+      await this.saveData(data, this.tanggal, sholat.id, {
+        func: this.getData,
+        arg: {tanggal:this.tanggal}
+      })
       this.showAdd = false
     },
-    saveData(ind, kolom){
-      let data = this.datas[ind]
-      console.log(data)
+    async saveData(data, tanggal, kolom, callback = null){
       let form = {
         id_anggota:this.idAnggota,
-        tanggal:this.tanggals[ind],
+        tanggal:tanggal,
         id_sholat:data[kolom].id_sholat,
         rakaat:data[kolom].rakaat,
         insert:data[kolom].do,
@@ -375,6 +381,9 @@ export default {
       } )
         .then(result => {
           // this.getData()
+          if (callback) {
+            callback.func(callback.arg)
+          }
           this.$refs.statisticDataSholat.updateChart()
         })
         .catch(err => {

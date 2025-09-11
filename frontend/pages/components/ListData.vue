@@ -164,6 +164,7 @@ export default {
         grouping:this.groupBy,
         ...this.params,
       }
+      console.log('list-data', this.idAnggota, params)
       params = window.jsonToFormData(params)
       this.$http.post(this.href, params).then(result => {
           var res = result.data;

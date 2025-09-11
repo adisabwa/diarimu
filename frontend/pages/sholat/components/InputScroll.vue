@@ -48,25 +48,27 @@
         <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
         <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
       </div>
-      <DragScroll id="body-scroll" ref="bodyScroll" snap-type="direction"
-        :syncWith="syncWith?.body" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-[var(--max-height,100vh)] pt-0 pb-6', `relative px-0 
-        animate
-        flex    
-        overflow-y-auto
-        overflow-x-auto`]"
-        @scrollEnd="handleAfterScroll">
-        <template v-for="(_data, ind) in datas"
-            :key="'data'+ind+formKey">
-          <el-container :id="'body'+ind" 
-            class="shrink-0 snap-center font-montserrat
-            px-5 w-full
-            relative
-            grid grid-cols-1"
-            v-loading="loadings[ind]">
-            <slot :data="_data" :tanggal="tanggals[ind]"/>
-          </el-container>
-        </template>
-      </DragScroll>
+      <div :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-[var(--max-height,100vh)] pt-0 pb-6','overflow-y-auto']">
+        <DragScroll id="body-scroll" ref="bodyScroll" snap-type="direction"
+          :syncWith="syncWith?.body" :class="[ `relative px-0 
+          animate
+          flex    
+          overflow-y-auto
+          overflow-x-auto`]"
+          @scrollEnd="handleAfterScroll">
+          <template v-for="(_data, ind) in datas"
+              :key="'data'+ind+formKey">
+            <el-container :id="'body'+ind" 
+              class="shrink-0 snap-center font-montserrat
+              px-5 w-full
+              relative
+              grid grid-cols-1"
+              v-loading="loadings[ind]">
+              <slot :data="_data" :tanggal="tanggals[ind]"/>
+            </el-container>
+          </template>
+        </DragScroll>
+      </div>
       <slot name="after" :datas="datas" />
     </el-card>
 </template>
