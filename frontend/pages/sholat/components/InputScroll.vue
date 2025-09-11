@@ -26,8 +26,8 @@
           <template v-else>
             <el-container v-for="(t, key) in tanggals" 
               :id="'header'+key"
-              class="snap-center w-full px-4  shrink-0">
-              <div @click="changeTanggal" class="w-full text-center">
+              class="snap-center w-full shrink-0">
+              <div @click="changeTanggal" class="mx-auto text-center">
                 <span 
                   >{{ dateDayIndo(t) }}</span>
               </div>
@@ -48,25 +48,27 @@
         <icons v-if="collapseInput" icon="fe:arrow-down" class="scale-x-[1.5] text-purple-900/[0.4]"/>
         <icons v-else icon="fe:arrow-up" class="scale-x-[1.5] text-purple-900/[0.4]"/>
       </div>
-      <DragScroll id="body-scroll" ref="bodyScroll" snap-type="direction"
-        :syncWith="syncWith?.body" :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-[var(--max-height,100vh)] pt-0 pb-6', `relative px-0 
-        animate
-        flex    
-        overflow-y-auto
-        overflow-x-auto`]"
-        @scrollEnd="handleAfterScroll">
-        <template v-for="(_data, ind) in datas"
-            :key="'data'+ind+formKey">
-          <el-container :id="'body'+ind" 
-            class="shrink-0 snap-center font-montserrat
-            px-5 w-full
-            relative
-            grid grid-cols-1"
-            v-loading="loadings[ind]">
-            <slot :data="_data" :tanggal="tanggals[ind]"/>
-          </el-container>
-        </template>
-      </DragScroll>
+      <div :class="[collapseInput ? 'max-h-0 py-0' : 'max-h-[var(--max-height,100vh)] pt-0 pb-6','overflow-y-auto']">
+        <DragScroll id="body-scroll" ref="bodyScroll" snap-type="direction"
+          :syncWith="syncWith?.body" :class="[`relative px-0 
+          animate
+          flex   
+          overflow-x-auto`]"
+          axis="x"
+          @scrollEnd="handleAfterScroll">
+          <template v-for="(_data, ind) in datas"
+              :key="'data'+ind+formKey">
+            <el-container :id="'body'+ind" 
+              class="shrink-0 snap-center font-montserrat
+              px-5 w-full
+              relative
+              grid grid-cols-1"
+              v-loading="loadings[ind]">
+              <slot :data="_data" :tanggal="tanggals[ind]"/>
+            </el-container>
+          </template>
+        </DragScroll>
+      </div>
       <slot name="after" :datas="datas" />
     </el-card>
 </template>
@@ -198,7 +200,7 @@ export default {
         left: center[0].offsetLeft
       })
 
-    //   console.log('center',  bcenter[0].offsetLeft, center[0].offsetLeft)
+      console.log('center',  bcenter[0].offsetLeft, center[0].offsetLeft)
     },
     scrollHeader(course = -1){
       let duration = 0.7
@@ -221,11 +223,11 @@ export default {
         return
       let header = this.jquery('#header-scroll')[0]
       let right = this.jquery('#header2')[0]
-    //   console.log(header.scrollLeft, right?.offsetLeft)
-      if ((Math.floor(header.scrollLeft / 10)) == 0) {
+      console.log(header.scrollLeft, right?.offsetLeft)
+      if ((Math.floor(header.scrollLeft / 30)) == 0) {
         this.changeTanggalData(-1)
         this.setHeaderToCenter()
-      } else if (Math.floor(header?.scrollLeft / 10) == Math.floor(right?.offsetLeft / 10)) {
+      } else if (Math.floor(header?.scrollLeft / 30) == Math.floor(right?.offsetLeft / 30)) {
         this.changeTanggalData(1)
         this.setHeaderToCenter()
       }

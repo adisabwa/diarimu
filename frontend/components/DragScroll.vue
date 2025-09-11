@@ -245,9 +245,9 @@ export default {
       const snapChildren = children.filter(isSnapChild);
       if (!snapChildren.length) return;
 
-      const scroll = this.axis === 'y' ? el.scrollTop : el.scrollLeft
-      const startPos = this.axis === 'y' ? this.startY : this.startX
-      const endPos = this.axis === 'y' ? this.lastY : this.lastX
+      const scroll = this.move === 'y' ? el.scrollTop : el.scrollLeft
+      const startPos = this.move === 'y' ? this.startY : this.startX
+      const endPos = this.move === 'y' ? this.lastY : this.lastX
       const movementDirection = endPos - startPos > 0 ? -1 : 1
 
       //snap to nearest child
@@ -257,7 +257,7 @@ export default {
       if (this.snapType == 'nearest') {
         let closestDist = Infinity;
         for (const child of snapChildren) {
-          const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
+          const offset = this.move === 'y' ? child.offsetTop : child.offsetLeft;
           const dist = Math.abs(offset - scroll);
           if (dist < closestDist) {
             closestDist = dist;
@@ -273,7 +273,7 @@ export default {
         let currentIndex = 0;
         let closestDist = Infinity;
         for (const [index, child] of snapChildren.entries())  {
-          const offset = this.axis === 'y' ? child.offsetTop : child.offsetLeft;
+          const offset = this.move === 'y' ? child.offsetTop : child.offsetLeft;
           const dist = Math.abs(offset - scroll);
           if (dist < closestDist) {
             closestDist = dist;
@@ -282,17 +282,18 @@ export default {
         }
         let newIndex = currentIndex + movementDirection;
         closestChild = snapChildren[newIndex] ?? snapChildren[currentIndex]
-        console.log(snapChildren, currentIndex, movementDirection, newIndex, closestChild)
+        
+        // console.log(snapChildren, currentIndex, movementDirection, newIndex, closestChild)
       }
 
       // return
       if (!closestChild) {
         return this.finishSnapping()
       }
-      const targetOffset = this.axis === 'y' ? closestChild.offsetTop : closestChild.offsetLeft;
-      const direction = this.axis === 'y' ? 'top' : 'left'
+      const targetOffset = this.move === 'y' ? closestChild.offsetTop : closestChild.offsetLeft;
+      const direction = this.move === 'y' ? 'top' : 'left'
 
-      // console.log(targetOffset, this.axis)
+      // console.log(targetOffset, this.move, closestChild.offsetTop, closestChild.offsetLeft)
       this.scrollToCoordinate(el, targetOffset, 0.3, direction, false, this.finishSnapping(targetOffset, closestChild));
     },
     finishSnapping(targetOffset = 0, closestChild = null){
@@ -306,17 +307,18 @@ export default {
     },
     onScroll(e) {
       // console.log('start-scroll')
-      if (this.disableEmit) return;
-
+      this.bypassMomentum = true
       const el = this.$refs.container;
-      
-      // 🔄 Emit scroll position
-      this.$emit('scroll', {
-        scrollLeft: el.scrollLeft,
-        scrollTop: el.scrollTop,
-        event: e
-      });
 
+      if (!this.disableEmit) {        
+        // 🔄 Emit scroll position
+        this.$emit('scroll', {
+          scrollLeft: el.scrollLeft,
+          scrollTop: el.scrollTop,
+          event: e
+        });
+      }
+      // this.handleDrag(el.scrollLeft, el.scrollTop)
       // Scroll sync logic:
       if (!this._syncing && this.syncWith) {
         this._syncing = true;
@@ -356,7 +358,7 @@ export default {
       // 🛑 Reset scroll-end timeout
       clearTimeout(this.scrollTimeout);
       this.scrollTimeout = setTimeout(() => {
-        // console.log('check-drag', this.isDragging, this.bypassMomentum)
+        console.log('check-drag', this.isDragging, this.bypassMomentum)
         if (!this.isDragging && !this.bypassMomentum) {
             this.applyMomentum();
         } else {
@@ -366,16 +368,16 @@ export default {
     },
     tryEmitScrollEnd() {
       // Wait for everything to end
-      // console.log('tryEmitScrollEnd', this.isDragging, this.isMomentum, this.isSnapping);
+      console.log('tryEmitScrollEnd', this.isDragging, this.isMomentum, this.isSnapping);
       if (!this.isDragging && !this.isMomentum && !this.isSnapping) {
         this.isScrolling = false;
         this.bypassMomentum = false;
         this.$emit('scroll-end');
       }
+      console.log(this.bypassMomentum)
     },
     setScroll({ left, top }) {
-      this.bypassMomentum = true;
-      // console.log('set scroll')
+      console.log('set scroll')
       const el = this.$refs.container;  
       // console.log(el)
       if (typeof left === 'number') el.scrollLeft = left;

@@ -21,7 +21,7 @@ class SholatController extends BasePageController
         $tanggal = $postData['tanggal'];
 
         $data = $this->model->getAll([
-            'id_anggota' => $postData['id_anggota'],
+            'id_anggota' => $postData['id_anggota'] ?? userdata()->id,
             'tanggal' => $tanggal,
         ]);
 
